@@ -981,6 +981,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 178872573279382419, guid: 597cdb958b5e91549aa79e864220c302, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 495388414335311948, guid: 597cdb958b5e91549aa79e864220c302, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 181
@@ -1120,6 +1124,10 @@ PrefabInstance:
     - target: {fileID: 3279450255431498606, guid: 1fa994d84365a144392272d4fece4383, type: 3}
       propertyPath: m_Name
       value: P-WeaponSpriteParent
+      objectReference: {fileID: 0}
+    - target: {fileID: 5906170016927918831, guid: 1fa994d84365a144392272d4fece4383, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8471768819166270004, guid: 1fa994d84365a144392272d4fece4383, type: 3}
       propertyPath: m_Name

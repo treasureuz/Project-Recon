@@ -7,7 +7,6 @@ public class EWeaponManager : MonoBehaviour
 	[Header("References")]
 	[SerializeField] private GameObject _bulletPrefab;
 	[SerializeField] private Transform _bulletSpawnPoint;
-	[SerializeField] private EnemyTrigger _enemyTrigger;
 	[SerializeField] private Enemy _enemy;
 	[SerializeField] private Player _player;
 
@@ -21,7 +20,7 @@ public class EWeaponManager : MonoBehaviour
 	private void Update()
 	{
 		//HandleWeaponRotation();
-		if (this._player != null && (this._enemyTrigger.GetIsEnemyShot() || this._enemy.GetIsWithinRadius()))
+		if (this._player != null && (this._enemy.GetIsEnemyShot() || this._enemy.GetIsWithinRadius()))
 		{
 			HandleEnemyShoot();
 		}
@@ -59,8 +58,6 @@ public class EWeaponManager : MonoBehaviour
 			//Specific to THIS bullet shot at THIS frame
 			BulletManager bullet = this._bulletInstance.GetComponent<BulletManager>();
 			bullet.SetBulletCharacterType(GameManager.CharacterType.Enemy);
-
-			//Physics2D.IgnoreCollision(this._bulletInstance.GetComponent<Collider2D>(), this._radius.GetComponent<Collider2D>());
 
 			this._nextShootTime = Time.time + this._timeBetweenEnemyShots;
 		}

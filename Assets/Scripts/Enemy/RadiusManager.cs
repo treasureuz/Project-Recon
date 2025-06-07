@@ -1,28 +1,20 @@
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class RadiusManager : MonoBehaviour
 {
-	private bool _isWithinRadius;
+	[Header("References")]
+	[SerializeField] private LayerMask _playerLayerMask;
+	[SerializeField] private CircleCollider2D _radius;
+
+	private void Start()
+	{
+		this._radius = GetComponent<CircleCollider2D>();
+	}
 
 	public bool IsWithinRadius()
 	{
-		return this._isWithinRadius;
-	}
-
-	private void OnTriggerEnter2D(Collider2D collision)
-	{
-		if (collision.CompareTag("Player"))
-		{
-			this._isWithinRadius = true;
-		}
-	}
-
-	private void OnTriggerExit2D(Collider2D collision)
-	{
-		if (collision.CompareTag("Player"))
-		{
-			this._isWithinRadius = false;
-		}
+		return Physics2D.OverlapCircle(this._radius.transform.position, this._radius.bounds.extents.x, this._playerLayerMask);
 	}
 
 }
