@@ -41,12 +41,12 @@ public class Player : MonoBehaviour, IDamageable
 	private float _currentHealth;
 	private float _moveSpeed;
 
-	private void Start()
+	private void Awake()
 	{
 		this._playerWeaponManager.AddThrusterTypeToStack(PWeaponManager.ThrusterType.Normal);
 		HandlePlayerSwitch();
 	}
-	 
+
 	private void FixedUpdate()
 	{
 		this._rb2d.linearVelocity = InputManager._moveDirection * this._moveSpeed;

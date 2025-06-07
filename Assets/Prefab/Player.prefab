@@ -55,11 +55,19 @@ MonoBehaviour:
   _standardMaxHealth: 100
   _standardMoveSpeed: 3
   _standardBulletDamage: 15
-  _standardTimeBetweenShots: 0.5
+  _standardTimeBetweenShots: 0.45
   _omenMaxHealth: 150
   _omenMoveSpeed: 3.3
   _omenBulletDamage: 25
-  _omenTimeBetweenShots: 0.45
+  _omenTimeBetweenShots: 0.38
+  _soraMaxHealth: 155
+  _soraMoveSpeed: 3.65
+  _soraBulletDamage: 30
+  _soraTimeBetweenShots: 0.25
+  _ralphMaxHealth: 200
+  _ralphMoveSpeed: 4
+  _ralphBulletDamage: 40
+  _ralphTimeBetweenShots: 0.1
 --- !u!50 &4307045051133944857
 Rigidbody2D:
   serializedVersion: 5
@@ -241,13 +249,11 @@ MonoBehaviour:
   _leftBulletSpawnPoint: {fileID: 8542115595291322650}
   _rightBulletSpawnPoint: {fileID: 8757797589631614229}
   _thrusterParent: {fileID: 164305352335488478}
-  _timeBetweenPlayerShots: 0.55
+  _timeBetweenPlayerShots: 0.45
   _normalPrefab: {fileID: 3831428221465586410, guid: 1d0c514e33871524d9bff93ac1209f66, type: 3}
   _thinPrefab: {fileID: 7417630984595399494, guid: 0c8e370f0f87dcb4d8d3b0a51c2c1e24, type: 3}
   _widePrefab: {fileID: 915936592291527419, guid: ff08791422af3f248a92619c78dc2095, type: 3}
   _doublePrefab: {fileID: 6472088012352498680, guid: 0b8767342fa88b24faf062dad7610167, type: 3}
-  _leftPrefab: {fileID: 1320364447223768067}
-  _rightPrefab: {fileID: 6975894005519273439}
 --- !u!1 &3503737894679935762
 GameObject:
   m_ObjectHideFlags: 0
@@ -583,7 +589,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6027581566516317771}
   m_Layer: 0
-  m_Name: BulletSpawnPoints
+  m_Name: P-BulletSpawnPoints
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -833,19 +839,9 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0b8767342fa88b24faf062dad7610167, type: 3}
---- !u!1 &1320364447223768067 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3427670355684788887, guid: 0b8767342fa88b24faf062dad7610167, type: 3}
-  m_PrefabInstance: {fileID: 4450515752506191508}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1384055614596147562 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3383979309097682942, guid: 0b8767342fa88b24faf062dad7610167, type: 3}
-  m_PrefabInstance: {fileID: 4450515752506191508}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &6975894005519273439 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6704789867377304395, guid: 0b8767342fa88b24faf062dad7610167, type: 3}
   m_PrefabInstance: {fileID: 4450515752506191508}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7856534055493679985

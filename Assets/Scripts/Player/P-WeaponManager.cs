@@ -12,7 +12,7 @@ public class PWeaponManager : MonoBehaviour
 	[SerializeField] private Transform _thrusterParent;
 
 	[Header("Weapon Settings")]
-	[SerializeField] private float _timeBetweenPlayerShots = 0.5f;
+	[SerializeField] private float _timeBetweenPlayerShots = 0.45f;
 
 	[Header("Thruster Types")]
 	[SerializeField] private GameObject _normalPrefab;
