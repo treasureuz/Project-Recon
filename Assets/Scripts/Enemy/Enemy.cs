@@ -91,10 +91,11 @@ public class Enemy : MonoBehaviour, IDamageable
 		//}
 
 		//This allows for interpolation
-		Vector2 direction = ((Vector2)this._player.position - this._rb2d.position).normalized;
-		Vector2 playerPos = this._rb2d.position + (direction * this._moveSpeed * Time.fixedDeltaTime);
+		Vector2 playerPos = new Vector2(this._player.position.x + 0.5f, this._player.position.y);
+		Vector2 direction = (playerPos - this._rb2d.position).normalized;
+		Vector2 newPosition = this._rb2d.position + (direction * this._moveSpeed * Time.fixedDeltaTime);
 		
-		this._rb2d.MovePosition(playerPos);
+		this._rb2d.MovePosition(newPosition);
 	}
 
 	#region Generate Random Position
