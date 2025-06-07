@@ -13,13 +13,26 @@ public class Player : MonoBehaviour, IDamageable
 	[SerializeField] private float _standardMaxHealth = 100f; // Max health of the player
 	[SerializeField] private float _standardMoveSpeed = 3f;
 	[SerializeField] private float _standardBulletDamage = 15f;
-	[SerializeField] private float _standardTimeBetweenShots = 0.5f;
+	[SerializeField] private float _standardTimeBetweenShots = 0.45f;
 
 	[Header("Omen's Player Settings")]
-	[SerializeField] private float _omenMaxHealth = 150f; // Max health of the player
+	[SerializeField] private float _omenMaxHealth = 125f; // Max health of the player
 	[SerializeField] private float _omenMoveSpeed = 3.3f;
-	[SerializeField] private float _omenBulletDamage = 25f;
-	[SerializeField] private float _omenTimeBetweenShots = 0.45f;
+	[SerializeField] private float _omenBulletDamage = 22.5f;
+	[SerializeField] private float _omenTimeBetweenShots = 0.38f;
+
+	[Header("Sora's Player Settings")]
+	[SerializeField] private float _soraMaxHealth = 155f; // Max health of the player
+	[SerializeField] private float _soraMoveSpeed = 3.65f;
+	[SerializeField] private float _soraBulletDamage = 30f;
+	[SerializeField] private float _soraTimeBetweenShots = 0.25f;
+
+	[Header("Ralph's Player Settings")]
+	[SerializeField] private float _ralphMaxHealth = 200f; // Max health of the player
+	[SerializeField] private float _ralphMoveSpeed = 4f;
+	[SerializeField] private float _ralphBulletDamage = 40f;
+	[SerializeField] private float _ralphTimeBetweenShots = 0.1f;
+
 
 	// Forces z axis to be 0
 	private Vector2 _mousePosition;
@@ -65,7 +78,7 @@ public class Player : MonoBehaviour, IDamageable
 
 		switch (this._playerWeaponManager.GetThrusterType())
 		{
-			case PWeaponManager.ThrusterType.Normal:
+			case PWeaponManager.ThrusterType.Normal: //Standard
 				this._currentHealth = this._standardMaxHealth;
 				this._moveSpeed = this._standardMoveSpeed;
 				this.transform.localScale = new Vector3(0.68f, 0.68f, 0.68f);
@@ -73,12 +86,26 @@ public class Player : MonoBehaviour, IDamageable
 				this._playerWeaponManager.SetTimeBetweenPlayerShots(this._standardTimeBetweenShots);
 				break;
 
-			case PWeaponManager.ThrusterType.Thin:
+			case PWeaponManager.ThrusterType.Thin: //Omen
 				this._currentHealth = this._omenMaxHealth;
 				this._moveSpeed = this._omenMoveSpeed;
-				this.transform.localScale = new Vector3(0.78f, 0.78f, 0.78f);
+				this.transform.localScale = new Vector3(0.725f, 0.725f, 0.725f);
 				this._bulletManager.SetBulletDamage(this._omenBulletDamage);
 				this._playerWeaponManager.SetTimeBetweenPlayerShots(this._omenTimeBetweenShots);
+				break;
+			case PWeaponManager.ThrusterType.Wide: //Sora
+				this._currentHealth = this._soraMaxHealth;
+				this._moveSpeed = this._soraMoveSpeed;
+				this.transform.localScale = new Vector3(0.78f, 0.78f, 0.78f);
+				this._bulletManager.SetBulletDamage(this._soraBulletDamage);
+				this._playerWeaponManager.SetTimeBetweenPlayerShots(this._soraTimeBetweenShots);
+				break;
+			case PWeaponManager.ThrusterType.Double: //Ralph
+				this._currentHealth = this._ralphMaxHealth;
+				this._moveSpeed = this._ralphMoveSpeed;
+				this.transform.localScale = new Vector3(0.85f, 0.85f, 0.85f);
+				this._bulletManager.SetBulletDamage(this._ralphBulletDamage);
+				this._playerWeaponManager.SetTimeBetweenPlayerShots(this._ralphTimeBetweenShots);
 				break;
 		}
 
@@ -90,6 +117,14 @@ public class Player : MonoBehaviour, IDamageable
 		if (collision.CompareTag("OmensTriangle"))
 		{
 			this._playerWeaponManager.AddThrusterTypeToStack(PWeaponManager.ThrusterType.Thin); //Omen's thruster type
+		}
+		else if (collision.CompareTag("SorasOrb"))
+		{
+			this._playerWeaponManager.AddThrusterTypeToStack(PWeaponManager.ThrusterType.Wide); //Sora's thruster type
+		}
+		else if (collision.CompareTag("RalphsCube"))
+		{
+			this._playerWeaponManager.AddThrusterTypeToStack(PWeaponManager.ThrusterType.Double); //Ralph's thruster type
 		}
 
 		HandlePlayerSwitch();

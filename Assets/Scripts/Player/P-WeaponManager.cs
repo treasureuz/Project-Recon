@@ -18,11 +18,7 @@ public class PWeaponManager : MonoBehaviour
 	[SerializeField] private GameObject _normalPrefab;
 	[SerializeField] private GameObject _thinPrefab;
 	[SerializeField] private GameObject _widePrefab;
-
-	[Header("Double Thrusters")]
 	[SerializeField] private GameObject _doublePrefab;
-	[SerializeField] private GameObject _leftPrefab;
-	[SerializeField] private GameObject _rightPrefab;
 
 	private Stack<ThrusterType> _thrusterTypeStack = new Stack<ThrusterType>();
 
@@ -80,7 +76,7 @@ public class PWeaponManager : MonoBehaviour
 		//Different from Time.deltaTime which is a static time of 0.0167 seconds for every single frame (60 FPS)
 		if (Mouse.current.leftButton.isPressed && Time.time >= this._nextShootTime)
 		{
-			if (GetThrusterTypeIndex() < 3)
+			if (GetThrusterTypeIndex() < 3) //If ThrusterType isn't "Double" (bc double has diff shooting mechanic)
 			{
 				this._bulletInstance = Instantiate(this._bulletPrefab, this._bulletSpawnPoint.position, this.transform.rotation);
 
@@ -107,27 +103,6 @@ public class PWeaponManager : MonoBehaviour
 		}
 	}
 
-
-	private void HandleDoubleTypeShoot()
-	{
-		//Time.time is the actual time accumulated every single frame since the game started
-		//Different from Time.deltaTime which is a static time of 0.0167 seconds for every single frame (60 FPS)
-		if (Mouse.current.leftButton.isPressed && Time.time >= this._nextShootTime)
-		{
-			this._bulletInstance = Instantiate(this._bulletPrefab, this._bulletSpawnPoint.position, this.transform.rotation);
-
-			//Every time player shoots, it marks the character type's (player) name on it
-			//Specific to THIS bullet shot at THIS frame
-			BulletManager bullet = this._bulletInstance.GetComponent<BulletManager>();
-			bullet.SetBulletCharacterType(GameManager.CharacterType.Player);
-
-			//Physics2D.IgnoreCollision(this._bulletInstance.GetComponent<Collider2D>(), this._player.GetComponent<Collider2D>());
-
-			Debug.Log("Time between shots: " + this._timeBetweenPlayerShots);
-			this._nextShootTime = Time.time + this._timeBetweenPlayerShots;
-		}
-	}
-
 	public void HandleThrusterInstantiation()
 	{
 		if (this._thrusterInstance != null) Destroy(this._thrusterInstance);
@@ -140,10 +115,10 @@ public class PWeaponManager : MonoBehaviour
 			case 1: //Thruster Type - Thin 
 				this._thrusterInstance = Instantiate(this._thinPrefab, this._thinPrefab.transform.position, Quaternion.identity);
 				break;
-			case 2:
+			case 2: //Thruster Type - Wide
 				this._thrusterInstance = Instantiate(this._widePrefab, this._widePrefab.transform.position, Quaternion.identity); 
 				break;
-			case 3:
+			case 3: //Thruster Type - Double
 				this._thrusterInstance = Instantiate(this._doublePrefab, this._doublePrefab.transform.position, Quaternion.identity);
 				break;
 		}	
