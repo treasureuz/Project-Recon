@@ -81,7 +81,7 @@ public class Player : MonoBehaviour, IDamageable
 			case PWeaponManager.ThrusterType.Normal: //Standard
 				this._currentHealth = this._standardMaxHealth;
 				this._moveSpeed = this._standardMoveSpeed;
-				this.transform.localScale = new Vector3(0.69f, 0.69f, 0.69f);
+				this.transform.localScale = new Vector3(0.68f, 0.68f, 0.68f);
 				this._bulletManager.SetBulletDamage(this._standardBulletDamage);
 				this._playerWeaponManager.SetTimeBetweenPlayerShots(this._standardTimeBetweenShots);
 				break;

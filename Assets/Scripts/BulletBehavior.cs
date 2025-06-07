@@ -8,7 +8,7 @@ public class BulletBehavior : MonoBehaviour
 
 	[Header("Bullet Settings")]
 	[SerializeField] private float _bulletForce = 15f;
-	[SerializeField] private float _destroyTime = 3f;
+	[SerializeField] private float _destroyTime = 1.25f;
 
 	private void Start()
 	{

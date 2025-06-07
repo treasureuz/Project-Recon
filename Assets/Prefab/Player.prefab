@@ -29,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -16.39, y: -0.21, z: 0}
-  m_LocalScale: {x: 0.68, y: 0.68, z: 0.68}
+  m_LocalScale: {x: 0.685, y: 0.685, z: 0.685}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 4345813924743787251}
@@ -53,19 +53,19 @@ MonoBehaviour:
   _bulletManager: {fileID: 6202038610834583983, guid: 37308ab0f9bcb9c408dfd69e448c5eb2, type: 3}
   _playerWeaponManager: {fileID: 1699253976151754416}
   _standardMaxHealth: 100
-  _standardMoveSpeed: 3
+  _standardMoveSpeed: 2.85
   _standardBulletDamage: 15
-  _standardTimeBetweenShots: 0.45
+  _standardTimeBetweenShots: 0.55
   _omenMaxHealth: 125
-  _omenMoveSpeed: 3.3
+  _omenMoveSpeed: 3.1
   _omenBulletDamage: 25
   _omenTimeBetweenShots: 0.38
   _soraMaxHealth: 155
-  _soraMoveSpeed: 3.65
+  _soraMoveSpeed: 3.45
   _soraBulletDamage: 30
   _soraTimeBetweenShots: 0.265
   _ralphMaxHealth: 200
-  _ralphMoveSpeed: 4
+  _ralphMoveSpeed: 3.85
   _ralphBulletDamage: 40
   _ralphTimeBetweenShots: 0.125
 --- !u!50 &4307045051133944857
@@ -701,8 +701,8 @@ Transform:
   m_GameObject: {fileID: 8471768819166270004}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.6378, y: -0.0064, z: 0}
-  m_LocalScale: {x: 0.47565, y: 0.237175, z: 0.8333333}
+  m_LocalPosition: {x: 0.6253, y: -0.0064, z: 0}
+  m_LocalScale: {x: 0.4507529, y: 0.237175, z: 0.8333333}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 5649323439025943167}
@@ -921,18 +921,6 @@ PrefabInstance:
     - target: {fileID: 3280448552770043426, guid: ff08791422af3f248a92619c78dc2095, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7879531161721364858, guid: ff08791422af3f248a92619c78dc2095, type: 3}
-      propertyPath: m_Color.b
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7879531161721364858, guid: ff08791422af3f248a92619c78dc2095, type: 3}
-      propertyPath: m_Color.g
-      value: 0.7569827
-      objectReference: {fileID: 0}
-    - target: {fileID: 7879531161721364858, guid: ff08791422af3f248a92619c78dc2095, type: 3}
-      propertyPath: m_Color.r
-      value: 0.13679248
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
