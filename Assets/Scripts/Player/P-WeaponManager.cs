@@ -52,8 +52,6 @@ public class PWeaponManager : MonoBehaviour
 	{
 		//HandleWeaponRotation();
 		HandlePlayerShoot();
-		
-		
 	}
 
 	#region HandleWeaponRotation
