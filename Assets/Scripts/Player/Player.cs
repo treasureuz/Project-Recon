@@ -25,13 +25,13 @@ public class Player : MonoBehaviour, IDamageable
 	[SerializeField] private float _soraMaxHealth = 155f; // Max health of the player
 	[SerializeField] private float _soraMoveSpeed = 3.65f;
 	[SerializeField] private float _soraBulletDamage = 30f;
-	[SerializeField] private float _soraTimeBetweenShots = 0.25f;
+	[SerializeField] private float _soraTimeBetweenShots = 0.265f;
 
 	[Header("Ralph's Player Settings")]
 	[SerializeField] private float _ralphMaxHealth = 200f; // Max health of the player
 	[SerializeField] private float _ralphMoveSpeed = 4f;
 	[SerializeField] private float _ralphBulletDamage = 40f;
-	[SerializeField] private float _ralphTimeBetweenShots = 0.1f;
+	[SerializeField] private float _ralphTimeBetweenShots = 0.125f;
 
 
 	// Forces z axis to be 0
@@ -81,7 +81,7 @@ public class Player : MonoBehaviour, IDamageable
 			case PWeaponManager.ThrusterType.Normal: //Standard
 				this._currentHealth = this._standardMaxHealth;
 				this._moveSpeed = this._standardMoveSpeed;
-				this.transform.localScale = new Vector3(0.68f, 0.68f, 0.68f);
+				this.transform.localScale = new Vector3(0.69f, 0.69f, 0.69f);
 				this._bulletManager.SetBulletDamage(this._standardBulletDamage);
 				this._playerWeaponManager.SetTimeBetweenPlayerShots(this._standardTimeBetweenShots);
 				break;
@@ -89,21 +89,21 @@ public class Player : MonoBehaviour, IDamageable
 			case PWeaponManager.ThrusterType.Thin: //Omen
 				this._currentHealth = this._omenMaxHealth;
 				this._moveSpeed = this._omenMoveSpeed;
-				this.transform.localScale = new Vector3(0.725f, 0.725f, 0.725f);
+				this.transform.localScale = new Vector3(0.73f, 0.73f, 0.73f);
 				this._bulletManager.SetBulletDamage(this._omenBulletDamage);
 				this._playerWeaponManager.SetTimeBetweenPlayerShots(this._omenTimeBetweenShots);
 				break;
 			case PWeaponManager.ThrusterType.Wide: //Sora
 				this._currentHealth = this._soraMaxHealth;
 				this._moveSpeed = this._soraMoveSpeed;
-				this.transform.localScale = new Vector3(0.78f, 0.78f, 0.78f);
+				this.transform.localScale = new Vector3(0.775f, 0.775f, 0.775f);
 				this._bulletManager.SetBulletDamage(this._soraBulletDamage);
 				this._playerWeaponManager.SetTimeBetweenPlayerShots(this._soraTimeBetweenShots);
 				break;
 			case PWeaponManager.ThrusterType.Double: //Ralph
 				this._currentHealth = this._ralphMaxHealth;
 				this._moveSpeed = this._ralphMoveSpeed;
-				this.transform.localScale = new Vector3(0.85f, 0.85f, 0.85f);
+				this.transform.localScale = new Vector3(0.825f, 0.825f, 0.825f);
 				this._bulletManager.SetBulletDamage(this._ralphBulletDamage);
 				this._playerWeaponManager.SetTimeBetweenPlayerShots(this._ralphTimeBetweenShots);
 				break;
@@ -151,18 +151,17 @@ public class Player : MonoBehaviour, IDamageable
 	}
 	private void DestroyOnDie()
 	{
-		//If index is not my NormalThrusterType index
-		if (this._playerWeaponManager.GetThrusterTypeIndex() > 0)
+		if (this._playerWeaponManager.GetThrusterTypeIndex() == 0) //If index is "NormalThrusterType" index
 		{
-			Destroy(this._playerWeaponManager.GetThrusterInstance());
-			this._playerWeaponManager.PopAndSetThrusterType();
-
-			HandlePlayerSwitch();
+			this._playerWeaponManager.PopAndSetThrusterType(); //First, remove from stack
+			Destroy(this.gameObject); //Then, destroy in game
 		}
 		else
 		{
-			this._playerWeaponManager.PopAndSetThrusterType();
-			Destroy(this.gameObject);
+			this._playerWeaponManager.PopAndSetThrusterType(); //First, remove from stack
+			Destroy(this._playerWeaponManager.GetThrusterInstance()); //Then, destroy in game
+
+			HandlePlayerSwitch();
 		}
 	}
 

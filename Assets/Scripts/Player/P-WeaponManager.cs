@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -76,7 +78,11 @@ public class PWeaponManager : MonoBehaviour
 		//Different from Time.deltaTime which is a static time of 0.0167 seconds for every single frame (60 FPS)
 		if (Mouse.current.leftButton.isPressed && Time.time >= this._nextShootTime)
 		{
-			if (GetThrusterTypeIndex() < 3) //If ThrusterType isn't "Double" (bc double has diff shooting mechanic)
+			if (GetThrusterTypeIndex() == 3) //If ThrusterType is "Double" (bc double has diff shooting mechanic) 
+			{
+				StartCoroutine(DoubleThrustersDelayBetweenShots());
+			}
+			else
 			{
 				this._bulletInstance = Instantiate(this._bulletPrefab, this._bulletSpawnPoint.position, this.transform.rotation);
 
@@ -85,22 +91,26 @@ public class PWeaponManager : MonoBehaviour
 				BulletManager bullet = this._bulletInstance.GetComponent<BulletManager>();
 				bullet.SetBulletCharacterType(GameManager.CharacterType.Player);
 			}
-			else
-			{
-				this._leftBulletInstance = Instantiate(this._bulletPrefab, this._leftBulletSpawnPoint.position, this.transform.rotation);
-				this._rightBulletInstance = Instantiate(this._bulletPrefab, this._leftBulletSpawnPoint.position, this.transform.rotation);
-
-				//Every time player shoots a bullet, it marks the character type's (player) name on it
-				//Specific to BOTH THESE bullets shot at THIS frame
-				this._leftBulletInstance.GetComponent<BulletManager>().SetBulletCharacterType(GameManager.CharacterType.Player);
-				this._rightBulletInstance.GetComponent<BulletManager>().SetBulletCharacterType(GameManager.CharacterType.Player);
-			}
 
 			//Physics2D.IgnoreCollision(this._bulletInstance.GetComponent<Collider2D>(), this._player.GetComponent<Collider2D>());
 
 			Debug.Log("Time between shots: " + this._timeBetweenPlayerShots);
 			this._nextShootTime = Time.time + this._timeBetweenPlayerShots;
 		}
+	}
+
+	private IEnumerator DoubleThrustersDelayBetweenShots()
+	{
+		this._leftBulletInstance = Instantiate(this._bulletPrefab, this._leftBulletSpawnPoint.position, this.transform.rotation);
+		
+		yield return new WaitForSeconds(this._timeBetweenPlayerShots - 0.045f);
+		
+		this._rightBulletInstance = Instantiate(this._bulletPrefab, this._rightBulletSpawnPoint.position, this.transform.rotation);
+
+		//Every time player shoots a bullet, it marks the character type's (player) name on it
+		//Specific to BOTH THESE bullets shot at THIS frame
+		this._leftBulletInstance.GetComponent<BulletManager>().SetBulletCharacterType(GameManager.CharacterType.Player);
+		this._rightBulletInstance.GetComponent<BulletManager>().SetBulletCharacterType(GameManager.CharacterType.Player);
 	}
 
 	public void HandleThrusterInstantiation()

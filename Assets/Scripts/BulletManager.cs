@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class BulletManager : MonoBehaviour
 {
+	[Header("Bullet Damage Settings")]
 	[SerializeField] private float _playerBulletDamage = 15f;
 	[SerializeField] private float _enemyBulletDamage = 20f;
 
