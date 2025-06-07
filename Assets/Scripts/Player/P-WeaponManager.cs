@@ -6,12 +6,13 @@ using UnityEngine.InputSystem;
 
 public class PWeaponManager : MonoBehaviour
 {
-	[Header("Bullet References")]
+	[Header("References")]
 	[SerializeField] private GameObject _bulletPrefab;
 	[SerializeField] private Transform _bulletSpawnPoint;
 	[SerializeField] private Transform _leftBulletSpawnPoint;
 	[SerializeField] private Transform _rightBulletSpawnPoint;
 	[SerializeField] private Transform _thrusterParent;
+	[SerializeField] private RadiusManager _radius;
 
 	[Header("Weapon Settings")]
 	[SerializeField] private float _timeBetweenPlayerShots = 0.45f;
@@ -39,11 +40,11 @@ public class PWeaponManager : MonoBehaviour
 		Double = 3, // Ralph
 	}
 
-	private ThrusterType thrusterType;
+	private ThrusterType _thrusterType;
 
 	private void Start()
 	{
-		this.thrusterType = ThrusterType.Normal;
+		this._thrusterType = ThrusterType.Normal;
 	}
 
 	private void Update()
@@ -92,7 +93,7 @@ public class PWeaponManager : MonoBehaviour
 				bullet.SetBulletCharacterType(GameManager.CharacterType.Player);
 			}
 
-			//Physics2D.IgnoreCollision(this._bulletInstance.GetComponent<Collider2D>(), this._player.GetComponent<Collider2D>());
+			//Physics2D.IgnoreCollision(this._bulletInstance.GetComponent<Collider2D>(), this._radius.GetComponent<Collider2D>());
 
 			Debug.Log("Time between shots: " + this._timeBetweenPlayerShots);
 			this._nextShootTime = Time.time + this._timeBetweenPlayerShots;
@@ -144,7 +145,7 @@ public class PWeaponManager : MonoBehaviour
 
 	public void AddThrusterTypeToStack(ThrusterType newThrusterType)
 	{
-		this.thrusterType = newThrusterType;
+		this._thrusterType = newThrusterType;
 		this._thrusterTypeStack.Push(newThrusterType);
 		Debug.Log("Stack Count: " + this._thrusterTypeStack.Count);
 	}
@@ -155,7 +156,7 @@ public class PWeaponManager : MonoBehaviour
 
 		if (this._thrusterTypeStack.Count > 0)
 		{
-			this.thrusterType = this._thrusterTypeStack.Peek();
+			this._thrusterType = this._thrusterTypeStack.Peek();
 		}
 	}
 
@@ -166,12 +167,12 @@ public class PWeaponManager : MonoBehaviour
 
 	public ThrusterType GetThrusterType()
 	{
-		return this.thrusterType;
+		return this._thrusterType;
 	}
 
 	public int GetThrusterTypeIndex()
 	{
-		return (int) this.thrusterType;
+		return (int) this._thrusterType;
 	}
 
 	#endregion

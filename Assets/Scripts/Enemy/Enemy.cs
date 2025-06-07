@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -5,40 +6,55 @@ public class Enemy : MonoBehaviour, IDamageable
 {
 	[Header("References")]
 	[SerializeField] private Rigidbody2D _rb2d;
-	[SerializeField] private AsteroidBehavior _asteroid;
-	//[SerializeField] private BulletManager _bullet;
 	[SerializeField] private Transform _player;
+	[SerializeField] private RadiusManager _radiusManager;
+	[SerializeField] private EnemyTrigger _enemyTrigger;
 
 	[Header("Bounds")]
-	[SerializeField] private Vector2 _minBounds = new Vector2(-12.35f, 3.42f);
-	[SerializeField] private Vector2 _maxBounds = new Vector2(-6.65f, 2.42f);
+	[SerializeField] private Vector2 _minBounds;
+	[SerializeField] private Vector2 _maxBounds;
 
 	[Header("Enemy Settings")]
-	[SerializeField] private float _moveDuration = 1f;
-	[SerializeField] private float _timeBetweenMoves = 2f;
+	//[SerializeField] private float _moveDuration = 1f;
+	//[SerializeField] private float _timeBetweenMoves = 2f;
+	[SerializeField] private float _moveSpeed = 2.8f;
 	[SerializeField] private float _maxHealth = 120f; // Max health of the player
+	[SerializeField] private float _waitTimeUntilIdle = 3f;
 
 	// Forces z axis to be 0
 	private Vector2 _directionToPlayer;
-	private Vector2 _targetPosition;
+	//private Vector2 _targetPosition;
 
 	private float _currentHealth;
-	private float _elapsedMoveTime;
-
+	//private float _elapsedMoveTime;
+	
 	private float offset = 0.75f; // How far enemy is allowed to move each time
+
+	private bool _isWithinRadius;
+
+	private void Awake()
+	{
+		this._player = GameObject.FindWithTag("Player").transform; // Fixes broken prefab reference issue
+	}
 
 	private void Start()
 	{
-		this._player = GameObject.FindWithTag("Player").transform; // Fixes broken prefab reference issue
-
-		this._targetPosition = GenerateRandomPosition();
-
 		this._currentHealth = this._maxHealth; // Initialize health
+		this._minBounds = new Vector2(-12.35f, 3.42f);
+		this._maxBounds = new Vector2(-6.65f, 2.42f);
+		//this._targetPosition = GenerateRandomPosition();
+	}
+
+	//Not needed but adds clarity as Enemy HAS the radius
+	private void Update()
+	{
+		if (this._radiusManager.IsWithinRadius()) this._isWithinRadius = true;
+		else this._isWithinRadius = false;
 	}
 
 	private void FixedUpdate()
 	{
-		if (this._player != null)
+		if (this._player != null && (this._enemyTrigger.GetIsEnemyShot() || this._isWithinRadius))
 		{
 			HandleEnemyRotation();
 			HandleEnemyMovement();
@@ -53,28 +69,35 @@ public class Enemy : MonoBehaviour, IDamageable
 		float angle = Vector3.SignedAngle(this.transform.right, this._directionToPlayer, Vector3.forward);
 
 		//Rotate smoothly/step by step
-		float t = Time.fixedDeltaTime / 0.25f; // a fraction of the total angle you want to rotate THIS frame
+		float t = Time.fixedDeltaTime / 0.2f; // a fraction of the total angle you want to rotate THIS frame
 		this.transform.Rotate(Vector3.forward, angle * t);
 	}
 
 	private void HandleEnemyMovement()
 	{
-		// Wait 0.85 secs before moving (added moveDuration because elapsedTime IS equal/greater than moveDuration)
-		this._elapsedMoveTime += Time.fixedDeltaTime;
-		if (this._elapsedMoveTime >= this._timeBetweenMoves + this._moveDuration)
-		{
-			this._targetPosition = GenerateRandomPosition();
-			this._elapsedMoveTime = 0f;
-		}
+		// Wait 0.85 + 1 secs before moving
+		//this._elapsedMoveTime += Time.fixedDeltaTime;
+		//if (this._elapsedMoveTime >= this._timeBetweenMoves + this._moveDuration)
+		//{
+		//	this._targetPosition = GenerateRandomPosition();
+		//	this._elapsedMoveTime = 0f;
+		//}
 
-		// The enemy is moving so wait 1 secs for interpolation to finish
-		if (this._elapsedMoveTime < this._moveDuration)
-		{
-			float t = Mathf.Clamp01(this._elapsedMoveTime / this._moveDuration);
-			this.transform.position = Vector2.Lerp(this.transform.position, this._targetPosition, t);
-		}
+		//// The enemy is moving so wait 1 secs for interpolation to finish
+		//if (this._elapsedMoveTime < this._moveDuration)
+		//{
+		//	float t = Mathf.Clamp01(this._elapsedMoveTime / this._moveDuration);
+		//	this.transform.position = Vector2.Lerp(this.transform.position, this._targetPosition, t);
+		//}
+
+		//This allows for interpolation
+		Vector2 direction = ((Vector2)this._player.position - this._rb2d.position).normalized;
+		Vector2 playerPos = this._rb2d.position + (direction * this._moveSpeed * Time.fixedDeltaTime);
+		
+		this._rb2d.MovePosition(playerPos);
 	}
 
+	#region Generate Random Position
 	private Vector2 GenerateRandomPosition()
 	{
 		// Picks best max/min x, y positions enemy is allowed to move to based on the background bounds
@@ -90,21 +113,20 @@ public class Enemy : MonoBehaviour, IDamageable
 		
 		return new Vector2(randXPos, randYPos);
 	}
+	#endregion
 
-	private void OnTriggerEnter2D(Collider2D collision)
+	#region Setters && Getters
+	public bool GetIsWithinRadius()
 	{
-		IDamageable iDamageable = GetComponent<IDamageable>();
-		if (collision.CompareTag("Asteroid"))
-		{
-			iDamageable.OnDamaged(this._asteroid.getAsteroidDamage());
-		}
-		else if (collision.CompareTag("Bullet"))
-		{
-			//Bullet damage is specific to THIS bullet/collision's character type
-			iDamageable.OnDamaged(collision.GetComponent<BulletManager>().GetBulletDamage());
-			Debug.Log("Enemy hit: " + collision.GetComponent<BulletManager>().GetBulletDamage());
-		}
+		return this._isWithinRadius;
 	}
+
+	public float GetWaitTimeUntilIdle()
+	{
+		return this._waitTimeUntilIdle;
+	}
+
+	#endregion
 
 	#region IDamageable Interface Implementation
 	public void OnDamaged(float damageAmount)
@@ -112,6 +134,7 @@ public class Enemy : MonoBehaviour, IDamageable
 		this._currentHealth -= damageAmount;
 		if (this._currentHealth <= 0)
 		{
+			Debug.Log("Enemy Dead");
 			Destroy(gameObject); // Destroy enemy when health reaches zero
 		}
 	}

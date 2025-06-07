@@ -806,6 +806,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4058067303306927987, guid: 597cdb958b5e91549aa79e864220c302, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4601994596425871221, guid: 597cdb958b5e91549aa79e864220c302, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -894,22 +898,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 191160983667545446, guid: 1fa994d84365a144392272d4fece4383, type: 3}
-      propertyPath: _standardTimeBetweenShots
-      value: 0.55
-      objectReference: {fileID: 0}
-    - target: {fileID: 303196939666991746, guid: 1fa994d84365a144392272d4fece4383, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.68
-      objectReference: {fileID: 0}
-    - target: {fileID: 303196939666991746, guid: 1fa994d84365a144392272d4fece4383, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.68
-      objectReference: {fileID: 0}
-    - target: {fileID: 303196939666991746, guid: 1fa994d84365a144392272d4fece4383, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.68
-      objectReference: {fileID: 0}
     - target: {fileID: 303196939666991746, guid: 1fa994d84365a144392272d4fece4383, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 0
@@ -921,6 +909,14 @@ PrefabInstance:
     - target: {fileID: 303196939666991746, guid: 1fa994d84365a144392272d4fece4383, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: -188
+      objectReference: {fileID: 0}
+    - target: {fileID: 3279450255431498606, guid: 1fa994d84365a144392272d4fece4383, type: 3}
+      propertyPath: m_Name
+      value: P-WeaponSpriteParent
+      objectReference: {fileID: 0}
+    - target: {fileID: 8471768819166270004, guid: 1fa994d84365a144392272d4fece4383, type: 3}
+      propertyPath: m_Name
+      value: P-WeaponSprite
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:

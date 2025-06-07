@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 191160983667545446}
   - component: {fileID: 4307045051133944857}
   - component: {fileID: 3477806910951290100}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -53,11 +53,11 @@ MonoBehaviour:
   _bulletManager: {fileID: 6202038610834583983, guid: 37308ab0f9bcb9c408dfd69e448c5eb2, type: 3}
   _playerWeaponManager: {fileID: 1699253976151754416}
   _standardMaxHealth: 100
-  _standardMoveSpeed: 2.85
+  _standardMoveSpeed: 2.88
   _standardBulletDamage: 15
   _standardTimeBetweenShots: 0.55
   _omenMaxHealth: 125
-  _omenMoveSpeed: 3.1
+  _omenMoveSpeed: 3.15
   _omenBulletDamage: 25
   _omenTimeBetweenShots: 0.38
   _soraMaxHealth: 155
@@ -249,6 +249,7 @@ MonoBehaviour:
   _leftBulletSpawnPoint: {fileID: 8542115595291322650}
   _rightBulletSpawnPoint: {fileID: 8757797589631614229}
   _thrusterParent: {fileID: 164305352335488478}
+  _radius: {fileID: 0}
   _timeBetweenPlayerShots: 0.45
   _normalPrefab: {fileID: 3831428221465586410, guid: 1d0c514e33871524d9bff93ac1209f66, type: 3}
   _thinPrefab: {fileID: 7417630984595399494, guid: 0c8e370f0f87dcb4d8d3b0a51c2c1e24, type: 3}

@@ -4,27 +4,24 @@ using UnityEngine.InputSystem;
 
 public class EWeaponManager : MonoBehaviour
 {
-	[Header("Bullet References")]
+	[Header("References")]
 	[SerializeField] private GameObject _bulletPrefab;
 	[SerializeField] private Transform _bulletSpawnPoint;
+	[SerializeField] private EnemyTrigger _enemyTrigger;
+	[SerializeField] private Enemy _enemy;
+	[SerializeField] private Player _player;
 
 	[Header("Weapon Settings")]
 	[SerializeField] private float _timeBetweenEnemyShots = 0.85f;
 
-	private Player _player;
 	private GameObject _bulletInstance;
 
 	private float _nextShootTime = 0f;
 
-	private void Awake()
-	{
-		this._player = GameObject.FindWithTag("Player").GetComponent<Player>();
-	}
-
 	private void Update()
 	{
 		//HandleWeaponRotation();
-		if (this._player != null)
+		if (this._player != null && (this._enemyTrigger.GetIsEnemyShot() || this._enemy.GetIsWithinRadius()))
 		{
 			HandleEnemyShoot();
 		}
@@ -63,7 +60,7 @@ public class EWeaponManager : MonoBehaviour
 			BulletManager bullet = this._bulletInstance.GetComponent<BulletManager>();
 			bullet.SetBulletCharacterType(GameManager.CharacterType.Enemy);
 
-			//Physics2D.IgnoreCollision(this._bulletInstance.GetComponent<Collider2D>(), this._enemy.GetComponent<Collider2D>());
+			//Physics2D.IgnoreCollision(this._bulletInstance.GetComponent<Collider2D>(), this._radius.GetComponent<Collider2D>());
 
 			this._nextShootTime = Time.time + this._timeBetweenEnemyShots;
 		}

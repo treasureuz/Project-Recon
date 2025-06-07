@@ -50,7 +50,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _rb2d: {fileID: 7253802200055206241}
   _bulletForce: 15
-  _destroyTime: 1.25
+  _destroyTime: 1.35
 --- !u!114 &6202038610834583983
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -63,7 +63,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 538c5907ef7b182459e41b0cf56384f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerBulletDamage: 0
+  _playerBulletDamage: 15
   _enemyBulletDamage: 20
 --- !u!50 &7253802200055206241
 Rigidbody2D:

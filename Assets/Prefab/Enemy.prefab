@@ -129,7 +129,6 @@ GameObject:
   - component: {fileID: 882752297644895047}
   - component: {fileID: 1234068746657982907}
   - component: {fileID: 6945814893582821146}
-  - component: {fileID: 297004409101067789}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Enemy
@@ -168,13 +167,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _rb2d: {fileID: 6945814893582821146}
-  _asteroid: {fileID: 6430892029719757333, guid: 42137422141fffe41ab10d200b1aec7d, type: 3}
   _player: {fileID: 303196939666991746, guid: 1fa994d84365a144392272d4fece4383, type: 3}
+  _radiusManager: {fileID: 6790307559122807138}
+  _enemyTrigger: {fileID: 4671824720053842030}
   _minBounds: {x: -12.9, y: -2.42}
   _maxBounds: {x: -6.3, y: 3.42}
-  _moveDuration: 1
-  _timeBetweenMoves: 1
+  _moveSpeed: 1.5
   _maxHealth: 120
+  _waitTimeUntilIdle: 3
 --- !u!50 &6945814893582821146
 Rigidbody2D:
   serializedVersion: 5
@@ -202,42 +202,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!58 &297004409101067789
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2552822358008046916}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_Radius: 0.64
 --- !u!1 &2668232860587067861
 GameObject:
   m_ObjectHideFlags: 0
@@ -335,9 +299,10 @@ GameObject:
   m_Component:
   - component: {fileID: 7033558396782419949}
   - component: {fileID: 178872573279382419}
-  m_Layer: 0
+  - component: {fileID: 6790307559122807138}
+  m_Layer: 10
   m_Name: Radius
-  m_TagString: Untagged
+  m_TagString: EnemyRadius
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -387,12 +352,24 @@ CircleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 7.75
+  m_Radius: 7
+--- !u!114 &6790307559122807138
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4058067303306927987}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5b5c560847599f499cccf98644f8e11, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4601994596425871221
 GameObject:
   m_ObjectHideFlags: 0
@@ -441,6 +418,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _bulletPrefab: {fileID: 1232338131004727195, guid: 37308ab0f9bcb9c408dfd69e448c5eb2, type: 3}
   _bulletSpawnPoint: {fileID: 5346880517716472199}
+  _enemyTrigger: {fileID: 4671824720053842030}
+  _enemy: {fileID: 1234068746657982907}
+  _player: {fileID: 191160983667545446, guid: 1fa994d84365a144392272d4fece4383, type: 3}
   _timeBetweenEnemyShots: 0.85
 --- !u!1 &5410469102236947278
 GameObject:
@@ -625,6 +605,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1331297346162134466}
+  - component: {fileID: 4671824720053842030}
+  - component: {fileID: 2672119314558753442}
   m_Layer: 0
   m_Name: EnemySpriteParent
   m_TagString: Untagged
@@ -648,6 +630,56 @@ Transform:
   - {fileID: 2892785244676628481}
   m_Father: {fileID: 882752297644895047}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4671824720053842030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6104260926029749131}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4544afd5d9430ea48ad0cbd7394577fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _asteroid: {fileID: 6430892029719757333, guid: 42137422141fffe41ab10d200b1aec7d, type: 3}
+  _enemy: {fileID: 1234068746657982907}
+--- !u!58 &2672119314558753442
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6104260926029749131}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Radius: 0.64
 --- !u!1 &6324046065522987607
 GameObject:
   m_ObjectHideFlags: 0
