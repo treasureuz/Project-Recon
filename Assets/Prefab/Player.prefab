@@ -32,7 +32,7 @@ Transform:
   m_LocalScale: {x: 0.685, y: 0.685, z: 0.685}
   m_ConstrainProportionsScale: 1
   m_Children:
-  - {fileID: 4345813924743787251}
+  - {fileID: 8334123836799243455}
   - {fileID: 448364479618553845}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -188}
@@ -166,38 +166,6 @@ Transform:
   - {fileID: 6301115466084634047}
   m_Father: {fileID: 4594743565776231435}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1381052351201362519
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 4345813924743787251}
-  m_Layer: 0
-  m_Name: PlayerSpriteParent
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &4345813924743787251
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1381052351201362519}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 8334123836799243455}
-  m_Father: {fileID: 303196939666991746}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3279450255431498606
 GameObject:
   m_ObjectHideFlags: 0
@@ -250,7 +218,6 @@ MonoBehaviour:
   _leftBulletSpawnPoint: {fileID: 8542115595291322650}
   _rightBulletSpawnPoint: {fileID: 8757797589631614229}
   _thrusterParent: {fileID: 164305352335488478}
-  _radius: {fileID: 0}
   _timeBetweenPlayerShots: 0.45
   _normalPrefab: {fileID: 3831428221465586410, guid: 1d0c514e33871524d9bff93ac1209f66, type: 3}
   _thinPrefab: {fileID: 7417630984595399494, guid: 0c8e370f0f87dcb4d8d3b0a51c2c1e24, type: 3}
@@ -399,7 +366,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8334123836799243455}
   m_Layer: 0
-  m_Name: PlayerSprite
+  m_Name: PlayerSpriteParent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -413,14 +380,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3641197584638570284}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3130828868511340703}
   - {fileID: 7792820388867698707}
-  m_Father: {fileID: 4345813924743787251}
+  m_Father: {fileID: 303196939666991746}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4233617488310707876
 GameObject:
@@ -642,7 +609,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6027581566516317771
 Transform:
   m_ObjectHideFlags: 0

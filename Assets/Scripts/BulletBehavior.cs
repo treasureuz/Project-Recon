@@ -11,7 +11,7 @@ public class BulletBehavior : MonoBehaviour
 	[SerializeField] private float _destroyTime = 1.25f;
 
 	private void Start()
-	{
+	{ 
 		LaunchBullet();
 		DestroyAfter(this._destroyTime);
 	}

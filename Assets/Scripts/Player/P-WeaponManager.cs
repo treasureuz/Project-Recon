@@ -12,7 +12,6 @@ public class PWeaponManager : MonoBehaviour
 	[SerializeField] private Transform _leftBulletSpawnPoint;
 	[SerializeField] private Transform _rightBulletSpawnPoint;
 	[SerializeField] private Transform _thrusterParent;
-	[SerializeField] private RadiusManager _radius;
 
 	[Header("Weapon Settings")]
 	[SerializeField] private float _timeBetweenPlayerShots = 0.45f;
@@ -25,9 +24,9 @@ public class PWeaponManager : MonoBehaviour
 
 	private Stack<ThrusterType> _thrusterTypeStack = new Stack<ThrusterType>();
 
-	private GameObject _bulletInstance;
-	private GameObject _leftBulletInstance;
-	private GameObject _rightBulletInstance;
+	//private GameObject _bulletInstance;
+	//private GameObject _leftBulletInstance;
+	//private GameObject _rightBulletInstance;
 	private GameObject _thrusterInstance;
 
 	private float _nextShootTime = 0f;
@@ -49,29 +48,8 @@ public class PWeaponManager : MonoBehaviour
 
 	private void Update()
 	{
-		//HandleWeaponRotation();
 		HandlePlayerShoot();
 	}
-
-	#region HandleWeaponRotation
-	//private void HandleWeaponRotation()
-	//{
-	//	this._mousePosition = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
-
-	//	// Checks if direction is positive (mouse position is to the right) or
-	//	// negative (mouse position is to the left)
-	//	this._direction = (this._mousePosition - (Vector2)this.transform.position).normalized;
-
-	//	float angle = Vector3.SignedAngle(this.transform.right, this._direction, Vector3.forward);
-
-	//	//Rotate smoothly/step by step
-	//	float t = Time.fixedDeltaTime / _rotationDuration;
-	//	this.transform.Rotate(Vector3.forward, angle * t);
-
-	//	// Rotate the weapon to face the mouse position (Does similarly thing as above)
-	//	//this.transform.right = Vector3.Slerp(this.transform.right, this._direction, Mathf.Clamp01(t));
-	//}
-	#endregion
 
 	private void HandlePlayerShoot()
 	{
@@ -85,12 +63,11 @@ public class PWeaponManager : MonoBehaviour
 			}
 			else
 			{
-				this._bulletInstance = Instantiate(this._bulletPrefab, this._bulletSpawnPoint.position, this.transform.rotation);
+				GameObject bulletInstance = Instantiate(this._bulletPrefab, this._bulletSpawnPoint.position, this.transform.rotation);
 
 				//Every time player shoots a bullet, it marks the character type's (player) name on it
 				//Specific to THIS bullet shot at THIS frame
-				BulletManager bullet = this._bulletInstance.GetComponent<BulletManager>();
-				bullet.SetBulletCharacterType(GameManager.CharacterType.Player);
+				bulletInstance.GetComponent<BulletManager>().SetBulletCharacterType(GameManager.CharacterType.Player);
 			}
 
 			//Physics2D.IgnoreCollision(this._bulletInstance.GetComponent<Collider2D>(), this._radius.GetComponent<Collider2D>());
@@ -102,16 +79,16 @@ public class PWeaponManager : MonoBehaviour
 
 	private IEnumerator DoubleThrustersDelayBetweenShots()
 	{
-		this._leftBulletInstance = Instantiate(this._bulletPrefab, this._leftBulletSpawnPoint.position, this.transform.rotation);
+		GameObject leftBulletInstance = Instantiate(this._bulletPrefab, this._leftBulletSpawnPoint.position, this.transform.rotation);
 		
 		yield return new WaitForSeconds(this._timeBetweenPlayerShots - 0.045f);
 		
-		this._rightBulletInstance = Instantiate(this._bulletPrefab, this._rightBulletSpawnPoint.position, this.transform.rotation);
+		GameObject rightBulletInstance = Instantiate(this._bulletPrefab, this._rightBulletSpawnPoint.position, this.transform.rotation);
 
 		//Every time player shoots a bullet, it marks the character type's (player) name on it
 		//Specific to BOTH THESE bullets shot at THIS frame
-		this._leftBulletInstance.GetComponent<BulletManager>().SetBulletCharacterType(GameManager.CharacterType.Player);
-		this._rightBulletInstance.GetComponent<BulletManager>().SetBulletCharacterType(GameManager.CharacterType.Player);
+		leftBulletInstance.GetComponent<BulletManager>().SetBulletCharacterType(GameManager.CharacterType.Player);
+		rightBulletInstance.GetComponent<BulletManager>().SetBulletCharacterType(GameManager.CharacterType.Player);
 	}
 
 	public void HandleThrusterInstantiation()

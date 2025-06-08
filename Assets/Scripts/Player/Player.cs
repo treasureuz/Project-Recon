@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 
 public class Player : MonoBehaviour, IDamageable
 {
@@ -53,6 +54,46 @@ public class Player : MonoBehaviour, IDamageable
 		HandlePlayerRotation();
 	}
 
+	#region Player Settings
+	private void Standard()
+	{
+		this._currentHealth = this._standardMaxHealth;
+		this._moveSpeed = this._standardMoveSpeed;
+		this.transform.localScale = new Vector3(0.685f, 0.685f, 0.685f);
+		this._bulletManager.SetBulletDamage(this._standardBulletDamage);
+		this._playerWeaponManager.SetTimeBetweenPlayerShots(this._standardTimeBetweenShots);
+	}
+
+	private void Omen()
+	{
+		this._currentHealth = this._omenMaxHealth;
+		this._moveSpeed = this._omenMoveSpeed;
+		this.transform.localScale = new Vector3(0.73f, 0.73f, 0.73f);
+		this._bulletManager.SetBulletDamage(this._omenBulletDamage);
+		this._playerWeaponManager.SetTimeBetweenPlayerShots(this._omenTimeBetweenShots);
+	}
+
+	private void Sora()
+	{
+		this._currentHealth = this._soraMaxHealth;
+		this._moveSpeed = this._soraMoveSpeed;
+		this.transform.localScale = new Vector3(0.775f, 0.775f, 0.775f);
+		this._bulletManager.SetBulletDamage(this._soraBulletDamage);
+		this._playerWeaponManager.SetTimeBetweenPlayerShots(this._soraTimeBetweenShots);
+	}
+
+	private void Ralph()
+	{
+		this._currentHealth = this._ralphMaxHealth;
+		this._moveSpeed = this._ralphMoveSpeed;
+		this.transform.localScale = new Vector3(0.825f, 0.825f, 0.825f);
+		this._bulletManager.SetBulletDamage(this._ralphBulletDamage);
+		this._playerWeaponManager.SetTimeBetweenPlayerShots(this._ralphTimeBetweenShots);
+	}
+
+	#endregion
+
+	#region Player Actions
 	private void HandlePlayerRotation()
 	{
 		this._mousePosition = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
@@ -79,38 +120,23 @@ public class Player : MonoBehaviour, IDamageable
 		switch (this._playerWeaponManager.GetThrusterType())
 		{
 			case PWeaponManager.ThrusterType.Normal: //Standard
-				this._currentHealth = this._standardMaxHealth;
-				this._moveSpeed = this._standardMoveSpeed;
-				this.transform.localScale = new Vector3(0.685f, 0.685f, 0.685f);
-				this._bulletManager.SetBulletDamage(this._standardBulletDamage);
-				this._playerWeaponManager.SetTimeBetweenPlayerShots(this._standardTimeBetweenShots);
+				Standard();
 				break;
 
 			case PWeaponManager.ThrusterType.Thin: //Omen
-				this._currentHealth = this._omenMaxHealth;
-				this._moveSpeed = this._omenMoveSpeed;
-				this.transform.localScale = new Vector3(0.73f, 0.73f, 0.73f);
-				this._bulletManager.SetBulletDamage(this._omenBulletDamage);
-				this._playerWeaponManager.SetTimeBetweenPlayerShots(this._omenTimeBetweenShots);
+				Omen();
 				break;
 			case PWeaponManager.ThrusterType.Wide: //Sora
-				this._currentHealth = this._soraMaxHealth;
-				this._moveSpeed = this._soraMoveSpeed;
-				this.transform.localScale = new Vector3(0.775f, 0.775f, 0.775f);
-				this._bulletManager.SetBulletDamage(this._soraBulletDamage);
-				this._playerWeaponManager.SetTimeBetweenPlayerShots(this._soraTimeBetweenShots);
+				Sora();
 				break;
 			case PWeaponManager.ThrusterType.Double: //Ralph
-				this._currentHealth = this._ralphMaxHealth;
-				this._moveSpeed = this._ralphMoveSpeed;
-				this.transform.localScale = new Vector3(0.825f, 0.825f, 0.825f);
-				this._bulletManager.SetBulletDamage(this._ralphBulletDamage);
-				this._playerWeaponManager.SetTimeBetweenPlayerShots(this._ralphTimeBetweenShots);
+				Ralph();
 				break;
 		}
 
 		this._playerWeaponManager.HandleThrusterInstantiation();
 	}
+	#endregion
 
 	private void OnOrbsCollect(Collider2D collision)
 	{
@@ -134,11 +160,13 @@ public class Player : MonoBehaviour, IDamageable
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
 		IDamageable iDamageable = GetComponent<IDamageable>();
+		BulletManager bullet = collision.GetComponent<BulletManager>();
+
 		if (collision.CompareTag("Asteroid"))
 		{
 			iDamageable.OnDamaged(this._asteroid.getAsteroidDamage()); 
 		} 
-		else if (collision.CompareTag("Bullet"))
+		else if (collision.CompareTag("Bullet") && bullet.GetBulletCharacterType() == GameManager.CharacterType.Enemy)
 		{
 			//Bullet damage is specific to THIS bullet/collision's character type
 			iDamageable.OnDamaged(collision.GetComponent<BulletManager>().GetBulletDamage());
@@ -154,7 +182,7 @@ public class Player : MonoBehaviour, IDamageable
 		if (this._playerWeaponManager.GetThrusterTypeIndex() == 0) //If index is "NormalThrusterType" index
 		{
 			this._playerWeaponManager.PopAndSetThrusterType(); //First, remove from stack
-			Destroy(this.gameObject); //Then, destroy in game
+			Destroy(this.gameObject); //Then, destroy in game	
 		}
 		else
 		{
@@ -175,6 +203,5 @@ public class Player : MonoBehaviour, IDamageable
 			DestroyOnDie();
 		}
 	}
-
 	#endregion
 }

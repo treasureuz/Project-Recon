@@ -19,32 +19,11 @@ public class EWeaponManager : MonoBehaviour
 
 	private void Update()
 	{
-		//HandleWeaponRotation();
-		if (this._player != null && (this._enemy.GetIsEnemyShot() || this._enemy.GetIsWithinRadius()))
+		if (this._player != null && (this._enemy.GetEnemyState() == Enemy.EnemyState.Attack))
 		{
 			HandleEnemyShoot();
 		}
 	}
-
-	#region HandleWeaponRotation
-	//private void HandleWeaponRotation()
-	//{
-	//	this._mousePosition = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
-
-	//	// Checks if direction is positive (mouse position is to the right) or
-	//	// negative (mouse position is to the left)
-	//	this._direction = (this._mousePosition - (Vector2)this.transform.position).normalized;
-
-	//	float angle = Vector3.SignedAngle(this.transform.right, this._direction, Vector3.forward);
-
-	//	//Rotate smoothly/step by step
-	//	float t = Time.fixedDeltaTime / _rotationDuration;
-	//	this.transform.Rotate(Vector3.forward, angle * t);
-
-	//	// Rotate the weapon to face the mouse position (Does similarly thing as above)
-	//	//this.transform.right = Vector3.Slerp(this.transform.right, this._direction, Mathf.Clamp01(t));
-	//}
-	#endregion
 
 	private void HandleEnemyShoot()
 	{

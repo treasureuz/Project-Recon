@@ -48,6 +48,7 @@ public class AsteriodSpawnManager : MonoBehaviour
 			}
 		}
 	}
+	
 
 	private void SpawnAsteroid()
 	{

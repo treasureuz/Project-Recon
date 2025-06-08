@@ -6,18 +6,22 @@ public class BulletManager : MonoBehaviour
 	[SerializeField] private float _playerBulletDamage = 15f;
 	[SerializeField] private float _enemyBulletDamage = 20f;
 
-	private GameManager.CharacterType _bulletCharacterType;
+	private GameManager.CharacterType _characterType;
 
 	#region Setters & Getters
 
-	public void SetBulletCharacterType(GameManager.CharacterType newBulletCharacterType)
+	public void SetBulletCharacterType(GameManager.CharacterType newCharacterType)
 	{
-		this._bulletCharacterType = newBulletCharacterType;
+		this._characterType = newCharacterType;
+	}
+	public GameManager.CharacterType GetBulletCharacterType()
+	{
+		return this._characterType;
 	}
 
 	public void SetBulletDamage(float newBulletDamage)
 	{
-		switch (this._bulletCharacterType)
+		switch (this._characterType)
 		{
 			case GameManager.CharacterType.Player:
 				this._playerBulletDamage = newBulletDamage;
@@ -30,8 +34,8 @@ public class BulletManager : MonoBehaviour
 
 	public float GetBulletDamage()
 	{
-		Debug.Log("Character: " + this._bulletCharacterType);
-		switch (this._bulletCharacterType)
+		Debug.Log("Character: " + this._characterType);
+		switch (this._characterType)
 		{
 			case GameManager.CharacterType.Player:
 				return this._playerBulletDamage;

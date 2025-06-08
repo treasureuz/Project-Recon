@@ -467,7 +467,7 @@ Camera:
   far clip plane: 1000
   field of view: 34
   orthographic: 1
-  orthographic size: 4
+  orthographic size: 3.88
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -492,7 +492,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 31.15269, y: -4.10179, z: 0}
+  m_LocalPosition: {x: 30.943872, y: -4.21925, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -714,6 +714,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &868561966 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6790307559122807138, guid: 597cdb958b5e91549aa79e864220c302, type: 3}
+  m_PrefabInstance: {fileID: 1148836097}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5b5c560847599f499cccf98644f8e11, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &939587103
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1121,13 +1132,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -188
       objectReference: {fileID: 0}
+    - target: {fileID: 1699253976151754416, guid: 1fa994d84365a144392272d4fece4383, type: 3}
+      propertyPath: _radius
+      value: 
+      objectReference: {fileID: 868561966}
     - target: {fileID: 3279450255431498606, guid: 1fa994d84365a144392272d4fece4383, type: 3}
       propertyPath: m_Name
       value: P-WeaponSpriteParent
       objectReference: {fileID: 0}
     - target: {fileID: 5906170016927918831, guid: 1fa994d84365a144392272d4fece4383, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8471768819166270004, guid: 1fa994d84365a144392272d4fece4383, type: 3}
       propertyPath: m_Name
@@ -1588,7 +1603,7 @@ Transform:
   m_GameObject: {fileID: 1805605049}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 30.51, y: -4.3, z: 0}
+  m_LocalPosition: {x: 28.880001, y: -4.3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1619,7 +1634,7 @@ MonoBehaviour:
     CustomLookAtTarget: 0
   Lens:
     FieldOfView: 34
-    OrthographicSize: 4
+    OrthographicSize: 3.88
     NearClipPlane: 0.3
     FarClipPlane: 1000
     Dutch: 0
@@ -1670,12 +1685,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TrackerSettings:
-    BindingMode: 4
+    BindingMode: 0
     PositionDamping: {x: 1, y: 1, z: 1}
     AngularDampingMode: 0
     RotationDamping: {x: 1, y: 1, z: 1}
     QuaternionDamping: 1
-  FollowOffset: {x: 2.85, y: 0, z: -10}
+  FollowOffset: {x: 1.22, y: 0, z: -10}
 --- !u!1 &1865654083
 GameObject:
   m_ObjectHideFlags: 0
