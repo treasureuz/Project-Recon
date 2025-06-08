@@ -10,6 +10,8 @@ public class Player : MonoBehaviour, IDamageable
 	[SerializeField] private BulletManager _bulletManager;
 	[SerializeField] private PWeaponManager _playerWeaponManager;
 
+	[Header("Global Player Stettings")]
+	[SerializeField] private float _rotationDuration = 0.072f; //How long to rotate towards mouse position
 	#region Serialized Player Settings Fields
 	[Header("Standard Player Settings")]
 	[SerializeField] private float _standardMaxHealth = 100f; // Max health of the player
@@ -60,7 +62,7 @@ public class Player : MonoBehaviour, IDamageable
 	{
 		this._currentHealth = this._standardMaxHealth;
 		this._moveSpeed = this._standardMoveSpeed;
-		this.transform.localScale = new Vector3(0.685f, 0.685f, 0.685f);
+		this.transform.localScale = new Vector3(0.625f, 0.625f, 0.625f);
 		this._bulletManager.SetBulletDamage(this._standardBulletDamage);
 		this._playerWeaponManager.SetTimeBetweenPlayerShots(this._standardTimeBetweenShots);
 	}
@@ -69,7 +71,7 @@ public class Player : MonoBehaviour, IDamageable
 	{
 		this._currentHealth = this._omenMaxHealth;
 		this._moveSpeed = this._omenMoveSpeed;
-		this.transform.localScale = new Vector3(0.73f, 0.73f, 0.73f);
+		this.transform.localScale = new Vector3(0.65f, 0.65f, 0.65f);
 		this._bulletManager.SetBulletDamage(this._omenBulletDamage);
 		this._playerWeaponManager.SetTimeBetweenPlayerShots(this._omenTimeBetweenShots);
 	}
@@ -78,7 +80,7 @@ public class Player : MonoBehaviour, IDamageable
 	{
 		this._currentHealth = this._soraMaxHealth;
 		this._moveSpeed = this._soraMoveSpeed;
-		this.transform.localScale = new Vector3(0.775f, 0.775f, 0.775f);
+		this.transform.localScale = new Vector3(0.685f, 0.685f, 0.685f);
 		this._bulletManager.SetBulletDamage(this._soraBulletDamage);
 		this._playerWeaponManager.SetTimeBetweenPlayerShots(this._soraTimeBetweenShots);
 	}
@@ -87,7 +89,7 @@ public class Player : MonoBehaviour, IDamageable
 	{
 		this._currentHealth = this._ralphMaxHealth;
 		this._moveSpeed = this._ralphMoveSpeed;
-		this.transform.localScale = new Vector3(0.825f, 0.825f, 0.825f);
+		this.transform.localScale = new Vector3(0.73f, 0.73f, 0.73f);
 		this._bulletManager.SetBulletDamage(this._ralphBulletDamage);
 		this._playerWeaponManager.SetTimeBetweenPlayerShots(this._ralphTimeBetweenShots);
 	}
@@ -101,12 +103,12 @@ public class Player : MonoBehaviour, IDamageable
 
 		// Checks if direction is positive (mouse position is to the right) or
 		// negative (mouse position is to the left)
-		this._direction = (this._mousePosition - (Vector2)this.transform.position);
+		this._direction = (this._mousePosition - (Vector2)this.transform.position).normalized;
 
 		float angle = Vector3.SignedAngle(this.transform.right, this._direction, Vector3.forward);
 
 		//Rotate smoothly/step by step
-		float t = Time.fixedDeltaTime / 0.082f; // a fraction of the total angle you want to rotate THIS frame
+		float t = Time.fixedDeltaTime / this._rotationDuration; // a fraction of the total angle you want to rotate THIS frame
 		this.transform.Rotate(Vector3.forward, angle * t);
 
 		// Rotate the weapon to face the mouse position (Does similarly thing as above)

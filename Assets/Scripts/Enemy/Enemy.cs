@@ -15,7 +15,8 @@ public class Enemy : MonoBehaviour, IDamageable
 	[SerializeField] private Vector2 _maxBounds;
 
 	[Header("Enemy Settings")]
-	[SerializeField] private float _moveDuration = 1f;
+	[SerializeField] private float _rotationDuration = 0.2f; //How long to rotate towards player position
+	[SerializeField] private float _moveDuration = 1f; //How long to move towards random position
 	[SerializeField] private float _timeBetweenMoves = 2f;
 	[SerializeField] private float _moveSpeed = 2.8f;
 	[SerializeField] private float _maxHealth = 120f; // Max health of the player
@@ -97,7 +98,7 @@ public class Enemy : MonoBehaviour, IDamageable
 		float angle = Vector3.SignedAngle(this.transform.right, this._directionToPlayer, Vector3.forward);
 
 		//Rotate smoothly/step by step
-		float t = Time.fixedDeltaTime / 0.2f; // a fraction of the total angle you want to rotate THIS frame
+		float t = Time.fixedDeltaTime / this._rotationDuration; // a fraction of the total angle you want to rotate THIS frame
 		this.transform.Rotate(Vector3.forward, angle * t);
 	}
 

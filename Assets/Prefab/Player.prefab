@@ -29,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -16.39, y: -0.21, z: 0}
-  m_LocalScale: {x: 0.685, y: 0.685, z: 0.685}
+  m_LocalScale: {x: 0.625, y: 0.625, z: 0.625}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 8334123836799243455}
@@ -52,6 +52,7 @@ MonoBehaviour:
   _asteroid: {fileID: 6430892029719757333, guid: 42137422141fffe41ab10d200b1aec7d, type: 3}
   _bulletManager: {fileID: 6202038610834583983, guid: 37308ab0f9bcb9c408dfd69e448c5eb2, type: 3}
   _playerWeaponManager: {fileID: 1699253976151754416}
+  _rotationDuration: 0.072
   _standardMaxHealth: 100
   _standardMoveSpeed: 2.88
   _standardBulletDamage: 15
@@ -81,8 +82,8 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDamping: 3
-  m_AngularDamping: 8
+  m_LinearDamping: 0
+  m_AngularDamping: 5
   m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -93,8 +94,8 @@ Rigidbody2D:
     m_Bits: 0
   m_Interpolate: 1
   m_SleepingMode: 1
-  m_CollisionDetection: 1
-  m_Constraints: 0
+  m_CollisionDetection: 0
+  m_Constraints: 4
 --- !u!58 &3477806910951290100
 CircleCollider2D:
   m_ObjectHideFlags: 0
