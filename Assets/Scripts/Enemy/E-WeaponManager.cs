@@ -17,6 +17,11 @@ public class EWeaponManager : MonoBehaviour
 
 	private float _nextShootTime = 0f;
 
+	private void Awake()
+	{
+		this._player = GameObject.FindWithTag("Player").GetComponent<Player>();
+	}
+
 	private void Update()
 	{
 		if (this._player != null && (this._enemy.GetEnemyState() == Enemy.EnemyState.Attack))

@@ -130,7 +130,7 @@ public class PWeaponManager : MonoBehaviour
 	public void PopAndSetThrusterType()
 	{
 		this._thrusterTypeStack.Pop();
-
+		Debug.Log("Stack Count After Pop: " + this._thrusterTypeStack.Count);
 		if (this._thrusterTypeStack.Count > 0)
 		{
 			this._thrusterType = this._thrusterTypeStack.Peek();

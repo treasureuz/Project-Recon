@@ -10,23 +10,23 @@ public class Enemy : MonoBehaviour, IDamageable
 	[SerializeField] private AsteroidBehavior _asteroid;
 	[SerializeField] private RadiusManager _radiusManager;
 
-	[Header("Bounds")]
+	[Header("Move Bounds")]
 	[SerializeField] private Vector2 _minBounds;
 	[SerializeField] private Vector2 _maxBounds;
 
 	[Header("Enemy Settings")]
-	//[SerializeField] private float _moveDuration = 1f;
-	//[SerializeField] private float _timeBetweenMoves = 2f;
+	[SerializeField] private float _moveDuration = 1f;
+	[SerializeField] private float _timeBetweenMoves = 2f;
 	[SerializeField] private float _moveSpeed = 2.8f;
 	[SerializeField] private float _maxHealth = 120f; // Max health of the player
 	[SerializeField] private float _waitTimeUntilIdle = 3f;
 
 	// Forces z axis to be 0
 	private Vector2 _directionToPlayer;
-	//private Vector2 _targetPosition;
+	private Vector2 _targetPosition;
 
 	private float _currentHealth;
-	//private float _elapsedMoveTime;
+	private float _elapsedMoveTime;
 	private float offset = 0.75f; // How far enemy is allowed to move each time
 
 	private bool _isWithinRadius;
@@ -48,9 +48,13 @@ public class Enemy : MonoBehaviour, IDamageable
 	private void Start()
 	{
 		this._currentHealth = this._maxHealth; // Initialize health
-		//this._minBounds = new Vector2(this.transform.position.x - 0.52f, -2.42f);
-		//this._maxBounds = new Vector2(this.transform.position.y + 0.522f, 3.42f);
-		//this._targetPosition = GenerateRandomPosition();
+
+		//Dodging/Moving Bounds
+		this._minBounds = new Vector2(this.transform.position.x - 5.2f, -2.42f);
+		this._maxBounds = new Vector2(this.transform.position.x + 5.2f, 3.42f);
+
+		//Generate position to move to on start
+		this._targetPosition = GenerateRandomPosition();
 	}
 
 	//Not needed but adds clarity as Enemy HAS the radius
@@ -106,20 +110,21 @@ public class Enemy : MonoBehaviour, IDamageable
 		//Move towards player
 		this._rb2d.MovePosition(newPosition);
 
-		//Wait 0.85 + 1 secs before "dodging" or "moving"
-		//this._elapsedMoveTime += Time.fixedDeltaTime;
-		//if (this._elapsedMoveTime >= this._timeBetweenMoves + this._moveDuration)
-		//{
-		//	this._targetPosition = GenerateRandomPosition();
-		//	this._elapsedMoveTime = 0f;
-		//}
+		this._elapsedMoveTime += Time.fixedDeltaTime;
+		// "Dodge"/"Move" to the generated position. **Takes 1 sec for move interpolation to finish**
+		if (this._elapsedMoveTime < this._moveDuration)
+		{
+			//Reposition smoothly
+			float t = Mathf.Clamp01(this._elapsedMoveTime / this._moveDuration);
+			this.transform.position = Vector2.Lerp(this.transform.position, this._targetPosition, t);
+		}
 
-		//// The enemy is "dodging" or "moving" so wait 1 secs for interpolation to finish
-		//if (this._elapsedMoveTime < this._moveDuration)
-		//{
-		//	float t = Mathf.Clamp01(this._elapsedMoveTime / this._moveDuration);
-		//	this.transform.position = Vector2.Lerp(this.transform.position, this._targetPosition, t);
-		//}
+		//Then wait 2 sec before "dodging" or "moving" again
+		if (this._elapsedMoveTime >= this._timeBetweenMoves + this._moveDuration)
+		{
+			this._targetPosition = GenerateRandomPosition();
+			this._elapsedMoveTime = 0f;
+		}
 	}
 
 	#endregion
@@ -171,6 +176,7 @@ public class Enemy : MonoBehaviour, IDamageable
 		{
 			iDamageable.OnDamaged(this._asteroid.getAsteroidDamage());
 		}
+		//Adds clarity as it confirms the bullet/collision was shot from the player
 		else if (collision.CompareTag("Bullet") && bullet.GetBulletCharacterType() == GameManager.CharacterType.Player)
 		{
 			StartCoroutine(OnShot());
@@ -187,7 +193,6 @@ public class Enemy : MonoBehaviour, IDamageable
 		this._currentHealth -= damageAmount;
 		if (this._currentHealth <= 0)
 		{
-			Debug.Log("Enemy Dead");
 			Destroy(gameObject); // Destroy enemy when health reaches zero
 		}
 	}

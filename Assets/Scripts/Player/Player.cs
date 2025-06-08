@@ -10,6 +10,7 @@ public class Player : MonoBehaviour, IDamageable
 	[SerializeField] private BulletManager _bulletManager;
 	[SerializeField] private PWeaponManager _playerWeaponManager;
 
+	#region Serialized Player Settings Fields
 	[Header("Standard Player Settings")]
 	[SerializeField] private float _standardMaxHealth = 100f; // Max health of the player
 	[SerializeField] private float _standardMoveSpeed = 3f;
@@ -33,7 +34,7 @@ public class Player : MonoBehaviour, IDamageable
 	[SerializeField] private float _ralphMoveSpeed = 4f;
 	[SerializeField] private float _ralphBulletDamage = 40f;
 	[SerializeField] private float _ralphTimeBetweenShots = 0.125f;
-
+	#endregion
 
 	// Forces z axis to be 0
 	private Vector2 _mousePosition;
@@ -166,6 +167,7 @@ public class Player : MonoBehaviour, IDamageable
 		{
 			iDamageable.OnDamaged(this._asteroid.getAsteroidDamage()); 
 		} 
+		//Adds clarity as it confirms the bullet/collision was shot from the enemy 
 		else if (collision.CompareTag("Bullet") && bullet.GetBulletCharacterType() == GameManager.CharacterType.Enemy)
 		{
 			//Bullet damage is specific to THIS bullet/collision's character type
@@ -196,6 +198,7 @@ public class Player : MonoBehaviour, IDamageable
 	#region IDamageable Interface Implementation
 	public void OnDamaged(float damageAmount)
 	{
+		Debug.Log("Called OnDamaged!");
 		this._currentHealth -= damageAmount;
 		Debug.Log("Current Health: " + this._currentHealth);
 		if (this._currentHealth <= 0)

@@ -14,6 +14,7 @@ public class BulletManager : MonoBehaviour
 	{
 		this._characterType = newCharacterType;
 	}
+
 	public GameManager.CharacterType GetBulletCharacterType()
 	{
 		return this._characterType;
@@ -34,7 +35,6 @@ public class BulletManager : MonoBehaviour
 
 	public float GetBulletDamage()
 	{
-		Debug.Log("Character: " + this._characterType);
 		switch (this._characterType)
 		{
 			case GameManager.CharacterType.Player:
