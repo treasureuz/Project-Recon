@@ -117,7 +117,7 @@ public class Enemy : MonoBehaviour, IDamageable
 		{
 			//Reposition smoothly
 			float t = Mathf.Clamp01(this._elapsedMoveTime / this._moveDuration);
-			this.transform.position = Vector2.Lerp(this.transform.position, this._targetPosition, t);
+			this.transform.position = Vector3.Slerp(this.transform.position, this._targetPosition, t);
 		}
 
 		//Then wait 2 sec before "dodging" or "moving" again

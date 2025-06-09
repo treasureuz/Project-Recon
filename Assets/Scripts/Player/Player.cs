@@ -51,10 +51,14 @@ public class Player : MonoBehaviour, IDamageable
 		HandlePlayerSwitch();
 	}
 
+	private void Update()
+	{
+		HandlePlayerRotation();
+	}
+
 	private void FixedUpdate()
 	{
 		this._rb2d.linearVelocity = InputManager._moveDirection * this._moveSpeed;
-		HandlePlayerRotation();
 	}
 
 	#region Player Settings
@@ -108,7 +112,7 @@ public class Player : MonoBehaviour, IDamageable
 		float angle = Vector3.SignedAngle(this.transform.right, this._direction, Vector3.forward);
 
 		//Rotate smoothly/step by step
-		float t = Time.fixedDeltaTime / this._rotationDuration; // a fraction of the total angle you want to rotate THIS frame
+		float t = Time.deltaTime / this._rotationDuration; // a fraction of the total angle you want to rotate THIS frame
 		this.transform.Rotate(Vector3.forward, angle * t);
 
 		// Rotate the weapon to face the mouse position (Does similarly thing as above)

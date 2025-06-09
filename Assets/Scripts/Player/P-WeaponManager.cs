@@ -59,7 +59,7 @@ public class PWeaponManager : MonoBehaviour
 		{
 			if (GetThrusterTypeIndex() == 3) //If ThrusterType is "Double" (bc double has diff shooting mechanic) 
 			{
-				StartCoroutine(DoubleThrustersDelayBetweenShots());
+				StartCoroutine(HandleDoubleThrusterShoot());
 			}
 			else
 			{
@@ -77,7 +77,7 @@ public class PWeaponManager : MonoBehaviour
 		}
 	}
 
-	private IEnumerator DoubleThrustersDelayBetweenShots()
+	private IEnumerator HandleDoubleThrusterShoot()
 	{
 		GameObject leftBulletInstance = Instantiate(this._bulletPrefab, this._leftBulletSpawnPoint.position, this.transform.rotation);
 		
