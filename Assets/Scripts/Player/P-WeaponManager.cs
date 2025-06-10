@@ -1,13 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using NUnit.Framework.Constraints;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PWeaponManager : MonoBehaviour
 {
 	[Header("References")]
-	[SerializeField] private GameObject _bulletPrefab;
 	[SerializeField] private Transform _bulletSpawnPoint;
 	[SerializeField] private Transform _leftBulletSpawnPoint;
 	[SerializeField] private Transform _rightBulletSpawnPoint;
@@ -40,6 +40,9 @@ public class PWeaponManager : MonoBehaviour
 
 	private Stack<ThrusterType> _thrusterTypeStack = new Stack<ThrusterType>();
 
+	private GameObject _bulletInstance;
+	private GameObject _leftBulletInstance;
+	private GameObject _rightBulletInstance;
 	private GameObject _thrusterInstance;
 
 	private float _timeBetweenShots;
@@ -102,17 +105,18 @@ public class PWeaponManager : MonoBehaviour
 		//Different from Time.deltaTime which is a static time of 0.0167 seconds for every single frame (60 FPS)
 		if (Mouse.current.leftButton.isPressed && Time.time >= this._nextShootTime)
 		{
-			if (this._thrusterType == PWeaponManager.ThrusterType.Double) //If ThrusterType is "Double" (bc double has diff shooting mechanic) 
+			switch (this._thrusterType)
 			{
-				StartCoroutine(HandleDoubleThrusterShoot());
-			}
-			else
-			{
-				GameObject bulletInstance = Instantiate(this._bulletPrefab, this._bulletSpawnPoint.position, this.transform.rotation);
+				case ThrusterType.Double: StartCoroutine(HandleDoubleThrusterShoot()); break;
+				default:
+					this._bulletInstance = Instantiate
+						(this._bulletManager.GetBulletPrefab(), this._bulletSpawnPoint.position, this.transform.rotation);
 
-				//Every time player shoots a bullet, it marks the character type's (player) name on it
-				//Specific to THIS bullet shot at THIS frame
-				bulletInstance.GetComponent<BulletManager>().SetBulletCharacterType(GameManager.CharacterType.Player);
+					//Marks that the character type, player, shot the bullet
+					//**Specific to THIS bullet shot at THIS frame**
+					BulletManager bullet = this._bulletInstance.GetComponent<BulletManager>();
+					bullet.SetBulletCharacterType(GameManager.CharacterType.Player);
+					break;
 			}
 
 			//Physics2D.IgnoreCollision(this._bulletInstance.GetComponent<Collider2D>(), this._radius.GetComponent<Collider2D>());
@@ -124,16 +128,18 @@ public class PWeaponManager : MonoBehaviour
 
 	private IEnumerator HandleDoubleThrusterShoot()
 	{
-		GameObject leftBulletInstance = Instantiate(this._bulletPrefab, this._leftBulletSpawnPoint.position, this.transform.rotation);
-		
+		this._leftBulletInstance = Instantiate
+			(this._bulletManager.GetBulletPrefab(), this._leftBulletSpawnPoint.position, this.transform.rotation);
+
 		yield return new WaitForSeconds(this._timeBetweenShots - 0.045f); // Wait time between double thruster shots
 		
-		GameObject rightBulletInstance = Instantiate(this._bulletPrefab, this._rightBulletSpawnPoint.position, this.transform.rotation);
+		this._rightBulletInstance = Instantiate
+			(this._bulletManager.GetBulletPrefab(), this._rightBulletSpawnPoint.position, this.transform.rotation);
 
 		//Every time player shoots a bullet, it marks the character type's (player) name on it
 		//Specific to BOTH THESE bullets shot at THIS frame
-		leftBulletInstance.GetComponent<BulletManager>().SetBulletCharacterType(GameManager.CharacterType.Player);
-		rightBulletInstance.GetComponent<BulletManager>().SetBulletCharacterType(GameManager.CharacterType.Player);
+		this._leftBulletInstance.GetComponent<BulletManager>().SetBulletCharacterType(GameManager.CharacterType.Player);
+		this._rightBulletInstance.GetComponent<BulletManager>().SetBulletCharacterType(GameManager.CharacterType.Player);
 	}
 	#endregion
 
@@ -142,7 +148,7 @@ public class PWeaponManager : MonoBehaviour
 		//Destroy previous thruster
 		if (this._thrusterInstance != null) Destroy(this._thrusterInstance);
 
-		//Set bullet character type to player so I can get the correct bullet damage
+		//Set bullet character type to player so it can get the correct bullet damage
 		this._bulletManager.SetBulletCharacterType(GameManager.CharacterType.Player);
 
 		switch (this._thrusterType)

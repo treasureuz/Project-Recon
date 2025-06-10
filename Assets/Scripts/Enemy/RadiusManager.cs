@@ -16,5 +16,4 @@ public class RadiusManager : MonoBehaviour
 	{
 		return Physics2D.OverlapCircle(this._radius.transform.position, this._radius.bounds.extents.x, this._playerLayerMask);
 	}
-
 }

@@ -177,8 +177,7 @@ public class Enemy : MonoBehaviour, IDamageable
 		{
 			iDamageable.OnDamaged(this._asteroid.getAsteroidDamage());
 		}
-		//Adds clarity as it confirms the bullet/collision was shot from the player
-		else if (collision.CompareTag("Bullet") && bullet.GetBulletCharacterType() == GameManager.CharacterType.Player)
+		else if (collision.CompareTag("PlayerBullet"))
 		{
 			StartCoroutine(OnShot());
 
