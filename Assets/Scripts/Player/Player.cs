@@ -10,32 +10,25 @@ public class Player : MonoBehaviour, IDamageable
 	[SerializeField] private BulletManager _bulletManager;
 	[SerializeField] private PWeaponManager _playerWeaponManager;
 
-	[Header("Global Player Stettings")]
+	[Header("Global Player Settings")]
 	[SerializeField] private float _rotationDuration = 0.072f; //How long to rotate towards mouse position
+
 	#region Serialized Player Settings Fields
 	[Header("Standard Player Settings")]
 	[SerializeField] private float _standardMaxHealth = 100f; // Max health of the player
 	[SerializeField] private float _standardMoveSpeed = 3f;
-	[SerializeField] private float _standardBulletDamage = 15f;
-	[SerializeField] private float _standardTimeBetweenShots = 0.45f;
 
 	[Header("Omen's Player Settings")]
 	[SerializeField] private float _omenMaxHealth = 125f; // Max health of the player
 	[SerializeField] private float _omenMoveSpeed = 3.3f;
-	[SerializeField] private float _omenBulletDamage = 22.5f;
-	[SerializeField] private float _omenTimeBetweenShots = 0.38f;
 
 	[Header("Sora's Player Settings")]
 	[SerializeField] private float _soraMaxHealth = 155f; // Max health of the player
 	[SerializeField] private float _soraMoveSpeed = 3.65f;
-	[SerializeField] private float _soraBulletDamage = 30f;
-	[SerializeField] private float _soraTimeBetweenShots = 0.265f;
 
 	[Header("Ralph's Player Settings")]
 	[SerializeField] private float _ralphMaxHealth = 200f; // Max health of the player
 	[SerializeField] private float _ralphMoveSpeed = 4f;
-	[SerializeField] private float _ralphBulletDamage = 40f;
-	[SerializeField] private float _ralphTimeBetweenShots = 0.125f;
 	#endregion
 
 	// Forces z axis to be 0
@@ -44,6 +37,16 @@ public class Player : MonoBehaviour, IDamageable
 
 	private float _currentHealth;
 	private float _moveSpeed;
+
+	public enum PlayerType
+	{
+		Standard = 0, // Normal
+		Omen = 1, // Thin
+		Sora = 2, // Wide
+		Ralph = 3 // Double
+	}
+
+	private PlayerType _playerType;
 
 	private void Awake()
 	{
@@ -66,36 +69,28 @@ public class Player : MonoBehaviour, IDamageable
 	{
 		this._currentHealth = this._standardMaxHealth;
 		this._moveSpeed = this._standardMoveSpeed;
-		this.transform.localScale = new Vector3(0.625f, 0.625f, 0.625f);
-		this._bulletManager.SetBulletDamage(this._standardBulletDamage);
-		this._playerWeaponManager.SetTimeBetweenPlayerShots(this._standardTimeBetweenShots);
+		this.transform.localScale = new Vector3(0.61f, 0.61f, 0.61f);
 	}
 
 	private void Omen()
 	{
 		this._currentHealth = this._omenMaxHealth;
 		this._moveSpeed = this._omenMoveSpeed;
-		this.transform.localScale = new Vector3(0.65f, 0.65f, 0.65f);
-		this._bulletManager.SetBulletDamage(this._omenBulletDamage);
-		this._playerWeaponManager.SetTimeBetweenPlayerShots(this._omenTimeBetweenShots);
+		this.transform.localScale = new Vector3(0.635f, 0.635f, 0.635f);
 	}
 
 	private void Sora()
 	{
 		this._currentHealth = this._soraMaxHealth;
 		this._moveSpeed = this._soraMoveSpeed;
-		this.transform.localScale = new Vector3(0.685f, 0.685f, 0.685f);
-		this._bulletManager.SetBulletDamage(this._soraBulletDamage);
-		this._playerWeaponManager.SetTimeBetweenPlayerShots(this._soraTimeBetweenShots);
+		this.transform.localScale = new Vector3(0.665f, 0.665f, 0.665f);
 	}
 
 	private void Ralph()
 	{
 		this._currentHealth = this._ralphMaxHealth;
 		this._moveSpeed = this._ralphMoveSpeed;
-		this.transform.localScale = new Vector3(0.73f, 0.73f, 0.73f);
-		this._bulletManager.SetBulletDamage(this._ralphBulletDamage);
-		this._playerWeaponManager.SetTimeBetweenPlayerShots(this._ralphTimeBetweenShots);
+		this.transform.localScale = new Vector3(0.7f, 0.7f, 0.7f);
 	}
 
 	#endregion
@@ -121,26 +116,13 @@ public class Player : MonoBehaviour, IDamageable
 
 	private void HandlePlayerSwitch()
 	{
-		//Set bullet character type to player so I can get the correct bullet damage
-		this._bulletManager.SetBulletCharacterType(GameManager.CharacterType.Player);
-
-		switch (this._playerWeaponManager.GetThrusterType())
+		switch (this._playerType)
 		{
-			case PWeaponManager.ThrusterType.Normal: //Standard
-				Standard();
-				break;
-
-			case PWeaponManager.ThrusterType.Thin: //Omen
-				Omen();
-				break;
-			case PWeaponManager.ThrusterType.Wide: //Sora
-				Sora();
-				break;
-			case PWeaponManager.ThrusterType.Double: //Ralph
-				Ralph();
-				break;
+			case PlayerType.Standard: Standard(); break; //Thruster Type - Normal
+			case PlayerType.Omen: Omen(); break; //Thruster Type - Thin
+			case PlayerType.Sora: Sora(); break; //Thruster Type - Wide
+			case PlayerType.Ralph: Ralph(); break; //Thruster Type - Double
 		}
-
 		this._playerWeaponManager.HandleThrusterInstantiation();
 	}
 	#endregion
@@ -185,9 +167,10 @@ public class Player : MonoBehaviour, IDamageable
 			OnOrbsCollect(collision);
 		}
 	}
+
 	private void DestroyOnDie()
 	{
-		if (this._playerWeaponManager.GetThrusterTypeIndex() == 0) //If index is "NormalThrusterType" index
+		if (this._playerType == PlayerType.Standard) //Or if ThrusterType index is "Normal"
 		{
 			this._playerWeaponManager.PopAndSetThrusterType(); //First, remove from stack
 			Destroy(this.gameObject); //Then, destroy in game	
