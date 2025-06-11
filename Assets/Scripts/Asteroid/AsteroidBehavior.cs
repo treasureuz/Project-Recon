@@ -34,7 +34,7 @@ public class AsteroidBehavior : MonoBehaviour, IDamageable
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
 		IDamageable iDamageable = this.GetComponent<IDamageable>();
-		if (collision.CompareTag("Player") || collision.CompareTag("Backdrop"))
+		if (collision.gameObject.layer == LayerMask.NameToLayer("Player") || collision.CompareTag("Backdrop"))
 		{
 			Destroy(gameObject);
 		}
@@ -44,6 +44,14 @@ public class AsteroidBehavior : MonoBehaviour, IDamageable
 			Debug.Log("Asteroid Hit: " + collision.GetComponent<BulletManager>().GetBulletDamage());
 		}
 	}
+
+	#region Getters 
+	public float GetAsteroidDamage()
+	{
+		return this._asteroidDamage;
+	}
+
+	#endregion
 
 	#region IDamageable Interface Implementation
 	public void OnDamaged(float damageAmount)
@@ -57,11 +65,5 @@ public class AsteroidBehavior : MonoBehaviour, IDamageable
 
 	#endregion
 
-	#region Getters 
-	public float getAsteroidDamage()
-	{
-		return this._asteroidDamage;
-	}
-
-	#endregion
+	
 }

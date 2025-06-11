@@ -72,30 +72,29 @@ public class Player : MonoBehaviour, IDamageable
 	{
 		this._currentHealth = this._standardMaxHealth;
 		this._moveSpeed = this._standardMoveSpeed;
-		this.transform.localScale = new Vector3(0.65f, 0.65f, 0.65f);
+		this.transform.localScale = new Vector3(0.655f, 0.655f, 0.655f);
 	}
 
 	private void Omen()
 	{
 		this._currentHealth = this._omenMaxHealth;
 		this._moveSpeed = this._omenMoveSpeed;
-		this.transform.localScale = new Vector3(0.68f, 0.68f, 0.68f);
+		this.transform.localScale = new Vector3(0.67f, 0.67f, 0.67f);
 	}
 
 	private void Sora()
 	{
 		this._currentHealth = this._soraMaxHealth;
 		this._moveSpeed = this._soraMoveSpeed;
-		this.transform.localScale = new Vector3(0.72f, 0.72f, 0.72f);
+		this.transform.localScale = new Vector3(0.69f, 0.69f, 0.69f);
 	}
 
 	private void Ralph()
 	{
 		this._currentHealth = this._ralphMaxHealth;
 		this._moveSpeed = this._ralphMoveSpeed;
-		this.transform.localScale = new Vector3(0.755f, 0.755f, 0.755f);
+		this.transform.localScale = new Vector3(0.715f, 0.715f, 0.715f);
 	}
-
 	#endregion
 
 	#region Player Actions
@@ -153,7 +152,6 @@ public class Player : MonoBehaviour, IDamageable
 	}
 
 	#region Helper Setter Method
-
 	private void SetPlayerType()
 	{
 		switch (this._playerWeaponManager.GetThrusterType())
@@ -161,20 +159,18 @@ public class Player : MonoBehaviour, IDamageable
 			case PWeaponManager.ThrusterType.Normal: this._playerType = PlayerType.Standard; break;
 			case PWeaponManager.ThrusterType.Thin: this._playerType = PlayerType.Omen; break;
 			case PWeaponManager.ThrusterType.Wide: this._playerType = PlayerType.Sora; break;
-			case PWeaponManager.ThrusterType.Double: this._playerType= PlayerType.Ralph; break;
+			case PWeaponManager.ThrusterType.Double: this._playerType = PlayerType.Ralph; break;
 		}
-
 	}
 	#endregion
 
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
 		IDamageable iDamageable = GetComponent<IDamageable>();
-		BulletManager bullet = collision.GetComponent<BulletManager>();
-
 		if (collision.CompareTag("Asteroid"))
 		{
-			iDamageable.OnDamaged(this._asteroid.getAsteroidDamage()); 
+			iDamageable.OnDamaged(collision.GetComponent<AsteroidBehavior>().GetAsteroidDamage()); 
+			Debug.Log("Player hit by Asteroid: " + collision.GetComponent<AsteroidBehavior>().GetAsteroidDamage());
 		} 
 		else if (collision.CompareTag("EnemyBullet"))
 		{
@@ -195,14 +191,13 @@ public class Player : MonoBehaviour, IDamageable
 			case PlayerType.Standard: //Thruster Type - Normal
 				this._playerWeaponManager.PopAndSetThrusterType(); //First, remove from stack,
 				SetPlayerType(); //Set player type based on current thruster type,
-				Destroy(this.gameObject); //Then, destroy in game	
-				break;
+				Destroy(this.gameObject); break;//Then, destroy in game	
+
 			default: //Every other Thruster Type - Thin, Wide, Double
 				this._playerWeaponManager.PopAndSetThrusterType(); //First, remove from stack,
 				SetPlayerType(); //Set player type based on current thruster type,
 				Destroy(this._playerWeaponManager.GetThrusterInstance()); //Then, destroy in game
-				HandlePlayerSwitch();
-				break;
+				HandlePlayerSwitch(); break;
 		}
 	}
 

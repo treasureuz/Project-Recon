@@ -9,9 +9,10 @@ public class PWeaponManager : MonoBehaviour
 {
 	[Header("References")]
 	[SerializeField] private GameObject _bulletPrefab;
-	[SerializeField] private Transform _bulletSpawnPoint;
+	[SerializeField] private Transform _regularBulletSpawnPoint;
 	[SerializeField] private Transform _leftBulletSpawnPoint;
 	[SerializeField] private Transform _rightBulletSpawnPoint;
+	[SerializeField] private Transform _wideBulletSpawnPoint;
 	[SerializeField] private Transform _thrusterParent;
 	[SerializeField] private BulletManager _bulletManager;
 
@@ -41,9 +42,10 @@ public class PWeaponManager : MonoBehaviour
 
 	private Stack<ThrusterType> _thrusterTypeStack = new Stack<ThrusterType>();
 
-	private GameObject _bulletInstance;
-	private GameObject _leftBulletInstance;
-	private GameObject _rightBulletInstance;
+	//private GameObject _regularBulletInstance;
+	//private GameObject _leftBulletInstance;
+	//private GameObject _rightBulletInstance;
+	//private GameObject _wideBulletInstance;
 	private GameObject _thrusterInstance;
 
 	private float _timeBetweenShots;
@@ -109,38 +111,41 @@ public class PWeaponManager : MonoBehaviour
 			switch (this._thrusterType)
 			{
 				case ThrusterType.Double: StartCoroutine(HandleDoubleThrusterShoot()); break;
-				default:
-					this._bulletInstance = Instantiate
-						(this._bulletPrefab, this._bulletSpawnPoint.position, this.transform.rotation);
+				case ThrusterType.Wide:
+					GameObject wideBulletInstance = Instantiate
+					(this._bulletPrefab, this._wideBulletSpawnPoint.position, this.transform.rotation);
 
 					//Marks that the character type, player, shot the bullet
 					//**Specific to THIS bullet shot at THIS frame**
-					BulletManager bullet = this._bulletInstance.GetComponent<BulletManager>();
-					bullet.SetBulletCharacterType(GameManager.CharacterType.Player);
-					break;
+					wideBulletInstance.GetComponent<BulletManager>().SetBulletCharacterType
+					(GameManager.CharacterType.Player); break;
+				default:
+					GameObject regularBulletInstance = Instantiate
+					(this._bulletPrefab, this._regularBulletSpawnPoint.position, this.transform.rotation);
+
+					//Marks that the character type, player, shot the bullet
+					//**Specific to THIS bullet shot at THIS frame**
+					regularBulletInstance.GetComponent<BulletManager>().SetBulletCharacterType
+					(GameManager.CharacterType.Player); break;
 			}
-
-			//Physics2D.IgnoreCollision(this._bulletInstance.GetComponent<Collider2D>(), this._radius.GetComponent<Collider2D>());
-
-			Debug.Log("Time between shots: " + this._timeBetweenShots);
 			this._nextShootTime = Time.time + this._timeBetweenShots;
 		}
 	}
 
 	private IEnumerator HandleDoubleThrusterShoot()
 	{
-		this._leftBulletInstance = Instantiate
+		GameObject leftBulletInstance = Instantiate
 			(this._bulletPrefab, this._leftBulletSpawnPoint.position, this.transform.rotation);
 
-		yield return new WaitForSeconds(this._timeBetweenShots - 0.045f); // Wait time between double thruster shots
+		yield return new WaitForSeconds(this._timeBetweenShots - 0.04f); // Wait time before right thruster shots
 
-		this._rightBulletInstance = Instantiate
+		GameObject rightBulletInstance = Instantiate
 			(this._bulletPrefab, this._rightBulletSpawnPoint.position, this.transform.rotation);
 
-		//Every time player shoots a bullet, it marks the character type's (player) name on it
-		//Specific to BOTH THESE bullets shot at THIS frame
-		this._leftBulletInstance.GetComponent<BulletManager>().SetBulletCharacterType(GameManager.CharacterType.Player);
-		this._rightBulletInstance.GetComponent<BulletManager>().SetBulletCharacterType(GameManager.CharacterType.Player);
+		//Marks that the character type, player, shot the bullet
+		//**Specific to BOTH THESE bullets shot at THIS frame**
+		leftBulletInstance.GetComponent<BulletManager>().SetBulletCharacterType(GameManager.CharacterType.Player);
+		rightBulletInstance.GetComponent<BulletManager>().SetBulletCharacterType(GameManager.CharacterType.Player);
 	}
 	#endregion
 

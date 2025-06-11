@@ -8,7 +8,7 @@ public class InputManager : MonoBehaviour
     public static Vector2 _moveDirection { get; private set; }
 
 	public static InputManager instance;
-
+                                        
     private InputAction _movement;
 
     public bool _isMoving;

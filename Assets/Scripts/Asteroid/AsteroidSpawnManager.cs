@@ -42,14 +42,10 @@ public class AsteriodSpawnManager : MonoBehaviour
 		if (this._player != null)
 		{
 			SpawnAsteroid();
-			if (InputManager.instance._isMoving)
-			{
-				RedirectSpawnPoints();
-			}
+			if (InputManager.instance._isMoving) RedirectSpawnPoints();
 		}
 	}
 	
-
 	private void SpawnAsteroid()
 	{
 		int randomSpawnIndex = Random.Range(0, this._spawnPoints.Length);
@@ -66,8 +62,8 @@ public class AsteriodSpawnManager : MonoBehaviour
 	{
 		this._playerPositionXDiffFromStart = this._player.position.x - this._playerStartPositionX;
 		
-		this._spawnPointsParent.position = new Vector2(this._spawnPointStartPositionX + 
-											this._playerPositionXDiffFromStart, this._spawnPointsParent.position.y);
+		this._spawnPointsParent.position = new Vector2
+			(this._spawnPointStartPositionX + this._playerPositionXDiffFromStart, this._spawnPointsParent.position.y);
 	}
 
 }

@@ -19,22 +19,22 @@ public class BulletManager : MonoBehaviour
 
 	public void ToggleBulletSprite(PWeaponManager.ThrusterType currentType) 
 	{
-		//Get this GameObject's Sprite Renderer, Capsule Collider, and Circle Collider (used for wideBulletSprite)
+		//Gets this GameObject's Sprite Renderer, Capsule Collider, and Circle Collider (used for wideBulletSprite)
 		this._regularBulletSprite = GetComponent<SpriteRenderer>();
 		this._regularBulletCapCollider = GetComponent<CapsuleCollider2D>();
 		this._wideBulletCircleCollider = GetComponent<CircleCollider2D>();
 
-		//Enable Regular Bullet Sprite if Thruster Type is "Normal" or "Double"
+		//Enables Regular Bullet Sprite if Thruster Type is "Normal" or "Double"
 		this._regularBulletSprite.enabled = 
 			(currentType == PWeaponManager.ThrusterType.Normal || currentType == PWeaponManager.ThrusterType.Double);
-		//Enable Regular Bullet Capsule Collider if Thruster Type is not Wide ("Normal", "Double", or "Thin")
+		//Enables Regular Bullet Capsule Collider if Thruster Type is not Wide ("Normal", "Double", or "Thin")
 		this._regularBulletCapCollider.enabled = 
 			(currentType != PWeaponManager.ThrusterType.Wide);
 
-		//Enable Thin Bullet Sprite
+		//Enables Thin Bullet Sprite
 		this._thinBulletSprite.enabled = (currentType == PWeaponManager.ThrusterType.Thin);
 
-		//Enable Wide Bullet Sprite and its Circle Collider
+		//Enables Wide Bullet Sprite and its Circle Collider
 		this._wideBulletSprite.enabled = (currentType == PWeaponManager.ThrusterType.Wide);
 		this._wideBulletCircleCollider.enabled = (currentType == PWeaponManager.ThrusterType.Wide);
 	}
@@ -50,11 +50,9 @@ public class BulletManager : MonoBehaviour
 		switch (this._characterType)
 		{
 			case GameManager.CharacterType.Player:
-				this._playerBulletDamage = newBulletDamage;
-				break;
+				this._playerBulletDamage = newBulletDamage; break;
 			case GameManager.CharacterType.Enemy:
-				this._enemyBulletDamage = newBulletDamage;
-				break;
+				this._enemyBulletDamage = newBulletDamage; break;
 		}
 	}
 

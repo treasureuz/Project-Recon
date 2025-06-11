@@ -925,6 +925,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -188
       objectReference: {fileID: 0}
+    - target: {fileID: 939227807971463196, guid: 1fa994d84365a144392272d4fece4383, type: 3}
+      propertyPath: m_Color.a
+      value: 0.99215686
+      objectReference: {fileID: 0}
     - target: {fileID: 1699253976151754416, guid: 1fa994d84365a144392272d4fece4383, type: 3}
       propertyPath: _radius
       value: 
@@ -933,21 +937,29 @@ PrefabInstance:
       propertyPath: m_Name
       value: P-WeaponSpriteParent
       objectReference: {fileID: 0}
-    - target: {fileID: 5906170016927918831, guid: 1fa994d84365a144392272d4fece4383, type: 3}
+    - target: {fileID: 4688014717769184997, guid: 1fa994d84365a144392272d4fece4383, type: 3}
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 6714873088308408549, guid: 1fa994d84365a144392272d4fece4383, type: 3}
+    - target: {fileID: 5906170016927918831, guid: 1fa994d84365a144392272d4fece4383, type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6714873088308408549, guid: 1fa994d84365a144392272d4fece4383, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7821487712773278483, guid: 1fa994d84365a144392272d4fece4383, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8471768819166270004, guid: 1fa994d84365a144392272d4fece4383, type: 3}
       propertyPath: m_Name
       value: P-WeaponSprite
+      objectReference: {fileID: 0}
+    - target: {fileID: 8814702217904855115, guid: 1fa994d84365a144392272d4fece4383, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
@@ -1487,7 +1499,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TrackerSettings:
     BindingMode: 4
-    PositionDamping: {x: 1.3, y: 1.36, z: 1}
+    PositionDamping: {x: 1.59, y: 1.62, z: 1}
     AngularDampingMode: 0
     RotationDamping: {x: 1, y: 1, z: 1}
     QuaternionDamping: 1

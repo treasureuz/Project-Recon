@@ -49,8 +49,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _rb2d: {fileID: 3606735017681977860}
   _asteroidForce: 2
-  _maxHealth: 30
-  _asteroidDamage: 50
+  _maxHealth: 40
+  _asteroidDamage: 60
   _asteroidRotationSpeed: 60
 --- !u!50 &3606735017681977860
 Rigidbody2D:
