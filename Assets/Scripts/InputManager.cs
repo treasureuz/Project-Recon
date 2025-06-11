@@ -3,9 +3,11 @@ using UnityEngine.InputSystem;
 
 public class InputManager : MonoBehaviour
 {
-    public static PlayerInput playerInput;
-    public static Vector2 _moveDirection;
-    public static InputManager instance;
+    private static PlayerInput playerInput;
+    //Caches move
+    public static Vector2 _moveDirection { get; private set; }
+
+	public static InputManager instance;
 
     private InputAction _movement;
 

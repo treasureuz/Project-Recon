@@ -154,15 +154,15 @@ public class PWeaponManager : MonoBehaviour
 
 		switch (this._thrusterType)
 		{
-			case ThrusterType.Normal: Normal(); break; //Player Type - Normal
+			case ThrusterType.Normal: Normal(); break; //Player Type - Standard
 			case ThrusterType.Thin: Thin(); break; //Player Type - Omen
 			case ThrusterType.Wide: Wide(); break; //Player Type - Sora
 			case ThrusterType.Double: Double(); break; //Player Type - Ralph
 		}
 		this._thrusterInstance.transform.SetParent(this._thrusterParent, false);
 
-		//Enable/Disable bullet prefab based on current thruster type
-		this._bulletManager.SetBulletPrefab(this._thrusterType);
+		//Enables/Disables Bullet Sprites and its corresponding Collider based on the current ThrusterType
+		this._bulletManager.ToggleBulletSprite(this._thrusterType);
 	}
 
 	#region Setters/Adders & Getters
@@ -188,6 +188,10 @@ public class PWeaponManager : MonoBehaviour
 		return this._thrusterInstance;
 	}
 
+	public ThrusterType GetThrusterType()
+	{
+		return this._thrusterType;
+	}
 	#endregion
 
 }

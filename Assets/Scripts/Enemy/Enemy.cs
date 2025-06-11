@@ -36,10 +36,10 @@ public class Enemy : MonoBehaviour, IDamageable
 	public enum EnemyState
 	{
 		Patrol,
-		Attack
+		Attack,
 	}
 
-	private EnemyState state;
+	public EnemyState state = EnemyState.Patrol;
 
 	private void Awake()
 	{
@@ -148,17 +148,17 @@ public class Enemy : MonoBehaviour, IDamageable
 	}
 	#endregion
 
-	#region Setters && Getters
-	public EnemyState GetEnemyState()
-	{
-		return this.state;
-	}
-
 	private IEnumerator OnShot()
 	{
 		this._isShot = true;
 		yield return new WaitForSeconds(this._waitTimeUntilIdle);
 		this._isShot = false;
+	}
+
+	#region Setters && Getters
+	public EnemyState GetEnemyState()
+	{
+		return this.state;
 	}
 
 	public float GetWaitTimeUntilIdle()
@@ -171,13 +171,12 @@ public class Enemy : MonoBehaviour, IDamageable
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
 		IDamageable iDamageable = this.GetComponent<IDamageable>();
-		BulletManager bullet = collision.GetComponent<BulletManager>();
 
-		if (collision.CompareTag("Asteroid"))
-		{
-			iDamageable.OnDamaged(this._asteroid.getAsteroidDamage());
-		}
-		else if (collision.CompareTag("PlayerBullet"))
+		//if (collision.CompareTag("Asteroid"))
+		//{
+		//	iDamageable.OnDamaged(this._asteroid.getAsteroidDamage());
+		//}
+		if (collision.CompareTag("PlayerBullet"))
 		{
 			StartCoroutine(OnShot());
 

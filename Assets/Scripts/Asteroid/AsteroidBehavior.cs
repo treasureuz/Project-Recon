@@ -34,13 +34,14 @@ public class AsteroidBehavior : MonoBehaviour, IDamageable
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
 		IDamageable iDamageable = this.GetComponent<IDamageable>();
-		if (collision.CompareTag("Player"))
+		if (collision.CompareTag("Player") || collision.CompareTag("Backdrop"))
 		{
 			Destroy(gameObject);
 		}
-		else if (collision.gameObject.CompareTag("Bullet"))
+		else if (collision.gameObject.CompareTag("PlayerBullet"))
 		{
-			iDamageable.OnDamaged(collision.GetComponent<BulletManager>().GetBulletDamage()); 
+			iDamageable.OnDamaged(collision.GetComponent<BulletManager>().GetBulletDamage());
+			Debug.Log("Asteroid Hit: " + collision.GetComponent<BulletManager>().GetBulletDamage());
 		}
 	}
 

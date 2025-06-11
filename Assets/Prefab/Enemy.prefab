@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5346880517716472199}
   m_Layer: 0
-  m_Name: BulletSpawnPoint
+  m_Name: E-BulletSpawnPoint
   m_TagString: Untagged
   m_Icon: {fileID: -5397416234189338067, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -179,6 +179,7 @@ MonoBehaviour:
   _moveSpeed: 1.55
   _maxHealth: 120
   _waitTimeUntilIdle: 5
+  state: 0
 --- !u!58 &3182403412100447416
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -240,7 +241,7 @@ Rigidbody2D:
     m_Bits: 0
   m_Interpolate: 1
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 0
 --- !u!1 &2668232860587067861
 GameObject:
@@ -396,7 +397,7 @@ CircleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: -0.35, y: 0}
   m_Radius: 7
 --- !u!114 &6790307559122807138
 MonoBehaviour:

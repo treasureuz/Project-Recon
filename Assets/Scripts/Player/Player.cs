@@ -1,3 +1,5 @@
+using System.Buffers.Text;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
@@ -70,28 +72,28 @@ public class Player : MonoBehaviour, IDamageable
 	{
 		this._currentHealth = this._standardMaxHealth;
 		this._moveSpeed = this._standardMoveSpeed;
-		this.transform.localScale = new Vector3(0.65f, 0.61f, 0.61f);
+		this.transform.localScale = new Vector3(0.65f, 0.65f, 0.65f);
 	}
 
 	private void Omen()
 	{
 		this._currentHealth = this._omenMaxHealth;
 		this._moveSpeed = this._omenMoveSpeed;
-		this.transform.localScale = new Vector3(0.68f, 0.635f, 0.635f);
+		this.transform.localScale = new Vector3(0.68f, 0.68f, 0.68f);
 	}
 
 	private void Sora()
 	{
 		this._currentHealth = this._soraMaxHealth;
 		this._moveSpeed = this._soraMoveSpeed;
-		this.transform.localScale = new Vector3(0.72f, 0.665f, 0.665f);
+		this.transform.localScale = new Vector3(0.72f, 0.72f, 0.72f);
 	}
 
 	private void Ralph()
 	{
 		this._currentHealth = this._ralphMaxHealth;
 		this._moveSpeed = this._ralphMoveSpeed;
-		this.transform.localScale = new Vector3(0.755f, 0.7f, 0.7f);
+		this.transform.localScale = new Vector3(0.755f, 0.755f, 0.755f);
 	}
 
 	#endregion
@@ -150,6 +152,21 @@ public class Player : MonoBehaviour, IDamageable
 		Destroy(collision.gameObject);
 	}
 
+	#region Helper Getter Method
+
+	private void SetPlayerType()
+	{
+		switch (this._playerWeaponManager.GetThrusterType())
+		{
+			case PWeaponManager.ThrusterType.Normal: this._playerType = PlayerType.Standard; break;
+			case PWeaponManager.ThrusterType.Thin: this._playerType = PlayerType.Omen; break;
+			case PWeaponManager.ThrusterType.Wide: this._playerType = PlayerType.Sora; break;
+			case PWeaponManager.ThrusterType.Double: this._playerType= PlayerType.Ralph; break;
+		}
+
+	}
+	#endregion
+
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
 		IDamageable iDamageable = GetComponent<IDamageable>();
@@ -175,12 +192,14 @@ public class Player : MonoBehaviour, IDamageable
 	{
 		switch (this._playerType)
 		{
-			case PlayerType.Standard:
-				this._playerWeaponManager.PopAndSetThrusterType(); //First, remove from stack
+			case PlayerType.Standard: //Thruster Type - Normal
+				this._playerWeaponManager.PopAndSetThrusterType(); //First, remove from stack,
+				SetPlayerType(); //Set player type based on current thruster type,
 				Destroy(this.gameObject); //Then, destroy in game	
 				break;
-			default:
-				this._playerWeaponManager.PopAndSetThrusterType(); //First, remove from stack
+			default: //Every other Thruster Type - Thin, Wide, Double
+				this._playerWeaponManager.PopAndSetThrusterType(); //First, remove from stack,
+				SetPlayerType(); //Set player type based on current thruster type,
 				Destroy(this._playerWeaponManager.GetThrusterInstance()); //Then, destroy in game
 				HandlePlayerSwitch();
 				break;

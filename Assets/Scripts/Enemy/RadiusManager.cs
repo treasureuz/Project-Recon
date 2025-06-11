@@ -7,8 +7,8 @@ public class RadiusManager : MonoBehaviour
 	[SerializeField] private LayerMask _playerLayerMask;
 	[SerializeField] private CircleCollider2D _radius;
 
-	private void Start()
-	{
+	private void Awake()
+	{ 
 		this._radius = GetComponent<CircleCollider2D>();
 	}
 

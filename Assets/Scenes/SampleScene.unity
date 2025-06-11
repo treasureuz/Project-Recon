@@ -398,7 +398,7 @@ Camera:
   far clip plane: 1000
   field of view: 34
   orthographic: 1
-  orthographic size: 3.58
+  orthographic size: 3.62
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -423,7 +423,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 30.410538, y: -4.3, z: 0}
+  m_LocalPosition: {x: 30.48165, y: -4.3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -937,21 +937,13 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 6027581566516317771, guid: 1fa994d84365a144392272d4fece4383, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0.778
-      objectReference: {fileID: 0}
-    - target: {fileID: 6027581566516317771, guid: 1fa994d84365a144392272d4fece4383, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -0.045
-      objectReference: {fileID: 0}
     - target: {fileID: 6714873088308408549, guid: 1fa994d84365a144392272d4fece4383, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7821487712773278483, guid: 1fa994d84365a144392272d4fece4383, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8471768819166270004, guid: 1fa994d84365a144392272d4fece4383, type: 3}
       propertyPath: m_Name
@@ -1443,7 +1435,7 @@ MonoBehaviour:
     CustomLookAtTarget: 0
   Lens:
     FieldOfView: 34
-    OrthographicSize: 3.58
+    OrthographicSize: 3.62
     NearClipPlane: 0.3
     FarClipPlane: 1000
     Dutch: 0
@@ -1495,7 +1487,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TrackerSettings:
     BindingMode: 4
-    PositionDamping: {x: 1, y: 1, z: 1}
+    PositionDamping: {x: 1.3, y: 1.36, z: 1}
     AngularDampingMode: 0
     RotationDamping: {x: 1, y: 1, z: 1}
     QuaternionDamping: 1
@@ -1541,14 +1533,14 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1865654083}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dde5321195d7bfd488a566cdea7776d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _asteroidPrefab: {fileID: 697032226462455953, guid: 42137422141fffe41ab10d200b1aec7d, type: 3}
   _rb2d: {fileID: 3606735017681977860, guid: 42137422141fffe41ab10d200b1aec7d, type: 3}
-  _player: {fileID: 0}
+  _player: {fileID: 303196939666991746, guid: 1fa994d84365a144392272d4fece4383, type: 3}
   _spawnPointsParent: {fileID: 2043126276}
   _spawnPoints:
   - {fileID: 1390950737}
