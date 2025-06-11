@@ -29,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -16.39, y: -0.21, z: 0}
-  m_LocalScale: {x: 0.625, y: 0.625, z: 0.625}
+  m_LocalScale: {x: 0.65, y: 0.65, z: 0.65}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 8334123836799243455}
@@ -50,25 +50,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _rb2d: {fileID: 4307045051133944857}
   _asteroid: {fileID: 6430892029719757333, guid: 42137422141fffe41ab10d200b1aec7d, type: 3}
-  _bulletManager: {fileID: 6202038610834583983, guid: 37308ab0f9bcb9c408dfd69e448c5eb2, type: 3}
+  _bulletManager: {fileID: 1480601095343456056, guid: 591ee9558d478f248936976d67428483, type: 3}
   _playerWeaponManager: {fileID: 1699253976151754416}
   _rotationDuration: 0.072
   _standardMaxHealth: 100
   _standardMoveSpeed: 2.88
-  _standardBulletDamage: 15
-  _standardTimeBetweenShots: 0.55
   _omenMaxHealth: 125
   _omenMoveSpeed: 3.15
-  _omenBulletDamage: 25
-  _omenTimeBetweenShots: 0.38
   _soraMaxHealth: 155
   _soraMoveSpeed: 3.45
-  _soraBulletDamage: 30
-  _soraTimeBetweenShots: 0.265
   _ralphMaxHealth: 200
   _ralphMoveSpeed: 3.85
-  _ralphBulletDamage: 40
-  _ralphTimeBetweenShots: 0.125
 --- !u!50 &4307045051133944857
 Rigidbody2D:
   serializedVersion: 5
@@ -95,7 +87,7 @@ Rigidbody2D:
   m_Interpolate: 1
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 4
+  m_Constraints: 0
 --- !u!58 &3477806910951290100
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -214,16 +206,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 780fdc81cb4967248b27efded73389b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _bulletPrefab: {fileID: 1232338131004727195, guid: 37308ab0f9bcb9c408dfd69e448c5eb2, type: 3}
+  _bulletPrefab: {fileID: 5689039745023292918, guid: 591ee9558d478f248936976d67428483, type: 3}
   _bulletSpawnPoint: {fileID: 1457638194406933492}
   _leftBulletSpawnPoint: {fileID: 8542115595291322650}
   _rightBulletSpawnPoint: {fileID: 8757797589631614229}
   _thrusterParent: {fileID: 164305352335488478}
-  _timeBetweenPlayerShots: 0.45
+  _bulletManager: {fileID: 1480601095343456056, guid: 591ee9558d478f248936976d67428483, type: 3}
   _normalPrefab: {fileID: 3831428221465586410, guid: 1d0c514e33871524d9bff93ac1209f66, type: 3}
   _thinPrefab: {fileID: 7417630984595399494, guid: 0c8e370f0f87dcb4d8d3b0a51c2c1e24, type: 3}
   _widePrefab: {fileID: 915936592291527419, guid: ff08791422af3f248a92619c78dc2095, type: 3}
   _doublePrefab: {fileID: 6472088012352498680, guid: 0b8767342fa88b24faf062dad7610167, type: 3}
+  _normalTimeBetweenShots: 0.45
+  _normalBulletDamage: 15
+  _thinTimeBetweenShots: 0.38
+  _thinBulletDamage: 22.5
+  _wideTimeBetweenShots: 0.265
+  _wideBulletDamage: 30
+  _doubleTimeBetweenShots: 0.125
+  _doubleBulletDamage: 40
 --- !u!61 &16584786667965039
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -610,7 +610,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &6027581566516317771
 Transform:
   m_ObjectHideFlags: 0
@@ -620,7 +620,7 @@ Transform:
   m_GameObject: {fileID: 5906170016927918831}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0.0209424, w: 0.9997807}
-  m_LocalPosition: {x: 0.6227117, y: -0.051518705, z: 0}
+  m_LocalPosition: {x: 0.777, y: 0, z: 0}
   m_LocalScale: {x: 1.4705882, y: 1.4705882, z: 1.4705882}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -898,7 +898,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3831428221465586410, guid: 1d0c514e33871524d9bff93ac1209f66, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

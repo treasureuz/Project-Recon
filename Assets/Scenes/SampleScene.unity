@@ -935,7 +935,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5906170016927918831, guid: 1fa994d84365a144392272d4fece4383, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6027581566516317771, guid: 1fa994d84365a144392272d4fece4383, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.778
+      objectReference: {fileID: 0}
+    - target: {fileID: 6027581566516317771, guid: 1fa994d84365a144392272d4fece4383, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.045
+      objectReference: {fileID: 0}
+    - target: {fileID: 6714873088308408549, guid: 1fa994d84365a144392272d4fece4383, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7821487712773278483, guid: 1fa994d84365a144392272d4fece4383, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8471768819166270004, guid: 1fa994d84365a144392272d4fece4383, type: 3}
       propertyPath: m_Name
@@ -1396,7 +1412,7 @@ Transform:
   m_GameObject: {fileID: 1805605049}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 28.880001, y: -4.3, z: 0}
+  m_LocalPosition: {x: 29.05, y: -4.3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1479,11 +1495,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TrackerSettings:
     BindingMode: 4
-    PositionDamping: {x: 1.88, y: 1.9, z: 1}
+    PositionDamping: {x: 1, y: 1, z: 1}
     AngularDampingMode: 0
     RotationDamping: {x: 1, y: 1, z: 1}
     QuaternionDamping: 1
-  FollowOffset: {x: 1.22, y: 0, z: -10}
+  FollowOffset: {x: 1.39, y: 0, z: -10}
 --- !u!1 &1865654083
 GameObject:
   m_ObjectHideFlags: 0

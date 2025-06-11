@@ -4,7 +4,6 @@
 TagManager:
   serializedVersion: 3
   tags:
-  - Bullet
   - Asteroid
   - Ground
   - Backdrop
@@ -13,6 +12,9 @@ TagManager:
   - OmensTriangle
   - RalphsCube
   - EnemyRadius
+  - EnemyBullet
+  - PlayerBullet
+  - Bullet
   layers:
   - Default
   - TransparentFX

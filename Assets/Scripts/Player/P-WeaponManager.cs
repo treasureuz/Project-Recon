@@ -8,6 +8,7 @@ using UnityEngine.InputSystem;
 public class PWeaponManager : MonoBehaviour
 {
 	[Header("References")]
+	[SerializeField] private GameObject _bulletPrefab;
 	[SerializeField] private Transform _bulletSpawnPoint;
 	[SerializeField] private Transform _leftBulletSpawnPoint;
 	[SerializeField] private Transform _rightBulletSpawnPoint;
@@ -19,21 +20,21 @@ public class PWeaponManager : MonoBehaviour
 	[SerializeField] private GameObject _thinPrefab;
 	[SerializeField] private GameObject _widePrefab;
 	[SerializeField] private GameObject _doublePrefab;
- 
-	#region Weapon Settings
-	[Header("Normal ThrusterType Settings")]
+
+	#region Thruster Settings
+	[Header("Normal Thruster Settings")]
 	[SerializeField] private float _normalTimeBetweenShots = 0.45f;
 	[SerializeField] private float _normalBulletDamage = 15f;
 
-	[Header("Thin ThrusterType Settings")]
+	[Header("Thin Thruster Settings")]
 	[SerializeField] private float _thinTimeBetweenShots = 0.38f;
 	[SerializeField] private float _thinBulletDamage = 22.5f;
 
-	[Header("Wide ThrusterType Settings")]
+	[Header("Wide Thruster Settings")]
 	[SerializeField] private float _wideTimeBetweenShots = 0.265f;
 	[SerializeField] private float _wideBulletDamage = 30f;
 
-	[Header("Double ThrusterType Settings")]
+	[Header("Double Thruster Settings")]
 	[SerializeField] private float _doubleTimeBetweenShots = 0.125f;
 	[SerializeField] private float _doubleBulletDamage = 40f;
 	#endregion
@@ -110,7 +111,7 @@ public class PWeaponManager : MonoBehaviour
 				case ThrusterType.Double: StartCoroutine(HandleDoubleThrusterShoot()); break;
 				default:
 					this._bulletInstance = Instantiate
-						(this._bulletManager.GetBulletPrefab(), this._bulletSpawnPoint.position, this.transform.rotation);
+						(this._bulletPrefab, this._bulletSpawnPoint.position, this.transform.rotation);
 
 					//Marks that the character type, player, shot the bullet
 					//**Specific to THIS bullet shot at THIS frame**
@@ -129,12 +130,12 @@ public class PWeaponManager : MonoBehaviour
 	private IEnumerator HandleDoubleThrusterShoot()
 	{
 		this._leftBulletInstance = Instantiate
-			(this._bulletManager.GetBulletPrefab(), this._leftBulletSpawnPoint.position, this.transform.rotation);
+			(this._bulletPrefab, this._leftBulletSpawnPoint.position, this.transform.rotation);
 
 		yield return new WaitForSeconds(this._timeBetweenShots - 0.045f); // Wait time between double thruster shots
-		
+
 		this._rightBulletInstance = Instantiate
-			(this._bulletManager.GetBulletPrefab(), this._rightBulletSpawnPoint.position, this.transform.rotation);
+			(this._bulletPrefab, this._rightBulletSpawnPoint.position, this.transform.rotation);
 
 		//Every time player shoots a bullet, it marks the character type's (player) name on it
 		//Specific to BOTH THESE bullets shot at THIS frame
@@ -143,7 +144,7 @@ public class PWeaponManager : MonoBehaviour
 	}
 	#endregion
 
-	public void HandleThrusterInstantiation()
+	public void HandleThrusterAndBulletInstantiation()
 	{
 		//Destroy previous thruster
 		if (this._thrusterInstance != null) Destroy(this._thrusterInstance);
@@ -153,12 +154,15 @@ public class PWeaponManager : MonoBehaviour
 
 		switch (this._thrusterType)
 		{
-			case PWeaponManager.ThrusterType.Normal: Normal(); break; //Player Type - Normal
-			case PWeaponManager.ThrusterType.Thin: Thin(); break; //Player Type - Omen
-			case PWeaponManager.ThrusterType.Wide: Wide(); break; //Player Type - Sora
-			case PWeaponManager.ThrusterType.Double: Double(); break; //Player Type - Ralph
-		}	
+			case ThrusterType.Normal: Normal(); break; //Player Type - Normal
+			case ThrusterType.Thin: Thin(); break; //Player Type - Omen
+			case ThrusterType.Wide: Wide(); break; //Player Type - Sora
+			case ThrusterType.Double: Double(); break; //Player Type - Ralph
+		}
 		this._thrusterInstance.transform.SetParent(this._thrusterParent, false);
+
+		//Enable/Disable bullet prefab based on current thruster type
+		this._bulletManager.SetBulletPrefab(this._thrusterType);
 	}
 
 	#region Setters/Adders & Getters

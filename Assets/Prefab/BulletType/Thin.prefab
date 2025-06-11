@@ -9,12 +9,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 34817650579243688}
-  - component: {fileID: 1050312219148949951}
   - component: {fileID: 2609311622249472300}
   - component: {fileID: 5639166310115238501}
   m_Layer: 8
   m_Name: Thin
-  m_TagString: PlayerBullet
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -28,27 +27,12 @@ Transform:
   m_GameObject: {fileID: 6973033344872998699}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.916, y: -0.3648, z: 0}
-  m_LocalScale: {x: 0.30039877, y: 0.035827164, z: 0.63}
-  m_ConstrainProportionsScale: 1
+  m_LocalPosition: {x: -0.11339, y: -0.01936, z: 0}
+  m_LocalScale: {x: 0.016697992, y: 0.0024038514, z: 0.044282973}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1050312219148949951
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6973033344872998699}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e287acde4c1873c44ba47dfc09e850c1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _rb2d: {fileID: 0}
-  _bulletForce: 15
-  _destroyTime: 1.25
 --- !u!70 &2609311622249472300
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -129,7 +113,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -3
   m_Sprite: {fileID: 2208703988740019828, guid: d16ccf7a44d16154c90075ebac2c21b9, type: 3}
   m_Color: {r: 0.990566, g: 0.9391687, b: 0.9391687, a: 1}
   m_FlipX: 0

@@ -460,7 +460,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0d4a3bcfcfc0e04189eebd365292e87, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _bulletPrefab: {fileID: 1232338131004727195, guid: 37308ab0f9bcb9c408dfd69e448c5eb2, type: 3}
+  _bulletPrefab: {fileID: 1232338131004727195, guid: 5cdd4c7b141c1b847b21d330a8585d8e, type: 3}
   _bulletSpawnPoint: {fileID: 5346880517716472199}
   _enemy: {fileID: 1234068746657982907}
   _player: {fileID: 191160983667545446, guid: 1fa994d84365a144392272d4fece4383, type: 3}

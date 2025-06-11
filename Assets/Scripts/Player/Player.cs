@@ -50,6 +50,7 @@ public class Player : MonoBehaviour, IDamageable
 
 	private void Awake()
 	{
+		this._playerType = PlayerType.Standard;
 		this._playerWeaponManager.AddThrusterTypeToStack(PWeaponManager.ThrusterType.Normal);
 		HandlePlayerSwitch();
 	}
@@ -69,28 +70,28 @@ public class Player : MonoBehaviour, IDamageable
 	{
 		this._currentHealth = this._standardMaxHealth;
 		this._moveSpeed = this._standardMoveSpeed;
-		this.transform.localScale = new Vector3(0.61f, 0.61f, 0.61f);
+		this.transform.localScale = new Vector3(0.65f, 0.61f, 0.61f);
 	}
 
 	private void Omen()
 	{
 		this._currentHealth = this._omenMaxHealth;
 		this._moveSpeed = this._omenMoveSpeed;
-		this.transform.localScale = new Vector3(0.635f, 0.635f, 0.635f);
+		this.transform.localScale = new Vector3(0.68f, 0.635f, 0.635f);
 	}
 
 	private void Sora()
 	{
 		this._currentHealth = this._soraMaxHealth;
 		this._moveSpeed = this._soraMoveSpeed;
-		this.transform.localScale = new Vector3(0.665f, 0.665f, 0.665f);
+		this.transform.localScale = new Vector3(0.72f, 0.665f, 0.665f);
 	}
 
 	private void Ralph()
 	{
 		this._currentHealth = this._ralphMaxHealth;
 		this._moveSpeed = this._ralphMoveSpeed;
-		this.transform.localScale = new Vector3(0.7f, 0.7f, 0.7f);
+		this.transform.localScale = new Vector3(0.755f, 0.7f, 0.7f);
 	}
 
 	#endregion
@@ -123,7 +124,7 @@ public class Player : MonoBehaviour, IDamageable
 			case PlayerType.Sora: Sora(); break; //Thruster Type - Wide
 			case PlayerType.Ralph: Ralph(); break; //Thruster Type - Double
 		}
-		this._playerWeaponManager.HandleThrusterInstantiation();
+		this._playerWeaponManager.HandleThrusterAndBulletInstantiation();
 	}
 	#endregion
 
@@ -131,14 +132,17 @@ public class Player : MonoBehaviour, IDamageable
 	{
 		if (collision.CompareTag("OmensTriangle"))
 		{
+			this._playerType = PlayerType.Omen;
 			this._playerWeaponManager.AddThrusterTypeToStack(PWeaponManager.ThrusterType.Thin); //Omen's thruster type
 		}
 		else if (collision.CompareTag("SorasOrb"))
 		{
+			this._playerType = PlayerType.Sora;
 			this._playerWeaponManager.AddThrusterTypeToStack(PWeaponManager.ThrusterType.Wide); //Sora's thruster type
 		}
 		else if (collision.CompareTag("RalphsCube"))
 		{
+			this._playerType = PlayerType.Ralph;
 			this._playerWeaponManager.AddThrusterTypeToStack(PWeaponManager.ThrusterType.Double); //Ralph's thruster type
 		}
 
@@ -169,17 +173,17 @@ public class Player : MonoBehaviour, IDamageable
 
 	private void DestroyOnDie()
 	{
-		if (this._playerType == PlayerType.Standard) //Or if ThrusterType index is "Normal"
+		switch (this._playerType)
 		{
-			this._playerWeaponManager.PopAndSetThrusterType(); //First, remove from stack
-			Destroy(this.gameObject); //Then, destroy in game	
-		}
-		else
-		{
-			this._playerWeaponManager.PopAndSetThrusterType(); //First, remove from stack
-			Destroy(this._playerWeaponManager.GetThrusterInstance()); //Then, destroy in game
-
-			HandlePlayerSwitch();
+			case PlayerType.Standard:
+				this._playerWeaponManager.PopAndSetThrusterType(); //First, remove from stack
+				Destroy(this.gameObject); //Then, destroy in game	
+				break;
+			default:
+				this._playerWeaponManager.PopAndSetThrusterType(); //First, remove from stack
+				Destroy(this._playerWeaponManager.GetThrusterInstance()); //Then, destroy in game
+				HandlePlayerSwitch();
+				break;
 		}
 	}
 

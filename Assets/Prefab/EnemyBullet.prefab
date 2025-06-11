@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 471806266274825588}
+  - component: {fileID: 5656941793213586776}
   - component: {fileID: 1050130379820493484}
-  - component: {fileID: 6202038610834583983}
   - component: {fileID: 7253802200055206241}
   - component: {fileID: 1912071455066929077}
   - component: {fileID: 7561340720938632595}
@@ -36,6 +36,23 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5656941793213586776
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1232338131004727195}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 538c5907ef7b182459e41b0cf56384f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _regularBulletPrefab: {fileID: 1963123665368345134, guid: df30389de0f80f840b9d16aa9a75eff4, type: 3}
+  _thinBulletPrefab: {fileID: 6973033344872998699, guid: 0ae9023115259f149b977bf4e1744159, type: 3}
+  _wideBulletPrefab: {fileID: 2631253822360064792, guid: 0c6067105717ec841aeba25f1b0feb6a, type: 3}
+  _playerBulletDamage: 15
+  _enemyBulletDamage: 20
 --- !u!114 &1050130379820493484
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -51,20 +68,6 @@ MonoBehaviour:
   _rb2d: {fileID: 7253802200055206241}
   _bulletForce: 15
   _destroyTime: 1.35
---- !u!114 &6202038610834583983
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1232338131004727195}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 538c5907ef7b182459e41b0cf56384f8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _playerBulletDamage: 15
-  _enemyBulletDamage: 20
 --- !u!50 &7253802200055206241
 Rigidbody2D:
   serializedVersion: 5
