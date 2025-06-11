@@ -21,9 +21,9 @@ public class InputManager : MonoBehaviour
         this._movement = playerInput.actions["Movement"];
 	}
 	
-	void Update()
+	void FixedUpdate()
     {
-        if (this._movement.WasPressedThisFrame() || this._movement.IsPressed() )
+        if (this._movement.WasPressedThisFrame() || this._movement.IsPressed())
         {
             this._isMoving = true;
         }

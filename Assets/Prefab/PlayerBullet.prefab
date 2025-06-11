@@ -27,8 +27,8 @@ Transform:
   m_GameObject: {fileID: 607741796525247142}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.1317, y: -0.0229, z: 0}
-  m_LocalScale: {x: 1.6999999, y: 16.2, z: 1.6999999}
+  m_LocalPosition: {x: 0.826, y: -1.53, z: 0}
+  m_LocalScale: {x: 1.9469165, y: 17.024694, z: 1.6999999}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3731414757703515654}
@@ -40,7 +40,7 @@ SpriteRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 607741796525247142}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -177,7 +177,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _thinBulletSprite: {fileID: 6104453994792669460}
   _wideBulletSprite: {fileID: 2800622063955491697}
-  _playerBulletDamage: 22.5
+  _playerBulletDamage: 30
   _enemyBulletDamage: 20
 --- !u!114 &3808043569035059493
 MonoBehaviour:
@@ -201,7 +201,7 @@ CapsuleCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5689039745023292918}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
@@ -238,7 +238,7 @@ CircleCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5689039745023292918}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
@@ -388,7 +388,7 @@ SpriteRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8215590533164436592}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1

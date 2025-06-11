@@ -152,7 +152,7 @@ public class Player : MonoBehaviour, IDamageable
 		Destroy(collision.gameObject);
 	}
 
-	#region Helper Getter Method
+	#region Helper Setter Method
 
 	private void SetPlayerType()
 	{
