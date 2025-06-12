@@ -72,28 +72,28 @@ public class Player : MonoBehaviour, IDamageable
 	{
 		this._currentHealth = this._standardMaxHealth;
 		this._moveSpeed = this._standardMoveSpeed;
-		this.transform.localScale = new Vector3(0.655f, 0.655f, 0.655f);
+		this.transform.localScale = new Vector3(0.92f, 0.92f, 0.92f);
 	}
 
 	private void Omen()
 	{
 		this._currentHealth = this._omenMaxHealth;
 		this._moveSpeed = this._omenMoveSpeed;
-		this.transform.localScale = new Vector3(0.67f, 0.67f, 0.67f);
+		this.transform.localScale = new Vector3(0.95f, 0.95f, 0.95f);
 	}
 
 	private void Sora()
 	{
 		this._currentHealth = this._soraMaxHealth;
 		this._moveSpeed = this._soraMoveSpeed;
-		this.transform.localScale = new Vector3(0.69f, 0.69f, 0.69f);
+		this.transform.localScale = new Vector3(0.985f, 0.985f, 0.985f);
 	}
 
 	private void Ralph()
 	{
 		this._currentHealth = this._ralphMaxHealth;
 		this._moveSpeed = this._ralphMoveSpeed;
-		this.transform.localScale = new Vector3(0.715f, 0.715f, 0.715f);
+		this.transform.localScale = new Vector3(1.035f, 1.035f, 1.035f);
 	}
 	#endregion
 
