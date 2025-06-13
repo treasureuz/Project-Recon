@@ -37,12 +37,6 @@ public class EWeaponManager : MonoBehaviour
 		if (Time.time >= this._nextShootTime)
 		{
 			this._bulletInstance = Instantiate(this._bulletPrefab, this._bulletSpawnPoint.position, this.transform.rotation);
-
-			//Every time player shoots, it marks the character type's (player) name on it
-			//Specific to THIS bullet shot at THIS frame
-			BulletManager bullet = this._bulletInstance.GetComponent<BulletManager>();
-			bullet.SetBulletCharacterType(GameManager.CharacterType.Enemy);
-
 			this._nextShootTime = Time.time + this._timeBetweenEnemyShots;
 		}
 	}

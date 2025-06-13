@@ -1,6 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class Enemy : MonoBehaviour, IDamageable
 {
@@ -57,12 +56,13 @@ public class Enemy : MonoBehaviour, IDamageable
 		//Generate position to move to on start
 		this._targetPosition = GenerateRandomPosition();
 	}
-
-	//Not needed but adds clarity as Enemy HAS the radius
+	
 	private void Update()
 	{
+		//Not needed but adds clarity as Enemy HAS the radius
 		if (this._radiusManager.IsWithinRadius()) this._isWithinRadius = true;
 		else this._isWithinRadius = false;
+
 		UpdateEnemyState();
 	}
 
@@ -127,7 +127,6 @@ public class Enemy : MonoBehaviour, IDamageable
 			this._elapsedMoveTime = 0f;
 		}
 	}
-
 	#endregion
 
 	#region Generate Random Position
@@ -148,7 +147,7 @@ public class Enemy : MonoBehaviour, IDamageable
 	}
 	#endregion
 
-	private IEnumerator OnShot()
+	private IEnumerator OnEnemyShot()
 	{
 		this._isShot = true;
 		yield return new WaitForSeconds(this._waitTimeUntilIdle);
@@ -178,11 +177,9 @@ public class Enemy : MonoBehaviour, IDamageable
 		//}
 		if (collision.CompareTag("PlayerBullet"))
 		{
-			StartCoroutine(OnShot());
-
-			//Bullet damage is specific to THIS bullet/collision's character type
-			iDamageable.OnDamaged(collision.GetComponent<BulletManager>().GetBulletDamage());
-			Debug.Log("Enemy hit: " + collision.GetComponent<BulletManager>().GetBulletDamage());
+			StartCoroutine(OnEnemyShot()); //Enables isShot boolean and switches Enemy to attack mode
+			iDamageable.OnDamaged(collision.GetComponent<PBulletManager>().GetPlayerBulletDamage());
+			Debug.Log("Enemy hit: " + collision.GetComponent<PBulletManager>().GetPlayerBulletDamage());
 		}
 	}
 

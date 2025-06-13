@@ -5,7 +5,7 @@ public class InputManager : MonoBehaviour
 {
     private static PlayerInput playerInput;
     //Caches move
-    public static Vector2 _moveDirection { get; private set; }
+    public static Vector2 _moveDirection;
 
 	public static InputManager instance;
                                         

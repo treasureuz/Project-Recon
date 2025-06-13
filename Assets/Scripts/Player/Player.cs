@@ -1,21 +1,17 @@
-using System.Buffers.Text;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Rendering;
 
 public class Player : MonoBehaviour, IDamageable
 {
 	[Header("References")]
 	[SerializeField] private Rigidbody2D _rb2d;
 	[SerializeField] private AsteroidBehavior _asteroid;
-	[SerializeField] private BulletManager _bulletManager;
 	[SerializeField] private PWeaponManager _playerWeaponManager;
 
 	[Header("Global Player Settings")]
 	[SerializeField] private float _rotationDuration = 0.072f; //How long to rotate towards mouse position
 
-	#region Serialized Player Settings Fields
+	#region Player Settings
 	[Header("Standard Player Settings")]
 	[SerializeField] private float _standardMaxHealth = 100f; // Max health of the player
 	[SerializeField] private float _standardMoveSpeed = 3f;
@@ -72,7 +68,7 @@ public class Player : MonoBehaviour, IDamageable
 	{
 		this._currentHealth = this._standardMaxHealth;
 		this._moveSpeed = this._standardMoveSpeed;
-		this.transform.localScale = new Vector3(0.92f, 0.92f, 0.92f);
+		this.transform.localScale = new Vector3(0.925f, 0.925f, 0.925f);
 	}
 
 	private void Omen()
@@ -126,6 +122,8 @@ public class Player : MonoBehaviour, IDamageable
 			case PlayerType.Ralph: Ralph(); break; //Thruster Type - Double
 		}
 		this._playerWeaponManager.HandleThrusterAndBulletInstantiation();
+
+		UIManager.instance.UpdateHealthText();
 	}
 	#endregion
 
@@ -151,7 +149,7 @@ public class Player : MonoBehaviour, IDamageable
 		Destroy(collision.gameObject);
 	}
 
-	#region Helper Setter Method
+	#region Setters and Getters
 	private void SetPlayerType()
 	{
 		switch (this._playerWeaponManager.GetThrusterType())
@@ -162,27 +160,24 @@ public class Player : MonoBehaviour, IDamageable
 			case PWeaponManager.ThrusterType.Double: this._playerType = PlayerType.Ralph; break;
 		}
 	}
-	#endregion
 
-	private void OnTriggerEnter2D(Collider2D collision)
+	public float GetCurrentHealth()
 	{
-		IDamageable iDamageable = GetComponent<IDamageable>();
-		if (collision.CompareTag("Asteroid"))
+		return this._currentHealth;
+	}
+
+	public float GetMaxHealth()
+	{
+		switch (this._playerType)
 		{
-			iDamageable.OnDamaged(collision.GetComponent<AsteroidBehavior>().GetAsteroidDamage()); 
-			Debug.Log("Player hit by Asteroid: " + collision.GetComponent<AsteroidBehavior>().GetAsteroidDamage());
-		} 
-		else if (collision.CompareTag("EnemyBullet"))
-		{
-			//Bullet damage is specific to THIS bullet/collision's character type
-			iDamageable.OnDamaged(collision.GetComponent<BulletManager>().GetBulletDamage());
-			Debug.Log("Player hit: " + collision.GetComponent<BulletManager>().GetBulletDamage());
-		}
-		else if (collision.gameObject.layer == LayerMask.NameToLayer("Orbs"))
-		{
-			OnOrbsCollect(collision);
+			case PlayerType.Standard: return this._standardMaxHealth;
+			case PlayerType.Omen: return this._omenMaxHealth;	
+			case PlayerType.Sora: return this._soraMaxHealth;
+			case PlayerType.Ralph: return this._soraMaxHealth;
+			default: return 0f;
 		}
 	}
+	#endregion
 
 	private void DestroyOnDie()
 	{
@@ -201,12 +196,34 @@ public class Player : MonoBehaviour, IDamageable
 		}
 	}
 
+	private void OnTriggerEnter2D(Collider2D collision)
+	{
+		IDamageable iDamageable = GetComponent<IDamageable>();
+		if (collision.CompareTag("Asteroid"))
+		{
+			iDamageable.OnDamaged(collision.GetComponent<AsteroidBehavior>().GetAsteroidDamage()); 
+			Debug.Log("Player hit by Asteroid: " + collision.GetComponent<AsteroidBehavior>().GetAsteroidDamage());
+		} 
+		else if (collision.CompareTag("EnemyBullet"))
+		{
+			//Bullet damage is specific to THIS bullet/collision's character type
+			iDamageable.OnDamaged(collision.GetComponent<EBulletManager>().GetEnemyBulletDamage());
+			Debug.Log("Player hit: " + collision.GetComponent<EBulletManager>().GetEnemyBulletDamage());
+		}
+		else if (collision.gameObject.layer == LayerMask.NameToLayer("Orbs"))
+		{
+			OnOrbsCollect(collision);
+		}
+	}
+
 	#region IDamageable Interface Implementation
 	public void OnDamaged(float damageAmount)
 	{
 		Debug.Log("Called OnDamaged!");
 		this._currentHealth -= damageAmount;
-		Debug.Log("Current Health: " + this._currentHealth);
+
+		UIManager.instance.UpdateHealthText();
+
 		if (this._currentHealth <= 0)
 		{
 			DestroyOnDie();

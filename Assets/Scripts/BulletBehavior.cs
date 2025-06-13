@@ -6,7 +6,7 @@ public class BulletBehavior : MonoBehaviour
 	[Header("References")]
 	[SerializeField] private Rigidbody2D _rb2d;
 
-	[Header("Bullet Settings")]
+	[Header("Global Bullet Settings")]
 	[SerializeField] private float _bulletForce = 15f;
 	[SerializeField] private float _destroyTime = 1.25f;
 

@@ -133,7 +133,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3731414757703515654}
-  - component: {fileID: 1480601095343456056}
+  - component: {fileID: 1768029211391263932}
   - component: {fileID: 3808043569035059493}
   - component: {fileID: 2886029753530037223}
   - component: {fileID: 372467707223896636}
@@ -163,7 +163,7 @@ Transform:
   - {fileID: 1538072497696565619}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1480601095343456056
+--- !u!114 &1768029211391263932
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -172,13 +172,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 5689039745023292918}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 538c5907ef7b182459e41b0cf56384f8, type: 3}
+  m_Script: {fileID: 11500000, guid: 5e4feceb39aff9a448ee2cb98ab46525, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _playerBulletDamage: 15
+  _bulletMagazineCount: 124
   _thinBulletSprite: {fileID: 6104453994792669460}
   _wideBulletSprite: {fileID: 2800622063955491697}
-  _playerBulletDamage: 40
-  _enemyBulletDamage: 20
+  _wideBulletCircleCollider: {fileID: 372467707223896636}
+  _regularBulletSprite: {fileID: 9107890755234336174}
+  _regularBulletCapCollider: {fileID: 2886029753530037223}
 --- !u!114 &3808043569035059493
 MonoBehaviour:
   m_ObjectHideFlags: 0

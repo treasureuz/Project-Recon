@@ -1,20 +1,18 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using NUnit.Framework.Constraints;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PWeaponManager : MonoBehaviour
 {
 	[Header("References")]
+	[SerializeField] private PBulletManager _playerBulletManager;
 	[SerializeField] private GameObject _bulletPrefab;
 	[SerializeField] private Transform _regularBulletSpawnPoint;
 	[SerializeField] private Transform _leftBulletSpawnPoint;
 	[SerializeField] private Transform _rightBulletSpawnPoint;
 	[SerializeField] private Transform _wideBulletSpawnPoint;
 	[SerializeField] private Transform _thrusterParent;
-	[SerializeField] private BulletManager _bulletManager;
 
 	[Header("Thruster Types")]
 	[SerializeField] private GameObject _normalPrefab;
@@ -25,21 +23,26 @@ public class PWeaponManager : MonoBehaviour
 	#region Thruster Settings
 	[Header("Normal Thruster Settings")]
 	[SerializeField] private float _normalTimeBetweenShots = 0.45f;
+	[SerializeField] private float _normalBulletMagazineCount = 140f;
 	[SerializeField] private float _normalBulletDamage = 15f;
 
 	[Header("Thin Thruster Settings")]
 	[SerializeField] private float _thinTimeBetweenShots = 0.38f;
+	[SerializeField] private float _thinBulletMagazineCount = 180f;
 	[SerializeField] private float _thinBulletDamage = 22.5f;
 
 	[Header("Wide Thruster Settings")]
 	[SerializeField] private float _wideTimeBetweenShots = 0.265f;
+	[SerializeField] private float _wideBulletMagazineCount = 250f;
 	[SerializeField] private float _wideBulletDamage = 30f;
 
 	[Header("Double Thruster Settings")]
 	[SerializeField] private float _doubleTimeBetweenShots = 0.125f;
+	[SerializeField] private float _doubleBulletMagazineCount = 328f;
 	[SerializeField] private float _doubleBulletDamage = 40f;
 	#endregion
 
+	public static PWeaponManager playerWeaponManager;
 	private Stack<ThrusterType> _thrusterTypeStack = new Stack<ThrusterType>();
 
 	//private GameObject _regularBulletInstance;
@@ -49,8 +52,9 @@ public class PWeaponManager : MonoBehaviour
 	private GameObject _thrusterInstance;
 
 	private float _timeBetweenShots;
+	private float _bulletMagCount;
 	private float _nextShootTime = 0f;
-
+	
 	public enum ThrusterType
 	{
 		Normal = 0, // Standard 
@@ -75,28 +79,32 @@ public class PWeaponManager : MonoBehaviour
 	private void Normal()
 	{
 		this._timeBetweenShots = this._normalTimeBetweenShots;
-		this._bulletManager.SetBulletDamage(this._normalBulletDamage);
+		this._playerBulletManager.SetMagazineCount(this._normalBulletMagazineCount);
+		this._playerBulletManager.SetPlayerBulletDamage(this._normalBulletDamage);
 		this._thrusterInstance = Instantiate(this._normalPrefab, this._normalPrefab.transform.position, Quaternion.identity);
 	}
 
 	private void Thin()
 	{
 		this._timeBetweenShots = this._thinTimeBetweenShots;
-		this._bulletManager.SetBulletDamage(this._thinBulletDamage);
+		this._playerBulletManager.SetMagazineCount(this._thinBulletMagazineCount);
+		this._playerBulletManager.SetPlayerBulletDamage(this._thinBulletDamage);
 		this._thrusterInstance = Instantiate(this._thinPrefab, this._thinPrefab.transform.position, Quaternion.identity);
 	}
 
 	private void Wide()
 	{
 		this._timeBetweenShots = this._wideTimeBetweenShots;
-		this._bulletManager.SetBulletDamage(this._wideBulletDamage);
+		this._playerBulletManager.SetMagazineCount(this._wideBulletMagazineCount);
+		this._playerBulletManager.SetPlayerBulletDamage(this._wideBulletDamage);
 		this._thrusterInstance = Instantiate(this._widePrefab, this._widePrefab.transform.position, Quaternion.identity);
 	}
 
 	private void Double()
 	{
 		this._timeBetweenShots = this._doubleTimeBetweenShots;
-		this._bulletManager.SetBulletDamage(this._doubleBulletDamage);
+		this._playerBulletManager.SetMagazineCount(this._doubleBulletMagazineCount);
+		this._playerBulletManager.SetPlayerBulletDamage(this._doubleBulletDamage);
 		this._thrusterInstance = Instantiate(this._doublePrefab, this._doublePrefab.transform.position, Quaternion.identity);
 	}
 	#endregion
@@ -115,20 +123,15 @@ public class PWeaponManager : MonoBehaviour
 					GameObject wideBulletInstance = Instantiate
 					(this._bulletPrefab, this._wideBulletSpawnPoint.position, this.transform.rotation);
 
-					//Marks that the character type, player, shot the bullet
-					//**Specific to THIS bullet shot at THIS frame**
-					wideBulletInstance.GetComponent<BulletManager>().SetBulletCharacterType
-					(GameManager.CharacterType.Player); break;
+					this._playerBulletManager.SetMagazineCount(this._playerBulletManager.DecrementMagazineCount()); break; //Decrease amount of bullets
 				default:
 					GameObject regularBulletInstance = Instantiate
 					(this._bulletPrefab, this._regularBulletSpawnPoint.position, this.transform.rotation);
 
-					//Marks that the character type, player, shot the bullet
-					//**Specific to THIS bullet shot at THIS frame**
-					regularBulletInstance.GetComponent<BulletManager>().SetBulletCharacterType
-					(GameManager.CharacterType.Player); break;
+					this._playerBulletManager.SetMagazineCount(this._playerBulletManager.DecrementMagazineCount()); break; //Decrease amount of bullets
 			}
 			this._nextShootTime = Time.time + this._timeBetweenShots;
+			UIManager.instance.UpdateBulletText();
 		}
 	}
 
@@ -137,15 +140,14 @@ public class PWeaponManager : MonoBehaviour
 		GameObject leftBulletInstance = Instantiate
 			(this._bulletPrefab, this._leftBulletSpawnPoint.position, this.transform.rotation);
 
+		this._playerBulletManager.SetMagazineCount(this._playerBulletManager.DecrementMagazineCount()); //Decrease amount of bullets
+
 		yield return new WaitForSeconds(this._timeBetweenShots - 0.04f); // Wait time before right thruster shots
 
 		GameObject rightBulletInstance = Instantiate
 			(this._bulletPrefab, this._rightBulletSpawnPoint.position, this.transform.rotation);
 
-		//Marks that the character type, player, shot the bullet
-		//**Specific to BOTH THESE bullets shot at THIS frame**
-		leftBulletInstance.GetComponent<BulletManager>().SetBulletCharacterType(GameManager.CharacterType.Player);
-		rightBulletInstance.GetComponent<BulletManager>().SetBulletCharacterType(GameManager.CharacterType.Player);
+		this._playerBulletManager.SetMagazineCount(this._playerBulletManager.DecrementMagazineCount()); //Decrease amount of bullets
 	}
 	#endregion
 
@@ -153,9 +155,6 @@ public class PWeaponManager : MonoBehaviour
 	{
 		//Destroy previous thruster
 		if (this._thrusterInstance != null) Destroy(this._thrusterInstance);
-
-		//Set bullet character type to player so it can get the correct bullet damage
-		this._bulletManager.SetBulletCharacterType(GameManager.CharacterType.Player);
 
 		switch (this._thrusterType)
 		{
@@ -167,7 +166,9 @@ public class PWeaponManager : MonoBehaviour
 		this._thrusterInstance.transform.SetParent(this._thrusterParent, false);
 
 		//Enables/Disables Bullet Sprites and its corresponding Collider based on the current ThrusterType
-		this._bulletManager.ToggleBulletSprite(this._thrusterType);
+		this._playerBulletManager.ToggleBulletSprite(this._thrusterType);
+
+		UIManager.instance.UpdateBulletText();
 	}
 
 	#region Setters/Adders & Getters
@@ -197,6 +198,18 @@ public class PWeaponManager : MonoBehaviour
 	{
 		return this._thrusterType;
 	}
-	#endregion
 
+	public float GetMaxBulletMagazineCount()
+	{
+		switch (this._thrusterType)
+		{
+			case ThrusterType.Normal: return this._normalBulletMagazineCount;
+			case ThrusterType.Thin: return this._thinBulletMagazineCount;
+			case ThrusterType.Wide: return this._wideBulletMagazineCount;
+			case ThrusterType.Double: return this._doubleBulletMagazineCount;
+			default: return 0f;
+		}
+	}
+	#endregion
 }
+

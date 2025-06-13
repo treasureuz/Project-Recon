@@ -28,6 +28,7 @@ public class AsteriodSpawnManager : MonoBehaviour
 
 	private void Awake()
 	{
+		this._player = GameObject.FindWithTag("Player").transform;
 		//this._spawnPoints = this._spawnPointsParent.GetComponentsInChildren<Transform>();
 	}
 

@@ -40,8 +40,8 @@ public class AsteroidBehavior : MonoBehaviour, IDamageable
 		}
 		else if (collision.gameObject.CompareTag("PlayerBullet"))
 		{
-			iDamageable.OnDamaged(collision.GetComponent<BulletManager>().GetBulletDamage());
-			Debug.Log("Asteroid Hit: " + collision.GetComponent<BulletManager>().GetBulletDamage());
+			iDamageable.OnDamaged(collision.GetComponent<PBulletManager>().GetPlayerBulletDamage());
+			Debug.Log("Asteroid Hit: " + collision.GetComponent<PBulletManager>().GetPlayerBulletDamage());
 		}
 	}
 
