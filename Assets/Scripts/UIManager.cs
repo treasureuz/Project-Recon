@@ -4,8 +4,11 @@ using TMPro;
 public class UIManager : MonoBehaviour
 {
 	[Header("References")]
-    [SerializeField] private TMP_Text _healthText;
+	[SerializeField] private Camera _mainCam;
+	[SerializeField] private TMP_Text _healthText;
 	[SerializeField] private TMP_Text _bulletText;
+	[SerializeField] private TMP_Text _damageTextPrefab;
+	[SerializeField] private RectTransform _canvasParent;
 	[SerializeField] private Player _player;
 	[SerializeField] private PWeaponManager _playerWeaponManager;
 	[SerializeField] private PBulletManager _playerBulletManager;
@@ -45,6 +48,19 @@ public class UIManager : MonoBehaviour
 
 		if (this._currentBulletMagCount < 0) this._currentBulletMagCount = 0;
 		this._bulletText.text = "BULLETS: " + this._currentBulletMagCount.ToString() + "/" + 
-								this._maxBulletMagCount.ToString();
+								  this._maxBulletMagCount.ToString();
 	}
+
+	public void SpawnDamageText(Vector3 gameObjectPos, int damageAmount)
+	{
+		TMP_Text damageTextInstance = Instantiate(this._damageTextPrefab, this._canvasParent);
+
+		damageTextInstance.rectTransform.localScale = Vector3.one; // Reset scale to 1,1,1
+
+		damageTextInstance.rectTransform.position = gameObjectPos;
+		damageTextInstance.text = damageAmount.ToString(); //Set text value at the above position
+
+		Destroy(damageTextInstance.gameObject, 0.5f);
+	}
+
 }

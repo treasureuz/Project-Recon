@@ -401,16 +401,16 @@ MonoBehaviour:
   _widePrefab: {fileID: 915936592291527419, guid: ff08791422af3f248a92619c78dc2095, type: 3}
   _doublePrefab: {fileID: 6472088012352498680, guid: 0b8767342fa88b24faf062dad7610167, type: 3}
   _normalTimeBetweenShots: 0.45
-  _normalBulletMagazineCount: 140
+  _normalBulletMagazineCount: 38
   _normalBulletDamage: 15
   _thinTimeBetweenShots: 0.38
-  _thinBulletMagazineCount: 180
+  _thinBulletMagazineCount: 50
   _thinBulletDamage: 22.5
   _wideTimeBetweenShots: 0.285
-  _wideBulletMagazineCount: 250
+  _wideBulletMagazineCount: 64
   _wideBulletDamage: 30
   _doubleTimeBetweenShots: 0.19
-  _doubleBulletMagazineCount: 328
+  _doubleBulletMagazineCount: 80
   _doubleBulletDamage: 40
 --- !u!61 &16584786667965039
 BoxCollider2D:

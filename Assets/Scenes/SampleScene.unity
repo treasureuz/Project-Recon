@@ -367,7 +367,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: -10
+  m_SortingOrder: -100
   m_Sprite: {fileID: -5858099061022299432, guid: 1a3798128965e7c4e9acb5bf0e8488fe, type: 3}
   m_Color: {r: 0.76818025, g: 1, b: 0, a: 1}
   m_FlipX: 0
@@ -1273,7 +1273,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: -181.91162, w: 0}
+  m_margin: {x: 0, y: 0, z: -234.00284, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -1739,8 +1739,8 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1342751236}
   - {fileID: 887048609}
+  - {fileID: 1342751236}
   m_Father: {fileID: 1899849276}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -1797,8 +1797,8 @@ Canvas:
   m_GameObject: {fileID: 1710833905}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 0
-  m_Camera: {fileID: 0}
+  m_RenderMode: 1
+  m_Camera: {fileID: 519420031}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
@@ -2161,8 +2161,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36643bf7f5c48844ea6d5c5bc6b0fa6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _mainCam: {fileID: 519420031}
   _healthText: {fileID: 887048610}
   _bulletText: {fileID: 1342751237}
+  _damageTextPrefab: {fileID: 7792092309018426927, guid: 035a58c7f369f7a4695771cbc163c7c2, type: 3}
+  _canvasParent: {fileID: 1710833906}
   _player: {fileID: 1698188123}
   _playerWeaponManager: {fileID: 1672482124}
   _playerBulletManager: {fileID: 1768029211391263932, guid: 591ee9558d478f248936976d67428483, type: 3}

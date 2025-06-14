@@ -164,7 +164,7 @@ public class PWeaponManager : MonoBehaviour
 			case ThrusterType.Double: Double(); break; //Player Type - Ralph
 		}
 		this._thrusterInstance.transform.SetParent(this._thrusterParent, false);
-
+		
 		//Enables/Disables Bullet Sprites and its corresponding Collider based on the current ThrusterType
 		this._playerBulletManager.ToggleBulletSprite(this._thrusterType);
 

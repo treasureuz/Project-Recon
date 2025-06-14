@@ -46,7 +46,7 @@ public class Player : MonoBehaviour, IDamageable
 
 	private PlayerType _playerType;
 
-	private void Awake()
+	private void Start()
 	{
 		this._playerType = PlayerType.Standard;
 		this._playerWeaponManager.AddThrusterTypeToStack(PWeaponManager.ThrusterType.Normal);
