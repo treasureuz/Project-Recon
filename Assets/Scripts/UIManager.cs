@@ -51,13 +51,13 @@ public class UIManager : MonoBehaviour
 								  this._maxBulletMagCount.ToString();
 	}
 
-	public void SpawnDamageText(Vector3 gameObjectPos, int damageAmount)
+	public void SpawnDamageText(Vector3 spawnPos, int damageAmount)
 	{
 		TMP_Text damageTextInstance = Instantiate(this._damageTextPrefab, this._canvasParent);
 
 		damageTextInstance.rectTransform.localScale = Vector3.one; // Reset scale to 1,1,1
 
-		damageTextInstance.rectTransform.position = gameObjectPos;
+		damageTextInstance.rectTransform.position = spawnPos;
 		damageTextInstance.text = damageAmount.ToString(); //Set text value at the above position
 
 		Destroy(damageTextInstance.gameObject, 0.5f);

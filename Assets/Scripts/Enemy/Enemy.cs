@@ -169,18 +169,16 @@ public class Enemy : MonoBehaviour, IDamageable
 
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
-		RectTransform rectTransform = collision.GetComponent<RectTransform>();
-		PBulletManager col = collision.GetComponent<PBulletManager>();
-
+		PBulletManager collisionBM = collision.GetComponent<PBulletManager>();
 		IDamageable iDamageable = this.GetComponent<IDamageable>();
 
 		if (collision.CompareTag("PlayerBullet"))
 		{
 			StartCoroutine(OnEnemyShot()); //Enables isShot boolean and switches Enemy to attack mode
-			iDamageable.OnDamaged(col.GetPlayerBulletDamage());
+			iDamageable.OnDamaged(collisionBM.GetPlayerBulletDamage());
 
-			rectTransform.position = new Vector3(rectTransform.position.x + .5f, rectTransform.position.y + .7f, rectTransform.position.z);
-			UIManager.instance.SpawnDamageText(collision.GetComponent<RectTransform>().position, (int) col.GetPlayerBulletDamage());
+			Vector3 spawnPos = new Vector3(this.transform.position.x, this.transform.position.y + 0.3f);
+			UIManager.instance.SpawnDamageText(spawnPos, (int) collisionBM.GetPlayerBulletDamage());
 		}
 	}
 

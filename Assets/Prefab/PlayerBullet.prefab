@@ -40,7 +40,7 @@ SpriteRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 607741796525247142}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -146,15 +146,16 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!224 &3731414757703515654
-RectTransform:
+--- !u!4 &3731414757703515654
+Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5689039745023292918}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.1317, y: -0.0229, z: 0}
   m_LocalScale: {x: 0.021489104, y: 0.0027806244, z: 0.044282973}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -162,11 +163,6 @@ RectTransform:
   - {fileID: 1538072497696565619}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.1317, y: -0.0229}
-  m_SizeDelta: {x: 19.2, y: 13.47}
-  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1768029211391263932
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -179,8 +175,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e4feceb39aff9a448ee2cb98ab46525, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerBulletDamage: 22.5
-  _bulletMagazineCount: 44
+  _playerBulletDamage: 30
+  _bulletMagazineCount: 60
   _thinBulletSprite: {fileID: 6104453994792669460}
   _wideBulletSprite: {fileID: 2800622063955491697}
   _wideBulletCircleCollider: {fileID: 372467707223896636}
@@ -208,7 +204,7 @@ CapsuleCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5689039745023292918}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
@@ -245,7 +241,7 @@ CircleCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5689039745023292918}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
@@ -395,7 +391,7 @@ SpriteRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8215590533164436592}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1

@@ -89,9 +89,9 @@ MonoBehaviour:
   _omenMaxHealth: 125
   _omenMoveSpeed: 3.15
   _soraMaxHealth: 155
-  _soraMoveSpeed: 3.45
+  _soraMoveSpeed: 3.4
   _ralphMaxHealth: 200
-  _ralphMoveSpeed: 3.85
+  _ralphMoveSpeed: 3.75
 --- !u!50 &4307045051133944857
 Rigidbody2D:
   serializedVersion: 5
@@ -409,7 +409,7 @@ MonoBehaviour:
   _wideTimeBetweenShots: 0.285
   _wideBulletMagazineCount: 64
   _wideBulletDamage: 30
-  _doubleTimeBetweenShots: 0.19
+  _doubleTimeBetweenShots: 0.25
   _doubleBulletMagazineCount: 80
   _doubleBulletDamage: 40
 --- !u!61 &16584786667965039

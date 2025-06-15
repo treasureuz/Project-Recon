@@ -33,9 +33,7 @@ public class AsteroidBehavior : MonoBehaviour, IDamageable
 
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
-		RectTransform rectTransform = collision.GetComponent<RectTransform>();
-		PBulletManager col = collision.GetComponent<PBulletManager>();
-
+		PBulletManager collisionBM = collision.GetComponent<PBulletManager>();
 		IDamageable iDamageable = this.GetComponent<IDamageable>();
 		
 		if (collision.gameObject.layer == LayerMask.NameToLayer("Player") || collision.CompareTag("Backdrop"))
@@ -44,11 +42,10 @@ public class AsteroidBehavior : MonoBehaviour, IDamageable
 		}
 		else if (collision.gameObject.CompareTag("PlayerBullet"))
 		{
-			iDamageable.OnDamaged(col.GetPlayerBulletDamage());
+			iDamageable.OnDamaged(collisionBM.GetPlayerBulletDamage());
 
-			rectTransform.position = new Vector3
-				(rectTransform.position.x + .35f, rectTransform.position.y - 0.1f, rectTransform.position.z);
-			UIManager.instance.SpawnDamageText(rectTransform.position, (int) col.GetPlayerBulletDamage());
+			Vector3 spawnPos = new Vector3(this.transform.position.x, this.transform.position.y + 0.3f);
+			UIManager.instance.SpawnDamageText(spawnPos, (int) collisionBM.GetPlayerBulletDamage());
 		}
 	}
 

@@ -54,7 +54,7 @@ public class PWeaponManager : MonoBehaviour
 	private float _timeBetweenShots;
 	private float _bulletMagCount;
 	private float _nextShootTime = 0f;
-	
+
 	public enum ThrusterType
 	{
 		Normal = 0, // Standard 
@@ -114,7 +114,7 @@ public class PWeaponManager : MonoBehaviour
 	{
 		//Time.time is the actual time accumulated every single frame since the game started
 		//Different from Time.deltaTime which is a static time of 0.0167 seconds for every single frame (60 FPS)
-		if (Mouse.current.leftButton.isPressed && Time.time >= this._nextShootTime)
+		if (HasBullets() && Mouse.current.leftButton.isPressed && Time.time >= this._nextShootTime)
 		{
 			switch (this._thrusterType)
 			{
@@ -142,7 +142,7 @@ public class PWeaponManager : MonoBehaviour
 
 		this._playerBulletManager.SetMagazineCount(this._playerBulletManager.DecrementMagazineCount()); //Decrease amount of bullets
 
-		yield return new WaitForSeconds(this._timeBetweenShots - 0.04f); // Wait time before right thruster shots
+		yield return new WaitForSeconds(this._timeBetweenShots / 2f); // Wait time before right thruster shoots
 
 		GameObject rightBulletInstance = Instantiate
 			(this._bulletPrefab, this._rightBulletSpawnPoint.position, this.transform.rotation);
@@ -171,7 +171,14 @@ public class PWeaponManager : MonoBehaviour
 		UIManager.instance.UpdateBulletText();
 	}
 
-	#region Setters/Adders & Getters
+	#region Helper Methods
+	private bool HasBullets()
+	{
+		return this._playerBulletManager.GetCurrentMagazineCount() > 0;
+	}
+	#endregion
+
+	#region Setters//Adders & Getters
 	public void AddThrusterTypeToStack(ThrusterType newThrusterType)
 	{
 		this._thrusterType = newThrusterType;
