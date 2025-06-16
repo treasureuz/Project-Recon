@@ -7,7 +7,6 @@ TagManager:
   - Asteroid
   - Ground
   - Backdrop
-  - Enemy
   - SorasOrb
   - OmensTriangle
   - RalphsCube
@@ -15,6 +14,10 @@ TagManager:
   - EnemyBullet
   - PlayerBullet
   - Bullet
+  - Cop
+  - Guard
+  - LilGuard
+  - Enemy
   layers:
   - Default
   - TransparentFX

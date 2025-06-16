@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour, IDamageable
@@ -8,37 +9,73 @@ public class Enemy : MonoBehaviour, IDamageable
 	[SerializeField] private Transform _player;
 	[SerializeField] private AsteroidBehavior _asteroid;
 	[SerializeField] private RadiusManager _radiusManager;
+	[SerializeField] private EWeaponManager _enemyWeaponManager;
 
 	[Header("Move Bounds")]
 	[SerializeField] private Vector2 _minBounds;
 	[SerializeField] private Vector2 _maxBounds;
 
-	[Header("Enemy Settings")]
+	[Header("Global Enemy Settings")]
 	[SerializeField] private float _rotationDuration = 0.2f; //How long to rotate towards player position
 	[SerializeField] private float _moveDuration = 1f; //How long to move towards random position
-	[SerializeField] private float _timeBetweenMoves = 2f;
-	[SerializeField] private float _moveSpeed = 2.8f;
-	[SerializeField] private float _maxHealth = 120f; // Max health of the player
-	[SerializeField] private float _waitTimeUntilIdle = 3f;
+
+	#region Enemy Settings
+	[Header("Guard Enemy Settings")]
+	[SerializeField] private float _guardTimeBetweenMoves = 2f;
+	[SerializeField] private float _guardMoveSpeed = 1.55f;
+	[SerializeField] private float _guardMaxHealth = 120f;
+	[SerializeField] private float _guardWaitTimeUntilPatrol = 4f;
+
+	[Header("Cop Enemy Settings")]
+	[SerializeField] private float _copTimeBetweenMoves = 1.65f;
+	[SerializeField] private float _copMoveSpeed = 2f;
+	[SerializeField] private float _copMaxHealth = 180f; 
+	[SerializeField] private float _copWaitTimeUntilPatrol = 7.5f;
+
+	[Header("Lil Guard Enemy Settings")]
+	[SerializeField] private Enemy _lilGuardPrefab;
+	[SerializeField] private Transform _lilGuardTopSpawnPoint;
+	[SerializeField] private Transform _lilGuardBottomSpawnPoint;
+	[SerializeField] private float _lilGuardMoveSpeed = 1.75f;
+	[SerializeField] private float _lilGuardMaxHealth = 180f;
+	#endregion
+
+	private Enemy _lilGuardTopInstance;
+	private Enemy _lilGuardBottomInstance;
 
 	// Forces z axis to be 0
 	private Vector2 _directionToPlayer;
 	private Vector2 _targetPosition;
 
+	private float _timeBetweenMoves;
 	private float _currentHealth;
+	private float _moveSpeed;
+	private float _waitTimeUntilPatrol;
+
 	private float _elapsedMoveTime;
 	private float offset = 0.75f; // How far enemy is allowed to move each time
 
 	private bool _isWithinRadius;
 	private bool _isShot;
 
+	#region Enemy Enums
+	public enum EnemyType
+	{
+		Guard,
+		Cop, 
+		LilGuard
+	}
+
 	public enum EnemyState
 	{
 		Patrol,
 		Attack,
 	}
+	#endregion
 
-	public EnemyState state = EnemyState.Patrol;
+	[Header("Enemy Type & State")]
+	public EnemyType enemyType;
+	public EnemyState enemyState;
 
 	private void Awake()
 	{
@@ -47,21 +84,28 @@ public class Enemy : MonoBehaviour, IDamageable
 
 	private void Start()
 	{
-		this._currentHealth = this._maxHealth; // Initialize health
+		GameObject lilGuardSpawnPoints = GameObject.Find("LilGuardSpawnPoints");
+		this._lilGuardTopSpawnPoint = lilGuardSpawnPoints.transform.Find("TopSpawnPoint").transform;
+		this._lilGuardBottomSpawnPoint = lilGuardSpawnPoints.transform.Find("BottomSpawnPoint").transform;
 
-		//Dodging/Moving Bounds
-		this._minBounds = new Vector2(this.transform.position.x - 5.2f, -2.42f);
-		this._maxBounds = new Vector2(this.transform.position.x + 5.2f, 3.42f);
+		if (enemyType != EnemyType.LilGuard)
+		{
+			//Dodging/Moving Bounds based off radius 
+			this._minBounds = new Vector2(this.transform.position.x - 5.2f, -2.42f);
+			this._maxBounds = new Vector2(this.transform.position.x + 5.2f, 3.42f);
 
-		//Generate position to move to on start
-		this._targetPosition = GenerateRandomPosition();
+			//Generate position to move to on start
+			this._targetPosition = GenerateRandomPosition();
+		}
+
+		HandleEnemyType();
+		this._enemyWeaponManager.HandleBulletDamage(); // Sets enemy weapon type
 	}
-	
+
 	private void Update()
 	{
 		//Not needed but adds clarity as Enemy HAS the radius
-		if (this._radiusManager.IsWithinRadius()) this._isWithinRadius = true;
-		else this._isWithinRadius = false;
+		if (this._radiusManager.IsWithinRadius()) StartCoroutine(IsWithinRadius());
 
 		UpdateEnemyState();
 	}
@@ -73,7 +117,7 @@ public class Enemy : MonoBehaviour, IDamageable
 
 	private void PerformEnemyAction()
 	{
-		switch (state)
+		switch (enemyState)
 		{
 			case EnemyState.Attack:
 				HandleEnemyRotation();
@@ -83,13 +127,41 @@ public class Enemy : MonoBehaviour, IDamageable
 		}
 	}
 
-	private void UpdateEnemyState()
+	#region Enemy Type Settings
+	private void Guard()
 	{
-		if (this._isShot || this._isWithinRadius) state = EnemyState.Attack;
-		else state = EnemyState.Patrol;
+		this._timeBetweenMoves = this._guardTimeBetweenMoves;
+		this._moveSpeed = this._guardMoveSpeed;
+		this._currentHealth = this._guardMaxHealth;
+		this._waitTimeUntilPatrol = this._guardWaitTimeUntilPatrol;
+	}
+	
+	private void Cop()
+	{
+		this._timeBetweenMoves = this._copTimeBetweenMoves;
+		this._moveSpeed = this._copMoveSpeed;
+		this._currentHealth = this._copMaxHealth;
+		this._waitTimeUntilPatrol = this._copWaitTimeUntilPatrol;
 	}
 
+	private void LilGuard()
+	{
+		this._moveSpeed = this._lilGuardMoveSpeed;
+		this._currentHealth = this._lilGuardMaxHealth;
+	}
+	#endregion
+
 	#region Enemy Actions
+	private void HandleEnemyType()
+	{
+		switch (enemyType)
+		{
+			case EnemyType.Guard: Guard(); break;
+			case EnemyType.Cop: Cop(); break;
+			case EnemyType.LilGuard: LilGuard(); break;
+		}
+	}
+
 	private void HandleEnemyRotation()
 	{
 		// Checks if direction is positive (player is to the left) or negative (player is to the right)
@@ -104,13 +176,24 @@ public class Enemy : MonoBehaviour, IDamageable
 
 	private void HandleEnemyMovement()
 	{
+		if (enemyType != EnemyType.LilGuard) 
+		{
+			MoveTowardsPlayer();
+			HandleDodging();
+		}
+	}
+
+	private void MoveTowardsPlayer()
+	{
 		//This allows for interpolation
-		Vector2 playerPos = new Vector2(this._player.position.x + 0.5f, this._player.position.y);
+		Vector2 playerPos = new Vector2(this._player.position.x + 2f, this._player.position.y);
 		Vector2 direction = (playerPos - this._rb2d.position).normalized;
 		Vector2 newPosition = this._rb2d.position + (direction * this._moveSpeed * Time.fixedDeltaTime);
 		//Move towards player
 		this._rb2d.MovePosition(newPosition);
-
+	}
+	private void HandleDodging()
+	{
 		this._elapsedMoveTime += Time.fixedDeltaTime;
 		// "Dodge"/"Move" to the generated position. **Takes 1 sec for move interpolation to finish**
 		if (this._elapsedMoveTime < this._moveDuration)
@@ -142,30 +225,59 @@ public class Enemy : MonoBehaviour, IDamageable
 		// Generates random positions within appropriate bounds
 		float randXPos = Random.Range(minX, maxX);
 		float randYPos = Random.Range(minY, maxY);
-		
+
 		return new Vector2(randXPos, randYPos);
 	}
 	#endregion
 
+	private void UpdateEnemyState()
+	{
+		if (this._isShot || this._isWithinRadius) enemyState = EnemyState.Attack;
+		else enemyState = EnemyState.Patrol;
+	}
+
 	private IEnumerator OnEnemyShot()
 	{
 		this._isShot = true;
-		yield return new WaitForSeconds(this._waitTimeUntilIdle);
+		yield return new WaitForSeconds(this._waitTimeUntilPatrol);
 		this._isShot = false;
+	}
+
+	private IEnumerator IsWithinRadius()
+	{
+		this._isWithinRadius = true;
+		yield return new WaitForSeconds(this._waitTimeUntilPatrol);
+		this._isWithinRadius = false;
 	}
 
 	#region Setters && Getters
 	public EnemyState GetEnemyState()
 	{
-		return this.state;
+		return this.enemyState;
 	}
 
-	public float GetWaitTimeUntilIdle()
+	public EnemyType GetEnemyType()
 	{
-		return this._waitTimeUntilIdle;
+		return this.enemyType;
 	}
 
+	public float GetWaitTimeUntilPatrol()
+	{
+		return this._waitTimeUntilPatrol;
+	}
 	#endregion
+
+	private void DestroyOnDie()
+	{
+		switch (enemyType)
+		{
+			case EnemyType.Cop:
+				this._lilGuardTopInstance = Instantiate(this._lilGuardPrefab, this._lilGuardTopSpawnPoint.position, Quaternion.identity);
+				this._lilGuardBottomInstance = Instantiate(this._lilGuardPrefab, this._lilGuardBottomSpawnPoint.position, Quaternion.identity);
+				Destroy(gameObject); break;
+			default: Destroy(gameObject); break;
+		}
+	}
 
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
@@ -188,9 +300,8 @@ public class Enemy : MonoBehaviour, IDamageable
 		this._currentHealth -= damageAmount;
 		if (this._currentHealth <= 0)
 		{
-			Destroy(gameObject); // Destroy enemy when health reaches zero
+			DestroyOnDie(); // Destroy enemy when health reaches zero
 		}
 	}
-
 	#endregion
 }

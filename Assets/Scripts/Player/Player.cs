@@ -68,28 +68,28 @@ public class Player : MonoBehaviour, IDamageable
 	{
 		this._currentHealth = this._standardMaxHealth;
 		this._moveSpeed = this._standardMoveSpeed;
-		this.transform.localScale = new Vector3(0.925f, 0.925f, 0.925f);
+		this.transform.localScale = new Vector3(0.855f, 0.855f, 0.855f);
 	}
 
 	private void Omen()
 	{
 		this._currentHealth = this._omenMaxHealth;
 		this._moveSpeed = this._omenMoveSpeed;
-		this.transform.localScale = new Vector3(0.95f, 0.95f, 0.95f);
+		this.transform.localScale = new Vector3(0.875f, 0.875f, 0.875f);
 	}
 
 	private void Sora()
 	{
 		this._currentHealth = this._soraMaxHealth;
 		this._moveSpeed = this._soraMoveSpeed;
-		this.transform.localScale = new Vector3(0.985f, 0.985f, 0.985f);
+		this.transform.localScale = new Vector3(0.9f, 0.9f, 0.9f);
 	}
 
 	private void Ralph()
 	{
 		this._currentHealth = this._ralphMaxHealth;
 		this._moveSpeed = this._ralphMoveSpeed;
-		this.transform.localScale = new Vector3(1.035f, 1.035f, 1.035f);
+		this.transform.localScale = new Vector3(0.93f, 0.93f, 0.93f);
 	}
 	#endregion
 
@@ -195,7 +195,6 @@ public class Player : MonoBehaviour, IDamageable
 				HandlePlayerSwitch(); break;
 		}
 	}
-
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
 		IDamageable iDamageable = GetComponent<IDamageable>();
