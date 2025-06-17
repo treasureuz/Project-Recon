@@ -60,7 +60,7 @@ public class UIManager : MonoBehaviour
 		damageTextInstance.rectTransform.position = spawnPos;
 		damageTextInstance.text = damageAmount.ToString(); //Set text value at the above position
 
-		Destroy(damageTextInstance.gameObject, 0.5f);
+		Destroy(damageTextInstance.gameObject, 0.35f);
 	}
 
 }

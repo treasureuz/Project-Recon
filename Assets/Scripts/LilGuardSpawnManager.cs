@@ -25,7 +25,7 @@ public class LilGuardSpawnManager : MonoBehaviour
 
 	private void RedirectSpawnPoints()
 	{
-		this.transform.position = new Vector3(this._copEnemy.position.x, this.transform.position.y, this.transform.position.z);
+		this.transform.position = new Vector3(this._copEnemy.position.x, this._copEnemy.position.y, this.transform.position.z);
 		this.transform.rotation = this._copEnemy.rotation;
 	}
 }

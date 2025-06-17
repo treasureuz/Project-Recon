@@ -108,6 +108,18 @@ public class Player : MonoBehaviour, IDamageable
 		float t = Time.deltaTime / this._rotationDuration; // a fraction of the total angle you want to rotate THIS frame
 		this.transform.Rotate(Vector3.forward, angle * t);
 
+		//Normalize angle for scale flipping (eulerAngles.z can't be negative -- 0 to 360 degrees)
+		float zAngle = this.transform.eulerAngles.z;
+		if (zAngle > 180f) zAngle -= 360f;
+
+		Vector3 localScale = this.transform.localScale;
+
+		// Flip the player sprite vertically when facing left
+		if (zAngle > 120f || zAngle < -100f) localScale.y = -Mathf.Abs(localScale.y); 
+		else localScale.y = Mathf.Abs(localScale.y); // Keep the player sprite upright when facing right
+
+		this.transform.localScale = localScale; // Apply the scale to the player
+
 		// Rotate the weapon to face the mouse position (Does similarly thing as above)
 		// this.transform.right = Vector3.Slerp(this.transform.right, this._direction, Mathf.Clamp01(t));
 	}

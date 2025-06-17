@@ -172,15 +172,24 @@ public class Enemy : MonoBehaviour, IDamageable
 		//Rotate smoothly/step by step
 		float t = Time.fixedDeltaTime / this._rotationDuration; // a fraction of the total angle you want to rotate THIS frame
 		this.transform.Rotate(Vector3.forward, angle * t);
+
+		//Normalize angle for scale flipping (eulerAngles.z can't be negative -- 0 to 360 degrees)
+		float zAngle = this.transform.eulerAngles.z;
+		if (zAngle > 180f) zAngle -= 360f;
+
+		Vector3 localScale = this.transform.localScale;
+
+		// Flip the enemy sprite vertically when facing left
+		if (zAngle > 120f || zAngle < -100f) localScale.y = -Mathf.Abs(localScale.y);
+		else localScale.y = Mathf.Abs(localScale.y); // Keep the enemy sprite upright when facing right
+
+		this.transform.localScale = localScale; // Apply the scale to the enemy
 	}
 
 	private void HandleEnemyMovement()
 	{
-		if (enemyType != EnemyType.LilGuard) 
-		{
-			MoveTowardsPlayer();
-			HandleDodging();
-		}
+		MoveTowardsPlayer();
+		if (enemyType != EnemyType.LilGuard) HandleDodging();
 	}
 
 	private void MoveTowardsPlayer()
@@ -272,8 +281,10 @@ public class Enemy : MonoBehaviour, IDamageable
 		switch (enemyType)
 		{
 			case EnemyType.Cop:
-				this._lilGuardTopInstance = Instantiate(this._lilGuardPrefab, this._lilGuardTopSpawnPoint.position, Quaternion.identity);
-				this._lilGuardBottomInstance = Instantiate(this._lilGuardPrefab, this._lilGuardBottomSpawnPoint.position, Quaternion.identity);
+				this._lilGuardTopInstance = Instantiate
+					(this._lilGuardPrefab, this._lilGuardTopSpawnPoint.position, this.transform.rotation);
+				this._lilGuardBottomInstance = Instantiate
+					(this._lilGuardPrefab, this._lilGuardBottomSpawnPoint.position, this.transform.rotation);
 				Destroy(gameObject); break;
 			default: Destroy(gameObject); break;
 		}
