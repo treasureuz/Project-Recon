@@ -9,6 +9,7 @@ public class Enemy : MonoBehaviour, IDamageable
 	[SerializeField] private Transform _player;
 	[SerializeField] private AsteroidBehavior _asteroid;
 	[SerializeField] private RadiusManager _radiusManager;
+	[SerializeField] private CircleCollider2D _radius;
 	[SerializeField] private EWeaponManager _enemyWeaponManager;
 
 	[Header("Move Bounds")]
@@ -53,6 +54,7 @@ public class Enemy : MonoBehaviour, IDamageable
 	private float _waitTimeUntilPatrol;
 
 	private float _elapsedMoveTime;
+
 	private float offset = 0.75f; // How far enemy is allowed to move each time
 
 	private bool _isWithinRadius;
@@ -91,8 +93,8 @@ public class Enemy : MonoBehaviour, IDamageable
 		if (enemyType != EnemyType.LilGuard)
 		{
 			//Dodging/Moving Bounds based off radius 
-			this._minBounds = new Vector2(this.transform.position.x - 5.2f, -2.42f);
-			this._maxBounds = new Vector2(this.transform.position.x + 5.2f, 3.42f);
+			this._minBounds = new Vector2(this.transform.position.x - this._radius.bounds.extents.x, -2.42f);
+			this._maxBounds = new Vector2(this.transform.position.x + this._radius.bounds.extents.x, 3.42f);
 
 			//Generate position to move to on start
 			this._targetPosition = GenerateRandomPosition();
@@ -195,7 +197,7 @@ public class Enemy : MonoBehaviour, IDamageable
 	private void MoveTowardsPlayer()
 	{
 		//This allows for interpolation
-		Vector2 playerPos = new Vector2(this._player.position.x + 2f, this._player.position.y);
+		Vector2 playerPos = new Vector2(this._player.position.x + 3f, this._player.position.y);
 		Vector2 direction = (playerPos - this._rb2d.position).normalized;
 		Vector2 newPosition = this._rb2d.position + (direction * this._moveSpeed * Time.fixedDeltaTime);
 		//Move towards player

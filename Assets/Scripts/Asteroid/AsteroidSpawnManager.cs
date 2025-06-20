@@ -1,11 +1,15 @@
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
+using NUnit.Framework.Constraints;
+using Unity.Burst.Intrinsics;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class AsteriodSpawnManager : MonoBehaviour
 {
-    [Header("References")]
-	[SerializeField] private GameObject _asteroidPrefab;
+	[Header("References")]
+	[SerializeField] private GameObject _cosmicAsteroidPrefab;
+	[SerializeField] private GameObject _dwarfAsteroidPrefab;
 	[SerializeField] private Rigidbody2D _rb2d;
 	[SerializeField] Transform _player;
 
@@ -13,13 +17,17 @@ public class AsteriodSpawnManager : MonoBehaviour
 	[SerializeField] private Transform _spawnPointsParent;
 	[SerializeField] private Transform[] _spawnPoints = new Transform[3];
 
-    [Header("Spawn Settings")]
-	[SerializeField] private float _spawnInterval = 5f; // Time in seconds between spawns
+    [Header("Cosmic Spawn Settings")]
+	[SerializeField] private float _cosmicSpawnInterval = 5f;
 
+	[Header("Dwarf Spawn Settings")]
+	[SerializeField] private float _dwarfSpawnInterval = 2f;
+
+	private GameObject _asteroidPrefab;
 	private GameObject _asteroidInstance;
-	
 	private Transform _randomSpawnPoint;
 
+	private float _spawnInterval;
 	private float _nextSpawnTime = 0f;
 
 	private float _playerStartPositionX;
@@ -46,9 +54,25 @@ public class AsteriodSpawnManager : MonoBehaviour
 			if (InputManager.instance._isMoving) RedirectSpawnPoints();
 		}
 	}
-	
+
+	#region Asteroid Type Methods
+	private void CosmicAsteroid()
+	{
+		this._asteroidPrefab = this._cosmicAsteroidPrefab;
+		this._spawnInterval = this._cosmicSpawnInterval;
+	}
+
+	private void DwarfAsteroid()
+	{
+		this._asteroidPrefab = this._dwarfAsteroidPrefab;
+		this._spawnInterval = this._dwarfSpawnInterval;
+	}
+	#endregion
+
 	private void SpawnAsteroid()
 	{
+		DetermineAsteroidTypeToSpawn(); //First determine the type of asteroid to spawn
+
 		int randomSpawnIndex = Random.Range(0, this._spawnPoints.Length);
 		if (Time.time >= this._nextSpawnTime)
 		{
@@ -59,6 +83,22 @@ public class AsteriodSpawnManager : MonoBehaviour
 		}	
 	}
 
+	private void DetermineAsteroidTypeToSpawn()
+	{
+		int randomAsteroidIndex = Random.Range(0, 4);
+
+		switch (randomAsteroidIndex)
+		{
+			// 0 and 1 are cosmic asteroids, 
+			case 0: 
+			case 1: CosmicAsteroid(); break;
+
+			// 2 and 3 are dwarf asteroids
+			case 2: 
+			case 3: DwarfAsteroid(); break;
+
+		}
+	}
 	private void RedirectSpawnPoints()
 	{
 		this._playerPositionXDiffFromStart = this._player.position.x - this._playerStartPositionX;

@@ -122,12 +122,12 @@ public class PWeaponManager : MonoBehaviour
 				case ThrusterType.Wide:
 					GameObject wideBulletInstance = Instantiate
 					(this._bulletPrefab, this._wideBulletSpawnPoint.position, this.transform.rotation);
-
-					this._playerBulletManager.SetMagazineCount(this._playerBulletManager.DecrementMagazineCount()); break; //Decrease amount of bullets
+					
+					this._playerBulletManager.SetMagazineCount(this._playerBulletManager.DecrementMagazineCount()); break; //Decrease amount of bullets 
 				default:
 					GameObject regularBulletInstance = Instantiate
 					(this._bulletPrefab, this._regularBulletSpawnPoint.position, this.transform.rotation);
-
+			
 					this._playerBulletManager.SetMagazineCount(this._playerBulletManager.DecrementMagazineCount()); break; //Decrease amount of bullets
 			}
 			this._nextShootTime = Time.time + this._timeBetweenShots;
@@ -140,14 +140,13 @@ public class PWeaponManager : MonoBehaviour
 		GameObject leftBulletInstance = Instantiate
 			(this._bulletPrefab, this._leftBulletSpawnPoint.position, this.transform.rotation);
 
-		this._playerBulletManager.SetMagazineCount(this._playerBulletManager.DecrementMagazineCount()); //Decrease amount of bullets
+		//Decrease amount of bullets for both left and right thrusters
+		this._playerBulletManager.SetMagazineCount(this._playerBulletManager.GetCurrentMagazineCount() - 2f); 
 
 		yield return new WaitForSeconds(this._timeBetweenShots / 2f); // Wait time before right thruster shoots
 
 		GameObject rightBulletInstance = Instantiate
 			(this._bulletPrefab, this._rightBulletSpawnPoint.position, this.transform.rotation);
-
-		this._playerBulletManager.SetMagazineCount(this._playerBulletManager.DecrementMagazineCount()); //Decrease amount of bullets
 	}
 	#endregion
 

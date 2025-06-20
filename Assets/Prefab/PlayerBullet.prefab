@@ -175,8 +175,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e4feceb39aff9a448ee2cb98ab46525, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerBulletDamage: 40
-  _bulletMagazineCount: 34
+  _playerBulletDamage: 15
+  _bulletMagazineCount: 38
   _thinBulletSprite: {fileID: 6104453994792669460}
   _wideBulletSprite: {fileID: 2800622063955491697}
   _wideBulletCircleCollider: {fileID: 372467707223896636}

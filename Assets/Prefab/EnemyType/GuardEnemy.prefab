@@ -372,6 +372,7 @@ MonoBehaviour:
   _player: {fileID: 303196939666991746, guid: 1fa994d84365a144392272d4fece4383, type: 3}
   _asteroid: {fileID: 6430892029719757333, guid: 42137422141fffe41ab10d200b1aec7d, type: 3}
   _radiusManager: {fileID: 1987500767680005915}
+  _radius: {fileID: 9182655225929762179}
   _enemyWeaponManager: {fileID: 5604364594436956743}
   _minBounds: {x: -12.9, y: -2.42}
   _maxBounds: {x: -6.3, y: 3.42}

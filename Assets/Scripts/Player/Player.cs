@@ -105,10 +105,10 @@ public class Player : MonoBehaviour, IDamageable
 		float angle = Vector3.SignedAngle(this.transform.right, this._direction, Vector3.forward);
 
 		//Rotate smoothly/step by step
-		float t = Time.deltaTime / this._rotationDuration; // a fraction of the total angle you want to rotate THIS frame
+		float t = Time.deltaTime / this._rotationDuration; // a fraction of the total angle/rotation (THIS frame)
 		this.transform.Rotate(Vector3.forward, angle * t);
 
-		//Normalize angle for scale flipping (eulerAngles.z can't be negative -- 0 to 360 degrees)
+		//Normalizes angle for scale flipping (eulerAngles.z can't be negative -- 0 to 360 degrees)
 		float zAngle = this.transform.eulerAngles.z;
 		if (zAngle > 180f) zAngle -= 360f;
 

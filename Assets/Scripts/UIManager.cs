@@ -45,7 +45,7 @@ public class UIManager : MonoBehaviour
 	{
 		this._currentBulletMagCount = this._playerBulletManager.GetCurrentMagazineCount();
 		this._maxBulletMagCount = this._playerWeaponManager.GetMaxBulletMagazineCount();
-
+	
 		if (this._currentBulletMagCount < 0) this._currentBulletMagCount = 0;
 		this._bulletText.text = "BULLETS: " + this._currentBulletMagCount.ToString() + "/" + 
 								  this._maxBulletMagCount.ToString();
