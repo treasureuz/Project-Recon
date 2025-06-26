@@ -1,13 +1,14 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using NUnit.Framework;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour, IDamageable
 {
 	[Header("References")]
 	[SerializeField] private Rigidbody2D _rb2d;
-	[SerializeField] private Transform _player;
-	[SerializeField] private AsteroidBehavior _asteroid;
 	[SerializeField] private RadiusManager _radiusManager;
 	[SerializeField] private CircleCollider2D _radius;
 	[SerializeField] private EWeaponManager _enemyWeaponManager;
@@ -35,17 +36,21 @@ public class Enemy : MonoBehaviour, IDamageable
 
 	[Header("Lil Guard Enemy Settings")]
 	[SerializeField] private Enemy _lilGuardPrefab;
-	[SerializeField] private Transform _lilGuardTopSpawnPoint;
-	[SerializeField] private Transform _lilGuardBottomSpawnPoint;
 	[SerializeField] private float _lilGuardMoveSpeed = 1.75f;
 	[SerializeField] private float _lilGuardMaxHealth = 180f;
 	#endregion
 
+	private Player _player;
+	private EnemyHelper _enemyHelper;
+	private LilGuardSpawnManager _lilGuardSpawnPointsParent;
 	private Enemy _lilGuardTopInstance;
 	private Enemy _lilGuardBottomInstance;
 
+	private GameObject _closestPlayer;
+	private List<GameObject> _players;
+
 	// Forces z axis to be 0
-	private Vector2 _directionToPlayer;
+	private Vector2 _directionToClosestPlayer;
 	private Vector2 _targetPosition;
 
 	private float _timeBetweenMoves;
@@ -53,9 +58,10 @@ public class Enemy : MonoBehaviour, IDamageable
 	private float _moveSpeed;
 	private float _waitTimeUntilPatrol;
 
-	private float _elapsedMoveTime;
+	private float _closestDistance = Mathf.Infinity; // Set to positive/negative infinity on start
 
-	private float offset = 0.75f; // How far enemy is allowed to move each time
+	private float _elapsedMoveTime;
+	private float _offset = 0.75f; // How far enemy is allowed to move each time
 
 	private bool _isWithinRadius;
 	private bool _isShot;
@@ -79,16 +85,17 @@ public class Enemy : MonoBehaviour, IDamageable
 	public EnemyType enemyType;
 	public EnemyState enemyState;
 
-	private void Awake()
-	{
-		this._player = GameObject.FindWithTag("Player").transform; // Fixes broken prefab reference issue
-	}
-
 	private void Start()
 	{
-		GameObject lilGuardSpawnPoints = GameObject.Find("LilGuardSpawnPoints");
-		this._lilGuardTopSpawnPoint = lilGuardSpawnPoints.transform.Find("TopSpawnPoint").transform;
-		this._lilGuardBottomSpawnPoint = lilGuardSpawnPoints.transform.Find("BottomSpawnPoint").transform;
+		// Finds the active LilGuardSpawnPointsParent in the scene
+		this._lilGuardSpawnPointsParent = FindAnyObjectByType<LilGuardSpawnManager>();
+
+		this._radius = GetComponentInChildren<CircleCollider2D>();
+		this._player = GameObject.Find("Player").GetComponent<Player>(); // Finds the active Player in the scene
+		this._players = this._player.GetPlayerList(); // Get all players in the scene
+		this._enemyHelper = FindAnyObjectByType<EnemyHelper>(); // Finds the active EnemyHelper in the scene
+
+		this._enemyHelper.AddEnemyToList(this.gameObject); // Adds this enemy to the enemy list in EnemyHelper
 
 		if (enemyType != EnemyType.LilGuard)
 		{
@@ -110,16 +117,17 @@ public class Enemy : MonoBehaviour, IDamageable
 		if (this._radiusManager.IsWithinRadius()) StartCoroutine(IsWithinRadius());
 
 		UpdateEnemyState();
+		FindClosestPlayer();
 	}
 
 	private void FixedUpdate()
 	{
-		if (this._player != null) PerformEnemyAction();
+		if (this._closestPlayer != null) PerformEnemyAction();
 	}
 
 	private void PerformEnemyAction()
 	{
-		switch (enemyState)
+		switch (this.enemyState)
 		{
 			case EnemyState.Attack:
 				HandleEnemyRotation();
@@ -127,6 +135,12 @@ public class Enemy : MonoBehaviour, IDamageable
 				break;
 			case EnemyState.Patrol: break;
 		}
+	}
+
+	private void UpdateEnemyState()
+	{
+		if (this._isShot || this._isWithinRadius) this.enemyState = EnemyState.Attack;
+		else this.enemyState = EnemyState.Patrol;
 	}
 
 	#region Enemy Type Settings
@@ -153,7 +167,25 @@ public class Enemy : MonoBehaviour, IDamageable
 	}
 	#endregion
 
-	#region Enemy Actions
+	private void FindClosestPlayer()
+	{
+		this._closestDistance = Mathf.Infinity; // Reset every frame (Guarantees closestPlayer exists)
+		this._players = this._player.GetPlayerList(); // Get all players in the scene
+
+		foreach (GameObject player in this._players)
+		{
+			float distance = Vector2.Distance(this.transform.position, player.transform.position);
+			if (distance < this._closestDistance)
+			{
+				this._closestDistance = distance;
+				this._closestPlayer = player;
+			}
+		}
+
+		Debug.Log("Closest Player: " + this._closestPlayer.name);
+	}
+
+	#region Enemy Handlers
 	private void HandleEnemyType()
 	{
 		switch (enemyType)
@@ -164,12 +196,18 @@ public class Enemy : MonoBehaviour, IDamageable
 		}
 	}
 
+	private void HandleEnemyMovement()
+	{
+		MoveTowardsClosestPlayer();
+		if (enemyType != EnemyType.LilGuard) HandleDodging();
+	}
+
 	private void HandleEnemyRotation()
 	{
 		// Checks if direction is positive (player is to the left) or negative (player is to the right)
-		this._directionToPlayer = (this.transform.position - this._player.position);
+		this._directionToClosestPlayer = (this.transform.position - this._closestPlayer.transform.position); 
 
-		float angle = Vector3.SignedAngle(this.transform.right, this._directionToPlayer, Vector3.forward);
+		float angle = Vector3.SignedAngle(this.transform.right, this._directionToClosestPlayer, Vector3.forward);
 
 		//Rotate smoothly/step by step
 		float t = Time.fixedDeltaTime / this._rotationDuration; // a fraction of the total angle you want to rotate THIS frame
@@ -187,22 +225,21 @@ public class Enemy : MonoBehaviour, IDamageable
 
 		this.transform.localScale = localScale; // Apply the scale to the enemy
 	}
+	#endregion
 
-	private void HandleEnemyMovement()
+	#region Enemy Movement
+	private void MoveTowardsClosestPlayer()
 	{
-		MoveTowardsPlayer();
-		if (enemyType != EnemyType.LilGuard) HandleDodging();
-	}
+		Vector2 closestPlayerPos = new Vector2(this._closestPlayer.transform.position.x + 2.35f, this._closestPlayer.transform.position.y);
+		Vector2 direction = (closestPlayerPos - this._rb2d.position).normalized;
 
-	private void MoveTowardsPlayer()
-	{
 		//This allows for interpolation
-		Vector2 playerPos = new Vector2(this._player.position.x + 3f, this._player.position.y);
-		Vector2 direction = (playerPos - this._rb2d.position).normalized;
 		Vector2 newPosition = this._rb2d.position + (direction * this._moveSpeed * Time.fixedDeltaTime);
+
 		//Move towards player
 		this._rb2d.MovePosition(newPosition);
 	}
+
 	private void HandleDodging()
 	{
 		this._elapsedMoveTime += Time.fixedDeltaTime;
@@ -223,30 +260,6 @@ public class Enemy : MonoBehaviour, IDamageable
 	}
 	#endregion
 
-	#region Generate Random Position
-	private Vector2 GenerateRandomPosition()
-	{
-		// Picks best max/min x, y positions enemy is allowed to move to based on the background bounds
-		float minX = Mathf.Max(this._minBounds.x, transform.position.x - offset);
-		float maxX = Mathf.Min(this._maxBounds.x, transform.position.x + offset);
-
-		float minY = Mathf.Max(this._minBounds.y, transform.position.y - offset);
-		float maxY = Mathf.Min(this._maxBounds.y, transform.position.y + offset);
-
-		// Generates random positions within appropriate bounds
-		float randXPos = Random.Range(minX, maxX);
-		float randYPos = Random.Range(minY, maxY);
-
-		return new Vector2(randXPos, randYPos);
-	}
-	#endregion
-
-	private void UpdateEnemyState()
-	{
-		if (this._isShot || this._isWithinRadius) enemyState = EnemyState.Attack;
-		else enemyState = EnemyState.Patrol;
-	}
-
 	private IEnumerator OnEnemyShot()
 	{
 		this._isShot = true;
@@ -261,7 +274,30 @@ public class Enemy : MonoBehaviour, IDamageable
 		this._isWithinRadius = false;
 	}
 
-	#region Setters && Getters
+	#region Generate Random Position
+	private Vector2 GenerateRandomPosition()
+	{
+		// Picks best max/min x, y positions enemy is allowed to move to based on the background bounds
+		float minX = Mathf.Max(this._minBounds.x, transform.position.x - _offset);
+		float maxX = Mathf.Min(this._maxBounds.x, transform.position.x + _offset);
+
+		float minY = Mathf.Max(this._minBounds.y, transform.position.y - _offset);
+		float maxY = Mathf.Min(this._maxBounds.y, transform.position.y + _offset);
+
+		// Generates random positions within appropriate bounds
+		float randXPos = Random.Range(minX, maxX);
+		float randYPos = Random.Range(minY, maxY);
+
+		return new Vector2(randXPos, randYPos);
+	}
+	#endregion
+
+	#region Setters/Adders && Getters
+	public GameObject GetClosestPlayer()
+	{
+		return this._closestPlayer;
+	}
+
 	public EnemyState GetEnemyState()
 	{
 		return this.enemyState;
@@ -284,11 +320,14 @@ public class Enemy : MonoBehaviour, IDamageable
 		{
 			case EnemyType.Cop:
 				this._lilGuardTopInstance = Instantiate
-					(this._lilGuardPrefab, this._lilGuardTopSpawnPoint.position, this.transform.rotation);
+					(this._lilGuardPrefab, this._lilGuardSpawnPointsParent.GetTopSpawnPoint(), this.transform.rotation);
 				this._lilGuardBottomInstance = Instantiate
-					(this._lilGuardPrefab, this._lilGuardBottomSpawnPoint.position, this.transform.rotation);
+					(this._lilGuardPrefab, this._lilGuardSpawnPointsParent.GetBottomSpawnPoint(), this.transform.rotation);
+				this._enemyHelper.RemoveEnemyFromList(this.gameObject);
 				Destroy(gameObject); break;
-			default: Destroy(gameObject); break;
+			default:
+				this._enemyHelper.RemoveEnemyFromList(this.gameObject);
+				Destroy(gameObject); break;
 		}
 	}
 

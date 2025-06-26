@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -5,34 +8,41 @@ public class Player : MonoBehaviour, IDamageable
 {
 	[Header("References")]
 	[SerializeField] private Rigidbody2D _rb2d;
-	[SerializeField] private AsteroidBehavior _asteroid;
+	[SerializeField] private GameObject _playerClonePrefab;
+	[SerializeField] private GameObject _playerOverlayPrefab;
 	[SerializeField] private PWeaponManager _playerWeaponManager;
+	[SerializeField] private Transform _enemy;
 
 	[Header("Global Player Settings")]
-	[SerializeField] private float _rotationDuration = 0.072f; //How long to rotate towards mouse position
+	[SerializeField] private static float _rotationDuration = 0.072f; //How long to rotate towards mouse position
 
 	#region Player Settings
 	[Header("Standard Player Settings")]
-	[SerializeField] private float _standardMaxHealth = 100f; // Max health of the player
+	[SerializeField] private float _standardMaxHealth = 100f;
 	[SerializeField] private float _standardMoveSpeed = 3f;
+	[SerializeField] private Vector3 _standardScale = new Vector3(0.855f, 0.855f, 0.855f);
 
 	[Header("Omen's Player Settings")]
-	[SerializeField] private float _omenMaxHealth = 125f; // Max health of the player
+	[SerializeField] private float _omenMaxHealth = 125f;
 	[SerializeField] private float _omenMoveSpeed = 3.3f;
+	[SerializeField] private Vector3 _omenScale = new Vector3(0.875f, 0.875f, 0.875f);
 
 	[Header("Sora's Player Settings")]
-	[SerializeField] private float _soraMaxHealth = 155f; // Max health of the player
+	[SerializeField] private float _soraMaxHealth = 155f;
 	[SerializeField] private float _soraMoveSpeed = 3.65f;
+	[SerializeField] private Vector3 _soraScale = new Vector3(0.9f, 0.9f, 0.9f);
 
 	[Header("Ralph's Player Settings")]
-	[SerializeField] private float _ralphMaxHealth = 200f; // Max health of the player
+	[SerializeField] private float _ralphMaxHealth = 200f;
 	[SerializeField] private float _ralphMoveSpeed = 4f;
+	[SerializeField] private Vector3 _ralphScale = new Vector3(0.93f, 0.93f, 0.93f);
 	#endregion
 
-	// Forces z axis to be 0
-	private Vector2 _mousePosition;
-	private Vector2 _direction;
+	private GameObject _playerCloneInstance; // Player clone instance for Omen's ability
+	private GameObject _playerOverlayInstance;
 
+	private List<GameObject> _playerList = new List<GameObject>(); // List of players in the game
+										  
 	private float _currentHealth;
 	private float _moveSpeed;
 
@@ -48,6 +58,7 @@ public class Player : MonoBehaviour, IDamageable
 
 	private void Start()
 	{
+		AddPlayerToList(this.gameObject); // Add this player to the list
 		this._playerType = PlayerType.Standard;
 		this._playerWeaponManager.AddThrusterTypeToStack(PWeaponManager.ThrusterType.Normal);
 		HandlePlayerSwitch();
@@ -56,56 +67,78 @@ public class Player : MonoBehaviour, IDamageable
 	private void Update()
 	{
 		HandlePlayerRotation();
+		if (InputManager.instance.GetIsAbilityPressed()) HandlePlayerAbilities();
 	}
 
 	private void FixedUpdate()
 	{
-		this._rb2d.linearVelocity = InputManager._moveDirection * this._moveSpeed;
+		this._rb2d.linearVelocity = InputManager.moveDirection * this._moveSpeed; //Handles Player Movement
 	}
 
-	#region Player Settings
+	#region PlayerType Settings
 	private void Standard()
 	{
 		this._currentHealth = this._standardMaxHealth;
 		this._moveSpeed = this._standardMoveSpeed;
-		this.transform.localScale = new Vector3(0.855f, 0.855f, 0.855f);
+		this.transform.localScale = this._standardScale;
 	}
 
 	private void Omen()
 	{
 		this._currentHealth = this._omenMaxHealth;
 		this._moveSpeed = this._omenMoveSpeed;
-		this.transform.localScale = new Vector3(0.875f, 0.875f, 0.875f);
+		this.transform.localScale = this._omenScale;
 	}
 
 	private void Sora()
 	{
 		this._currentHealth = this._soraMaxHealth;
 		this._moveSpeed = this._soraMoveSpeed;
-		this.transform.localScale = new Vector3(0.9f, 0.9f, 0.9f);
+		this.transform.localScale = this._soraScale;
 	}
 
 	private void Ralph()
 	{
 		this._currentHealth = this._ralphMaxHealth;
 		this._moveSpeed = this._ralphMoveSpeed;
-		this.transform.localScale = new Vector3(0.93f, 0.93f, 0.93f);
+		this.transform.localScale = this._ralphScale;
 	}
 	#endregion
 
-	#region Player Actions
+	#region Player Abilities
+	private void OmensClone()
+	{
+		Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+		if (InputManager.instance.GetWasAbilityPressedThisFrame() && this._playerCloneInstance == null)
+		{
+			this._playerOverlayInstance = Instantiate(this._playerOverlayPrefab, mousePosition, Quaternion.identity);
+			this._playerOverlayInstance.transform.localScale = this.transform.localScale; // Set the scale of the clone
+		}
+		this._playerOverlayInstance.transform.position = mousePosition;
+
+		if (Mouse.current.leftButton.wasPressedThisFrame)
+		{
+			this._playerCloneInstance = Instantiate
+			(this._playerClonePrefab, this._playerOverlayInstance.transform.position, Quaternion.identity);
+			AddPlayerToList(this._playerCloneInstance); // Add the player clone to the list
+
+			InputManager.instance.SetIsAbilityPressed(false); // Reset the ability pressed state
+			Destroy(this._playerOverlayInstance); // Destroy the overlay after spawning the player clone
+		}
+	}
+	#endregion
+
+	#region Player Handlers
 	private void HandlePlayerRotation()
 	{
-		this._mousePosition = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+		Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+		//Checks if direction is positive (mouse position is to the right) or negative (mouse position is to the left)
+		Vector2 direction = (mousePosition - (Vector2)this.transform.position).normalized;
 
-		// Checks if direction is positive (mouse position is to the right) or
-		// negative (mouse position is to the left)
-		this._direction = (this._mousePosition - (Vector2)this.transform.position).normalized;
-
-		float angle = Vector3.SignedAngle(this.transform.right, this._direction, Vector3.forward);
+		float angle = Vector3.SignedAngle(this.transform.right, direction, Vector3.forward);
 
 		//Rotate smoothly/step by step
-		float t = Time.deltaTime / this._rotationDuration; // a fraction of the total angle/rotation (THIS frame)
+		float t = Time.deltaTime / _rotationDuration; // a fraction of the total angle/rotation (THIS frame)
 		this.transform.Rotate(Vector3.forward, angle * t);
 
 		//Normalizes angle for scale flipping (eulerAngles.z can't be negative -- 0 to 360 degrees)
@@ -114,14 +147,11 @@ public class Player : MonoBehaviour, IDamageable
 
 		Vector3 localScale = this.transform.localScale;
 
-		// Flip the player sprite vertically when facing left
-		if (zAngle > 120f || zAngle < -100f) localScale.y = -Mathf.Abs(localScale.y); 
+	    // Flip the player sprite vertically when facing left
+		if (zAngle > 120f || zAngle < -100f) localScale.y = -Mathf.Abs(localScale.y);
 		else localScale.y = Mathf.Abs(localScale.y); // Keep the player sprite upright when facing right
 
-		this.transform.localScale = localScale; // Apply the scale to the player
-
-		// Rotate the weapon to face the mouse position (Does similarly thing as above)
-		// this.transform.right = Vector3.Slerp(this.transform.right, this._direction, Mathf.Clamp01(t));
+		this.transform.localScale = localScale;// Apply the scale to the player
 	}
 
 	private void HandlePlayerSwitch()
@@ -137,32 +167,37 @@ public class Player : MonoBehaviour, IDamageable
 
 		UIManager.instance.UpdateHealthText();
 	}
+
+	private void HandlePlayerAbilities()
+	{
+		if (this._playerType == PlayerType.Omen)
+		{
+			OmensClone();
+		}
+	}
 	#endregion
 
 	private void OnOrbsCollect(Collider2D collision)
 	{
 		if (collision.CompareTag("OmensTriangle"))
 		{
-			this._playerType = PlayerType.Omen;
 			this._playerWeaponManager.AddThrusterTypeToStack(PWeaponManager.ThrusterType.Thin); //Omen's thruster type
 		}
 		else if (collision.CompareTag("SorasOrb"))
-		{
-			this._playerType = PlayerType.Sora;
+		{ 
 			this._playerWeaponManager.AddThrusterTypeToStack(PWeaponManager.ThrusterType.Wide); //Sora's thruster type
 		}
 		else if (collision.CompareTag("RalphsCube"))
 		{
-			this._playerType = PlayerType.Ralph;
 			this._playerWeaponManager.AddThrusterTypeToStack(PWeaponManager.ThrusterType.Double); //Ralph's thruster type
 		}
-
+		SetPlayerTypeWithThruster();
 		HandlePlayerSwitch();
 		Destroy(collision.gameObject);
 	}
 
-	#region Setters and Getters
-	private void SetPlayerType()
+	#region Helper Methods
+	private void SetPlayerTypeWithThruster()
 	{
 		switch (this._playerWeaponManager.GetThrusterType())
 		{
@@ -171,6 +206,34 @@ public class Player : MonoBehaviour, IDamageable
 			case PWeaponManager.ThrusterType.Wide: this._playerType = PlayerType.Sora; break;
 			case PWeaponManager.ThrusterType.Double: this._playerType = PlayerType.Ralph; break;
 		}
+	}
+	#endregion
+
+	#region Setters/Adders and Getters
+	public PlayerType GetPlayerType()
+	{
+		return this._playerType;
+	}
+
+	private void AddPlayerToList(GameObject newPlayer)
+	{
+		if (!this._playerList.Contains(newPlayer))
+		{
+			this._playerList.Add(newPlayer);
+		}
+	}
+
+	public void RemovePlayerFromList(GameObject playerToRemove)
+	{
+		if (this._playerList.Contains(playerToRemove))
+		{
+			this._playerList.Remove(playerToRemove);
+		}
+	}
+
+	public List<GameObject> GetPlayerList()
+	{
+		return this._playerList;
 	}
 
 	public float GetCurrentHealth()
@@ -189,6 +252,10 @@ public class Player : MonoBehaviour, IDamageable
 			default: return 0f;
 		}
 	}
+	public float GetMoveSpeed()
+	{
+		return this._moveSpeed;
+	}
 	#endregion
 
 	private void DestroyOnDie()
@@ -197,12 +264,17 @@ public class Player : MonoBehaviour, IDamageable
 		{
 			case PlayerType.Standard: //Thruster Type - Normal
 				this._playerWeaponManager.PopAndSetThrusterType(); //First, remove from stack,
-				SetPlayerType(); //Set player type based on current thruster type,
-				Destroy(this.gameObject); break;//Then, destroy in game	
 
+				SetPlayerTypeWithThruster(); //Set player type based on current thruster type,
+
+				RemovePlayerFromList(this.gameObject);
+				Destroy(this.gameObject); //Then, destroy in game	
+				if (this._playerCloneInstance != null) Destroy(this._playerCloneInstance); break; //Destroy clone if exists
 			default: //Every other Thruster Type - Thin, Wide, Double
 				this._playerWeaponManager.PopAndSetThrusterType(); //First, remove from stack,
-				SetPlayerType(); //Set player type based on current thruster type,
+
+				SetPlayerTypeWithThruster(); //Set player type based on current thruster type,
+
 				Destroy(this._playerWeaponManager.GetThrusterInstance()); //Then, destroy in game
 				HandlePlayerSwitch(); break;
 		}
@@ -230,15 +302,11 @@ public class Player : MonoBehaviour, IDamageable
 	#region IDamageable Interface Implementation
 	public void OnDamaged(float damageAmount)
 	{
-		Debug.Log("Called OnDamaged!");
 		this._currentHealth -= damageAmount;
 
 		UIManager.instance.UpdateHealthText();
 
-		if (this._currentHealth <= 0)
-		{
-			DestroyOnDie();
-		}
-	}
+		if (this._currentHealth <= 0) DestroyOnDie();
+	}	
 	#endregion
 }

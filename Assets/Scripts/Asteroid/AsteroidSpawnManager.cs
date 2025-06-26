@@ -51,7 +51,7 @@ public class AsteriodSpawnManager : MonoBehaviour
 		if (this._player != null)
 		{
 			SpawnAsteroid();
-			if (InputManager.instance._isMoving) RedirectSpawnPoints();
+			if (InputManager.instance.GetIsMoving()) RedirectSpawnPoints();
 		}
 	}
 

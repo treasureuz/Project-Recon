@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -42,17 +43,11 @@ public class PWeaponManager : MonoBehaviour
 	[SerializeField] private float _doubleBulletDamage = 40f;
 	#endregion
 
-	public static PWeaponManager playerWeaponManager;
 	private Stack<ThrusterType> _thrusterTypeStack = new Stack<ThrusterType>();
 
-	//private GameObject _regularBulletInstance;
-	//private GameObject _leftBulletInstance;
-	//private GameObject _rightBulletInstance;
-	//private GameObject _wideBulletInstance;
 	private GameObject _thrusterInstance;
 
 	private float _timeBetweenShots;
-	private float _bulletMagCount;
 	private float _nextShootTime = 0f;
 
 	public enum ThrusterType
@@ -193,6 +188,11 @@ public class PWeaponManager : MonoBehaviour
 		{
 			this._thrusterType = this._thrusterTypeStack.Peek();
 		}
+	}
+
+	public float GetTimeBetweenShots()
+	{
+		return this._timeBetweenShots;
 	}
 
 	public GameObject GetThrusterInstance()

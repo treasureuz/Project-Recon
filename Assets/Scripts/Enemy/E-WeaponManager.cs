@@ -9,7 +9,6 @@ public class EWeaponManager : MonoBehaviour
 	[SerializeField] private Transform _bulletSpawnPoint;
 	[SerializeField] private Enemy _enemy;
 	[SerializeField] private EBulletManager _enemyBulletManager;
-	[SerializeField] private Player _player;
 
 	#region Enemy Weapon Settings
 	[Header("Guard Weapon Settings")]
@@ -28,14 +27,9 @@ public class EWeaponManager : MonoBehaviour
 	private float _timeBetweenEnemyShots;
 	private float _nextShootTime = 0f;
 
-	private void Awake()
+	private void FixedUpdate()
 	{
-		this._player = GameObject.FindWithTag("Player").GetComponent<Player>();
-	}
-
-	private void Update()
-	{
-		if (this._player != null && (this._enemy.GetEnemyState() == Enemy.EnemyState.Attack))
+		if (this._enemy.GetClosestPlayer() != null && (this._enemy.GetEnemyState() == Enemy.EnemyState.Attack))
 		{
 			HandleEnemyShoot();
 		}

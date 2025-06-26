@@ -97,7 +97,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8691005031223333405}
   - component: {fileID: 5687130367575151000}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: E-WeaponSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -186,7 +186,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3970064250194824023}
   - component: {fileID: 301737045159345679}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: E-WeaponSpriteParent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -535,7 +535,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 886300051806315406}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: EnemySpriteParent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -657,7 +657,7 @@ GameObject:
   - component: {fileID: 6403008195876497232}
   - component: {fileID: 2478465006484852083}
   - component: {fileID: 238831766910545831}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: Radius
   m_TagString: EnemyRadius
   m_Icon: {fileID: 0}
@@ -781,10 +781,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _rb2d: {fileID: 1357426447022259208}
-  _player: {fileID: 303196939666991746, guid: 1fa994d84365a144392272d4fece4383, type: 3}
-  _asteroid: {fileID: 6430892029719757333, guid: 42137422141fffe41ab10d200b1aec7d, type: 3}
   _radiusManager: {fileID: 238831766910545831}
-  _radius: {fileID: 1477096281978555027}
+  _radius: {fileID: 2478465006484852083}
   _enemyWeaponManager: {fileID: 301737045159345679}
   _minBounds: {x: -12.9, y: -2.42}
   _maxBounds: {x: -6.3, y: 3.42}
@@ -799,8 +797,6 @@ MonoBehaviour:
   _copMaxHealth: 180
   _copWaitTimeUntilPatrol: 7.5
   _lilGuardPrefab: {fileID: 2551665939021353220, guid: a06205a3483ba5f41b8886e04f1e2f01, type: 3}
-  _lilGuardTopSpawnPoint: {fileID: 7720793205551651970, guid: 3ca478761d3124844a59e26eb9004347, type: 3}
-  _lilGuardBottomSpawnPoint: {fileID: 2042243253404090717, guid: 2a17b30560eb27a419f9de4bdbeade3b, type: 3}
   _lilGuardMoveSpeed: 1.75
   _lilGuardMaxHealth: 180
   enemyType: 1

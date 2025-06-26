@@ -48,7 +48,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02f3f26fd20e411408b1175114fa5fa7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enemyBulletDamage: 20
+  _enemyBulletDamage: 33
 --- !u!114 &1050130379820493484
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -312,7 +312,6 @@ MonoBehaviour:
   _bulletSpawnPoint: {fileID: 274353830520883155}
   _enemy: {fileID: 8227912361535481234}
   _enemyBulletManager: {fileID: 6718664040238761696, guid: 5cdd4c7b141c1b847b21d330a8585d8e, type: 3}
-  _player: {fileID: 191160983667545446, guid: 1fa994d84365a144392272d4fece4383, type: 3}
   _guardTimeBetweenEnemyShots: 0.6
   _guardBulletDamage: 20
   _copTimeBetweenEnemyShots: 0.72
@@ -369,10 +368,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _rb2d: {fileID: 4440016312442149851}
-  _player: {fileID: 303196939666991746, guid: 1fa994d84365a144392272d4fece4383, type: 3}
-  _asteroid: {fileID: 6430892029719757333, guid: 42137422141fffe41ab10d200b1aec7d, type: 3}
   _radiusManager: {fileID: 1987500767680005915}
-  _radius: {fileID: 9182655225929762179}
+  _radius: {fileID: 8994313138724572523}
   _enemyWeaponManager: {fileID: 5604364594436956743}
   _minBounds: {x: -12.9, y: -2.42}
   _maxBounds: {x: -6.3, y: 3.42}
@@ -387,8 +384,6 @@ MonoBehaviour:
   _copMaxHealth: 180
   _copWaitTimeUntilPatrol: 7.5
   _lilGuardPrefab: {fileID: 2551665939021353220, guid: a06205a3483ba5f41b8886e04f1e2f01, type: 3}
-  _lilGuardTopSpawnPoint: {fileID: 7720793205551651970, guid: 3ca478761d3124844a59e26eb9004347, type: 3}
-  _lilGuardBottomSpawnPoint: {fileID: 2042243253404090717, guid: 2a17b30560eb27a419f9de4bdbeade3b, type: 3}
   _lilGuardMoveSpeed: 1.75
   _lilGuardMaxHealth: 180
   enemyType: 0
