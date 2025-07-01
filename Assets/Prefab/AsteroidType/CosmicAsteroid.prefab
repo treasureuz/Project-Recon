@@ -42,7 +42,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 697032226462455953}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e11ac5addd432fe498d1ca15dd724349, type: 3}
   m_Name: 
@@ -50,7 +50,7 @@ MonoBehaviour:
   _rb2d: {fileID: 3606735017681977860}
   _asteroidForce: 2
   _maxHealth: 40
-  _asteroidDamage: 60
+  _asteroidDamage: 52
   _asteroidRotationSpeed: 60
 --- !u!50 &3606735017681977860
 Rigidbody2D:

@@ -226,7 +226,6 @@ MonoBehaviour:
   _bulletSpawnPoint: {fileID: 3808580741841407433}
   _enemy: {fileID: 9110741389325589097}
   _enemyBulletManager: {fileID: 6718664040238761696, guid: 5cdd4c7b141c1b847b21d330a8585d8e, type: 3}
-  _player: {fileID: 191160983667545446, guid: 1fa994d84365a144392272d4fece4383, type: 3}
   _guardTimeBetweenEnemyShots: 0.6
   _guardBulletDamage: 20
   _copTimeBetweenEnemyShots: 0.72
@@ -850,7 +849,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDamping: 0
+  m_LinearDamping: 0.12
   m_AngularDamping: 5
   m_GravityScale: 0
   m_Material: {fileID: 0}
@@ -862,5 +861,5 @@ Rigidbody2D:
     m_Bits: 0
   m_Interpolate: 1
   m_SleepingMode: 1
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
   m_Constraints: 0

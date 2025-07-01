@@ -41,10 +41,10 @@ public class Enemy : MonoBehaviour, IDamageable
 	#endregion
 
 	private Player _player;
-	private EnemyHelper _enemyHelper;
-	private LilGuardSpawnManager _lilGuardSpawnPointsParent;
 	private Enemy _lilGuardTopInstance;
 	private Enemy _lilGuardBottomInstance;
+	private EnemyHelper _enemyHelper;
+	private LilGuardSpawnManager _lilGuardSpawnPointsParent;
 
 	private GameObject _closestPlayer;
 	private List<GameObject> _players;
@@ -90,22 +90,23 @@ public class Enemy : MonoBehaviour, IDamageable
 		// Finds the active LilGuardSpawnPointsParent in the scene
 		this._lilGuardSpawnPointsParent = FindAnyObjectByType<LilGuardSpawnManager>();
 
-		this._radius = GetComponentInChildren<CircleCollider2D>();
+		this._radius = this.transform.Find("Radius").GetComponent<CircleCollider2D>();
+		this._radiusManager = this.transform.Find("Radius").GetComponent<RadiusManager>();
 		this._player = GameObject.Find("Player").GetComponent<Player>(); // Finds the active Player in the scene
 		this._players = this._player.GetPlayerList(); // Get all players in the scene
 		this._enemyHelper = FindAnyObjectByType<EnemyHelper>(); // Finds the active EnemyHelper in the scene
 
-		this._enemyHelper.AddEnemyToList(this.gameObject); // Adds this enemy to the enemy list in EnemyHelper
+		this._enemyHelper.AddEnemyToList(this); // Adds this enemy to the enemy list in EnemyHelper
 
-		if (enemyType != EnemyType.LilGuard)
-		{
-			//Dodging/Moving Bounds based off radius 
-			this._minBounds = new Vector2(this.transform.position.x - this._radius.bounds.extents.x, -2.42f);
-			this._maxBounds = new Vector2(this.transform.position.x + this._radius.bounds.extents.x, 3.42f);
+		//if (enemyType != EnemyType.LilGuard)
+		//{
+		//	//Dodging/Moving Bounds based off radius 
+		//	this._minBounds = new Vector2((this.transform.position.x - this._radius.bounds.extents.x)/2f, -1.35f);
+		//	this._maxBounds = new Vector2((this.transform.position.x + this._radius.bounds.extents.x)/2f, 2.35f);
 
-			//Generate position to move to on start
-			this._targetPosition = GenerateRandomPosition();
-		}
+		//	//Generate position to move to on start
+		//	this._targetPosition = GenerateDodgePosition();
+		//}
 
 		HandleEnemyType();
 		this._enemyWeaponManager.HandleBulletDamage(); // Sets enemy weapon type
@@ -181,8 +182,6 @@ public class Enemy : MonoBehaviour, IDamageable
 				this._closestPlayer = player;
 			}
 		}
-
-		Debug.Log("Closest Player: " + this._closestPlayer.name);
 	}
 
 	#region Enemy Handlers
@@ -199,7 +198,7 @@ public class Enemy : MonoBehaviour, IDamageable
 	private void HandleEnemyMovement()
 	{
 		MoveTowardsClosestPlayer();
-		if (enemyType != EnemyType.LilGuard) HandleDodging();
+		//if (enemyType != EnemyType.LilGuard) HandleDodging();
 	}
 
 	private void HandleEnemyRotation()
@@ -254,7 +253,7 @@ public class Enemy : MonoBehaviour, IDamageable
 		//Then wait 2 sec before "dodging" or "moving" again
 		if (this._elapsedMoveTime >= this._timeBetweenMoves + this._moveDuration)
 		{
-			this._targetPosition = GenerateRandomPosition();
+			this._targetPosition = GenerateDodgePosition();
 			this._elapsedMoveTime = 0f;
 		}
 	}
@@ -274,15 +273,15 @@ public class Enemy : MonoBehaviour, IDamageable
 		this._isWithinRadius = false;
 	}
 
-	#region Generate Random Position
-	private Vector2 GenerateRandomPosition()
+	#region Generate Dodge Position
+	private Vector2 GenerateDodgePosition()
 	{
 		// Picks best max/min x, y positions enemy is allowed to move to based on the background bounds
-		float minX = Mathf.Max(this._minBounds.x, transform.position.x - _offset);
-		float maxX = Mathf.Min(this._maxBounds.x, transform.position.x + _offset);
+		float minX = Mathf.Max(this._minBounds.x, transform.position.x - this._offset);
+		float maxX = Mathf.Min(this._maxBounds.x, transform.position.x + this._offset);
 
-		float minY = Mathf.Max(this._minBounds.y, transform.position.y - _offset);
-		float maxY = Mathf.Min(this._maxBounds.y, transform.position.y + _offset);
+		float minY = Mathf.Max(this._minBounds.y, transform.position.y - this._offset);
+		float maxY = Mathf.Min(this._maxBounds.y, transform.position.y + this._offset);
 
 		// Generates random positions within appropriate bounds
 		float randXPos = Random.Range(minX, maxX);
@@ -308,6 +307,11 @@ public class Enemy : MonoBehaviour, IDamageable
 		return this.enemyType;
 	}
 
+	public bool GetIsWithinRadius()
+	{
+		return this._isWithinRadius;
+	}
+
 	public float GetWaitTimeUntilPatrol()
 	{
 		return this._waitTimeUntilPatrol;
@@ -323,10 +327,10 @@ public class Enemy : MonoBehaviour, IDamageable
 					(this._lilGuardPrefab, this._lilGuardSpawnPointsParent.GetTopSpawnPoint(), this.transform.rotation);
 				this._lilGuardBottomInstance = Instantiate
 					(this._lilGuardPrefab, this._lilGuardSpawnPointsParent.GetBottomSpawnPoint(), this.transform.rotation);
-				this._enemyHelper.RemoveEnemyFromList(this.gameObject);
+				this._enemyHelper.RemoveEnemyFromList(this);
 				Destroy(gameObject); break;
 			default:
-				this._enemyHelper.RemoveEnemyFromList(this.gameObject);
+				this._enemyHelper.RemoveEnemyFromList(this);
 				Destroy(gameObject); break;
 		}
 	}

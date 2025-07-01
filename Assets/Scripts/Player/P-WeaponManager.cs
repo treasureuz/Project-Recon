@@ -24,22 +24,22 @@ public class PWeaponManager : MonoBehaviour
 	#region Thruster Settings
 	[Header("Normal Thruster Settings")]
 	[SerializeField] private float _normalTimeBetweenShots = 0.45f;
-	[SerializeField] private float _normalBulletMagazineCount = 140f;
+	[SerializeField] private int _normalBulletMagazineCount = 140;
 	[SerializeField] private float _normalBulletDamage = 15f;
 
 	[Header("Thin Thruster Settings")]
 	[SerializeField] private float _thinTimeBetweenShots = 0.38f;
-	[SerializeField] private float _thinBulletMagazineCount = 180f;
+	[SerializeField] private int _thinBulletMagazineCount = 180;
 	[SerializeField] private float _thinBulletDamage = 22.5f;
 
 	[Header("Wide Thruster Settings")]
 	[SerializeField] private float _wideTimeBetweenShots = 0.265f;
-	[SerializeField] private float _wideBulletMagazineCount = 250f;
+	[SerializeField] private int _wideBulletMagazineCount = 250;
 	[SerializeField] private float _wideBulletDamage = 30f;
 
 	[Header("Double Thruster Settings")]
 	[SerializeField] private float _doubleTimeBetweenShots = 0.125f;
-	[SerializeField] private float _doubleBulletMagazineCount = 328f;
+	[SerializeField] private int _doubleBulletMagazineCount = 328;
 	[SerializeField] private float _doubleBulletDamage = 40f;
 	#endregion
 
@@ -126,7 +126,7 @@ public class PWeaponManager : MonoBehaviour
 					this._playerBulletManager.SetMagazineCount(this._playerBulletManager.DecrementMagazineCount()); break; //Decrease amount of bullets
 			}
 			this._nextShootTime = Time.time + this._timeBetweenShots;
-			UIManager.instance.UpdateBulletText();
+			UIManager.instance.UpdateBulletText(this._playerBulletManager.GetCurrentMagazineCount(), GetMaxBulletMagazineCount());
 		}
 	}
 
@@ -136,7 +136,7 @@ public class PWeaponManager : MonoBehaviour
 			(this._bulletPrefab, this._leftBulletSpawnPoint.position, this.transform.rotation);
 
 		//Decrease amount of bullets for both left and right thrusters
-		this._playerBulletManager.SetMagazineCount(this._playerBulletManager.GetCurrentMagazineCount() - 2f); 
+		this._playerBulletManager.SetMagazineCount(this._playerBulletManager.GetCurrentMagazineCount() - 2); 
 
 		yield return new WaitForSeconds(this._timeBetweenShots / 2f); // Wait time before right thruster shoots
 
@@ -145,7 +145,7 @@ public class PWeaponManager : MonoBehaviour
 	}
 	#endregion
 
-	public void HandleThrusterAndBulletInstantiation()
+	public void InstantiateThrusterAndBullet()
 	{
 		//Destroy previous thruster
 		if (this._thrusterInstance != null) Destroy(this._thrusterInstance);
@@ -162,7 +162,7 @@ public class PWeaponManager : MonoBehaviour
 		//Enables/Disables Bullet Sprites and its corresponding Collider based on the current ThrusterType
 		this._playerBulletManager.ToggleBulletSprite(this._thrusterType);
 
-		UIManager.instance.UpdateBulletText();
+		UIManager.instance.UpdateBulletText(this._playerBulletManager.GetCurrentMagazineCount(), GetMaxBulletMagazineCount());
 	}
 
 	#region Helper Methods
@@ -179,33 +179,13 @@ public class PWeaponManager : MonoBehaviour
 		this._thrusterTypeStack.Push(newThrusterType);
 		Debug.Log("Stack Count: " + this._thrusterTypeStack.Count);
 	}
-
 	public void PopAndSetThrusterType()
 	{
 		this._thrusterTypeStack.Pop();
 		Debug.Log("Stack Count After Pop: " + this._thrusterTypeStack.Count);
-		if (this._thrusterTypeStack.Count > 0)
-		{
-			this._thrusterType = this._thrusterTypeStack.Peek();
-		}
+		if (this._thrusterTypeStack.Count > 0) this._thrusterType = this._thrusterTypeStack.Peek();
 	}
-
-	public float GetTimeBetweenShots()
-	{
-		return this._timeBetweenShots;
-	}
-
-	public GameObject GetThrusterInstance()
-	{
-		return this._thrusterInstance;
-	}
-
-	public ThrusterType GetThrusterType()
-	{
-		return this._thrusterType;
-	}
-
-	public float GetMaxBulletMagazineCount()
+	public int GetMaxBulletMagazineCount()
 	{
 		switch (this._thrusterType)
 		{
@@ -213,8 +193,20 @@ public class PWeaponManager : MonoBehaviour
 			case ThrusterType.Thin: return this._thinBulletMagazineCount;
 			case ThrusterType.Wide: return this._wideBulletMagazineCount;
 			case ThrusterType.Double: return this._doubleBulletMagazineCount;
-			default: return 0f;
+			default: return 0;
 		}
+	}
+	public float GetTimeBetweenShots()
+	{
+		return this._timeBetweenShots;
+	}
+	public GameObject GetThrusterInstance()
+	{
+		return this._thrusterInstance;
+	}
+	public ThrusterType GetThrusterType()
+	{
+		return this._thrusterType;
 	}
 	#endregion
 }

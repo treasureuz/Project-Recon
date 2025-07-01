@@ -11,14 +11,16 @@ public class PlayerClone : MonoBehaviour, IDamageable
 	[SerializeField] private Transform _bulletSpawnPoint;
 	[SerializeField] private GameObject _bulletPrefab;
 
-	[SerializeField] private static float _rotationDuration = 0.072f; //How long to rotate towards mouse position
+	private static float _rotationDuration = 0.072f; //How long to rotate towards mouse position
 
 	private Player _player;
 	private EnemyHelper _enemyHelper;
 	private PWeaponManager _playerWeaponManager;
 
-	private GameObject _closestEnemy;
-	private List<GameObject> _enemies = new List<GameObject>(); // List of all enemies in the scene
+	private Enemy _closestEnemy;
+	private List<Enemy> _enemies = new List<Enemy>(); // List of all enemies in the scene
+
+	private GameObject _bulletInstance;
 
 	private float _currentHealth; // Player clone's health
 	private float _moveSpeed;
@@ -31,7 +33,11 @@ public class PlayerClone : MonoBehaviour, IDamageable
 	private void Start()
 	{
 		this._player = GameObject.Find("Player").GetComponent<Player>(); // Finds the active Player in the scene
-		this._enemyHelper = GameObject.Find("Enemies").GetComponent<EnemyHelper>(); // Finds the active EnemyHelper in the scene
+		this._enemyHelper = FindAnyObjectByType<EnemyHelper>(); // Finds the active EnemyHelper in the scene
+
+		this._player.AddPlayerToList(this.gameObject); // Add the player clone to the list
+
+		HandleStartLocalScale(); // Handle the local scale of the player clone
 
 		this._currentHealth = this._player.GetMaxHealth();
 		this._moveSpeed = this._player.GetMoveSpeed();
@@ -47,7 +53,7 @@ public class PlayerClone : MonoBehaviour, IDamageable
 
 	private void FixedUpdate()
 	{
-		if(this._closestEnemy != null)
+		if (this._closestEnemy != null)
 		{
 			HandlePlayerCloneRotation();
 			HandlePlayerCloneMovement();
@@ -60,7 +66,7 @@ public class PlayerClone : MonoBehaviour, IDamageable
 		this._closestDistance = Mathf.Infinity; // Reset every frame (Guarantees closestEnemy exists)
 		this._enemies = this._enemyHelper.GetEnemyList(); // Get the list of enemies from the EnemyHelper
 
-		foreach (GameObject enemy in this._enemies)
+		foreach (Enemy enemy in this._enemies)
 		{
 			float distance = Vector2.Distance(this.transform.position, enemy.transform.position);
 			if (distance < this._closestDistance)
@@ -71,10 +77,24 @@ public class PlayerClone : MonoBehaviour, IDamageable
 		}
 	}
 
+	#region Player Clone Handlers
+	private void HandleStartLocalScale()
+	{
+		float zAngle = this._player.transform.eulerAngles.z;
+		if (zAngle > 180f) zAngle -= 360f;
+
+		Vector3 localScale = this.transform.localScale;
+
+		// Flip the player sprite vertically when facing left
+		if (zAngle > 120f || zAngle < -100f) localScale.y = -Mathf.Abs(localScale.y);
+		else localScale.y = Mathf.Abs(localScale.y); // Keep the player sprite upright when facing right
+
+		this.transform.localScale = localScale;// Apply the scale to the player
+	}
 	private void HandlePlayerCloneMovement()
 	{
 		//Offsets enemy position to avoid collision with the enemy  
-		Vector2 closestEnemyPos = new Vector2(this._closestEnemy.transform.position.x - .75f, this._closestEnemy.transform.position.y);
+		Vector2 closestEnemyPos = new Vector2(this._closestEnemy.transform.position.x - 1.78f, this._closestEnemy.transform.position.y);
 		Vector2 direction = (closestEnemyPos - this._rb2d.position).normalized;
 
 		//This allows for interpolation
@@ -101,9 +121,9 @@ public class PlayerClone : MonoBehaviour, IDamageable
 
 		// Flip the player sprite vertically when facing left
 		if (zAngle > 120f || zAngle < -100f) localScale.y = -Mathf.Abs(localScale.y);
-		else localScale.y = Mathf.Abs(localScale.y); // Keep the player sprite upright when facing right
+		else localScale.y = Mathf.Abs(localScale.y); // Keep the player clone sprite upright when facing right
 
-		this.transform.localScale = localScale; // Apply the scale to the player
+		this.transform.localScale = localScale; // Apply the scale to the player clone
 	}
 
 	#region Weapon Manager
@@ -111,12 +131,13 @@ public class PlayerClone : MonoBehaviour, IDamageable
 	{
 		//Time.time is the actual time accumulated every single frame since the game started
 		//Different from Time.deltaTime which is a static time of 0.0167 seconds for every single frame (60 FPS)
-		if (Time.time >= this._nextShootTime)
+		if (this._closestEnemy.GetIsWithinRadius() && Time.time >= this._nextShootTime)
 		{
-			GameObject bulletInstance = Instantiate(this._bulletPrefab, this._bulletSpawnPoint.position, this.transform.rotation);
+			this._bulletInstance = Instantiate(this._bulletPrefab, this._bulletSpawnPoint.position, this.transform.rotation);
 			this._nextShootTime = Time.time + this._timeBetweenShots;
 		}
 	}
+	#endregion
 	#endregion
 
 	private void OnTriggerEnter2D(Collider2D collision)
@@ -140,7 +161,6 @@ public class PlayerClone : MonoBehaviour, IDamageable
 	{
 		this._currentHealth -= damageAmount;
 		Debug.Log("Current Health (Clone): " + this._currentHealth);
-		UIManager.instance.UpdateHealthText();
 
 		if (this._currentHealth <= 0)
 		{

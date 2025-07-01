@@ -24,10 +24,12 @@ public class EWeaponManager : MonoBehaviour
 	[SerializeField] private float _lilGuardBulletDamage = 8f;
 	#endregion
 
+	private GameObject _bulletInstance;
+
 	private float _timeBetweenEnemyShots;
 	private float _nextShootTime = 0f;
 
-	private void FixedUpdate()
+	private void Update()
 	{
 		if (this._enemy.GetClosestPlayer() != null && (this._enemy.GetEnemyState() == Enemy.EnemyState.Attack))
 		{
@@ -57,13 +59,14 @@ public class EWeaponManager : MonoBehaviour
 
 	private void HandleEnemyShoot()
 	{
-		//Time.time is the actual time accumulated every single frame since the game started
-		//Different from Time.deltaTime which is a static time of 0.0167 seconds for every single frame (60 FPS)
-		if (Time.time >= this._nextShootTime)
+		this._nextShootTime += Time.deltaTime;
+	
+		if (this._nextShootTime >= this._timeBetweenEnemyShots)
 		{
-			GameObject bulletInstance = Instantiate(this._bulletPrefab, this._bulletSpawnPoint.position, this.transform.rotation);
-			this._nextShootTime = Time.time + this._timeBetweenEnemyShots;
+			this._bulletInstance = Instantiate(this._bulletPrefab, this._bulletSpawnPoint.position, this.transform.rotation);
+			this._nextShootTime = 0f; // Reset timer after shooting
 		}
+		
 	}
 
 	public void HandleBulletDamage()

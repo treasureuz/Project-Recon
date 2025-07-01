@@ -3,20 +3,20 @@ using UnityEngine;
 public class LilGuardSpawnManager : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private Transform _copEnemy;
+    [SerializeField] private Enemy _copEnemy;
 
 	[Header("Spawn Points")]
 	[SerializeField] private Transform[] _spawnPoints = new Transform[2];
 
 	private void Awake()
 	{
-		this._copEnemy = GameObject.Find("CopEnemy").transform; 
+		this._copEnemy = GameObject.Find("CopEnemy").GetComponent<Enemy>(); 
 		this._spawnPoints = GetComponentsInChildren<Transform>();
 	}
 
 	private void Start()
 	{
-		this.transform.position = this._copEnemy.position;
+		this.transform.position = this._copEnemy.transform.position;
 	}
 
 	private void Update()
@@ -29,8 +29,8 @@ public class LilGuardSpawnManager : MonoBehaviour
 
 	private void RedirectSpawnPoints()
 	{
-		this.transform.position = new Vector3(this._copEnemy.position.x, this._copEnemy.position.y, this.transform.position.z);
-		this.transform.rotation = this._copEnemy.rotation;
+		this.transform.position = new Vector2(this._copEnemy.transform.position.x, this._copEnemy.transform.position.y);
+		this.transform.rotation = this._copEnemy.transform.rotation;
 	}
 
 	#region Getters and Setters

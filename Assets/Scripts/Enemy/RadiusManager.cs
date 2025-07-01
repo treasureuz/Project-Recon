@@ -8,7 +8,7 @@ public class RadiusManager : MonoBehaviour
 	[SerializeField] private CircleCollider2D _radius;
 
 	private void Awake()
-	{ 
+	{
 		this._radius = GetComponent<CircleCollider2D>();
 	}
 

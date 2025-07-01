@@ -11,31 +11,31 @@ public class Player : MonoBehaviour, IDamageable
 	[SerializeField] private GameObject _playerClonePrefab;
 	[SerializeField] private GameObject _playerOverlayPrefab;
 	[SerializeField] private PWeaponManager _playerWeaponManager;
-	[SerializeField] private Transform _enemy;
 
 	[Header("Global Player Settings")]
 	[SerializeField] private static float _rotationDuration = 0.072f; //How long to rotate towards mouse position
 
 	#region Player Settings
 	[Header("Standard Player Settings")]
-	[SerializeField] private float _standardMaxHealth = 100f;
-	[SerializeField] private float _standardMoveSpeed = 3f;
 	[SerializeField] private Vector3 _standardScale = new Vector3(0.855f, 0.855f, 0.855f);
+	[SerializeField] private int _standardMaxHealth = 100;
+	[SerializeField] private float _standardMoveSpeed = 3f;
 
 	[Header("Omen's Player Settings")]
-	[SerializeField] private float _omenMaxHealth = 125f;
-	[SerializeField] private float _omenMoveSpeed = 3.3f;
 	[SerializeField] private Vector3 _omenScale = new Vector3(0.875f, 0.875f, 0.875f);
+	[SerializeField] private int _omenMaxHealth = 125;
+	[SerializeField] private float _omenMoveSpeed = 3.3f;
+	[SerializeField] private float _omenCloneCooldown = 5; // Cooldown for Omen's clone ability
 
 	[Header("Sora's Player Settings")]
-	[SerializeField] private float _soraMaxHealth = 155f;
-	[SerializeField] private float _soraMoveSpeed = 3.65f;
 	[SerializeField] private Vector3 _soraScale = new Vector3(0.9f, 0.9f, 0.9f);
-
+	[SerializeField] private int _soraMaxHealth = 155;
+	[SerializeField] private float _soraMoveSpeed = 3.65f;
+	
 	[Header("Ralph's Player Settings")]
-	[SerializeField] private float _ralphMaxHealth = 200f;
-	[SerializeField] private float _ralphMoveSpeed = 4f;
 	[SerializeField] private Vector3 _ralphScale = new Vector3(0.93f, 0.93f, 0.93f);
+	[SerializeField] private int _ralphMaxHealth = 200;
+	[SerializeField] private float _ralphMoveSpeed = 4f;
 	#endregion
 
 	private GameObject _playerCloneInstance; // Player clone instance for Omen's ability
@@ -45,6 +45,7 @@ public class Player : MonoBehaviour, IDamageable
 										  
 	private float _currentHealth;
 	private float _moveSpeed;
+	private float _cooldown = 0;
 
 	public enum PlayerType
 	{
@@ -68,6 +69,7 @@ public class Player : MonoBehaviour, IDamageable
 	{
 		HandlePlayerRotation();
 		if (InputManager.instance.GetIsAbilityPressed()) HandlePlayerAbilities();
+		UIManager.instance.UpdateCooldownText(GetCurrentCooldown());
 	}
 
 	private void FixedUpdate()
@@ -87,6 +89,7 @@ public class Player : MonoBehaviour, IDamageable
 	{
 		this._currentHealth = this._omenMaxHealth;
 		this._moveSpeed = this._omenMoveSpeed;
+		this._cooldown = this._omenCloneCooldown; 
 		this.transform.localScale = this._omenScale;
 	}
 
@@ -109,21 +112,35 @@ public class Player : MonoBehaviour, IDamageable
 	private void OmensClone()
 	{
 		Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
-		if (InputManager.instance.GetWasAbilityPressedThisFrame() && this._playerCloneInstance == null)
+		
+		if (Time.time >= this._cooldown)
 		{
-			this._playerOverlayInstance = Instantiate(this._playerOverlayPrefab, mousePosition, Quaternion.identity);
-			this._playerOverlayInstance.transform.localScale = this.transform.localScale; // Set the scale of the clone
-		}
-		this._playerOverlayInstance.transform.position = mousePosition;
+			if (InputManager.instance.GetWasAbilityPressedThisFrame() && this._playerOverlayInstance == null)
+			{
+				this._playerOverlayInstance = Instantiate(this._playerOverlayPrefab, mousePosition, Quaternion.identity);
+			}
+			if (this._playerOverlayInstance != null)
+			{
+				this._playerOverlayInstance.transform.localScale = this.transform.localScale; // Match player scale
 
-		if (Mouse.current.leftButton.wasPressedThisFrame)
-		{
-			this._playerCloneInstance = Instantiate
-			(this._playerClonePrefab, this._playerOverlayInstance.transform.position, Quaternion.identity);
-			AddPlayerToList(this._playerCloneInstance); // Add the player clone to the list
+				if (this.transform.localScale.y == -Mathf.Abs(this.transform.localScale.y))
+					this._playerOverlayInstance.transform.eulerAngles = new Vector3(0, 0, 180); // Flip overlay if player is facing left
+				else this._playerOverlayInstance.transform.eulerAngles = new Vector3(0, 0, 0); // Keep overlay upright if player is facing right
 
-			InputManager.instance.SetIsAbilityPressed(false); // Reset the ability pressed state
-			Destroy(this._playerOverlayInstance); // Destroy the overlay after spawning the player clone
+				this._playerOverlayInstance.transform.position = mousePosition;
+			}
+			if (Mouse.current.rightButton.wasPressedThisFrame && this._playerOverlayInstance != null)
+			{
+				this._playerCloneInstance = Instantiate
+				(this._playerClonePrefab, this._playerOverlayInstance.transform.position, Quaternion.identity);
+
+				InputManager.instance.SetIsAbilityPressed(false); // Reset the ability pressed state
+
+				Destroy(this._playerOverlayInstance); // Destroy the overlay after spawning the player clone
+				this._playerOverlayInstance = null; // Reset the overlay instance
+
+				this._cooldown = Time.time + this._omenCloneCooldown; // Reset cooldown
+			}
 		}
 	}
 	#endregion
@@ -163,9 +180,9 @@ public class Player : MonoBehaviour, IDamageable
 			case PlayerType.Sora: Sora(); break; //Thruster Type - Wide
 			case PlayerType.Ralph: Ralph(); break; //Thruster Type - Double
 		}
-		this._playerWeaponManager.HandleThrusterAndBulletInstantiation();
+		this._playerWeaponManager.InstantiateThrusterAndBullet();
 
-		UIManager.instance.UpdateHealthText();
+		UIManager.instance.UpdateHealthText(GetCurrentHealth());
 	}
 
 	private void HandlePlayerAbilities()
@@ -191,6 +208,7 @@ public class Player : MonoBehaviour, IDamageable
 		{
 			this._playerWeaponManager.AddThrusterTypeToStack(PWeaponManager.ThrusterType.Double); //Ralph's thruster type
 		}
+
 		SetPlayerTypeWithThruster();
 		HandlePlayerSwitch();
 		Destroy(collision.gameObject);
@@ -215,7 +233,7 @@ public class Player : MonoBehaviour, IDamageable
 		return this._playerType;
 	}
 
-	private void AddPlayerToList(GameObject newPlayer)
+	public void AddPlayerToList(GameObject newPlayer)
 	{
 		if (!this._playerList.Contains(newPlayer))
 		{
@@ -236,12 +254,12 @@ public class Player : MonoBehaviour, IDamageable
 		return this._playerList;
 	}
 
-	public float GetCurrentHealth()
+	public int GetCurrentHealth()
 	{
-		return this._currentHealth;
+		return (int) this._currentHealth;
 	}
 
-	public float GetMaxHealth()
+	public int GetMaxHealth()
 	{
 		switch (this._playerType)
 		{
@@ -249,12 +267,28 @@ public class Player : MonoBehaviour, IDamageable
 			case PlayerType.Omen: return this._omenMaxHealth;	
 			case PlayerType.Sora: return this._soraMaxHealth;
 			case PlayerType.Ralph: return this._soraMaxHealth;
-			default: return 0f;
+			default: return 0;
 		}
 	}
 	public float GetMoveSpeed()
 	{
 		return this._moveSpeed;
+	}
+
+	public int GetCurrentCooldown()
+	{
+		return (int) this._cooldown;
+	}
+
+	public int GetMaxCooldown()
+	{
+		switch (this._playerType)
+		{
+			case PlayerType.Omen: return (int) this._omenCloneCooldown;
+			case PlayerType.Sora: return 0;
+			case PlayerType.Ralph: return 0;
+			default: return 0;
+		}
 	}
 	#endregion
 
@@ -304,7 +338,7 @@ public class Player : MonoBehaviour, IDamageable
 	{
 		this._currentHealth -= damageAmount;
 
-		UIManager.instance.UpdateHealthText();
+		UIManager.instance.UpdateHealthText(GetCurrentHealth());
 
 		if (this._currentHealth <= 0) DestroyOnDie();
 	}	

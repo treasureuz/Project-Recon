@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 3477806910951290100}
   m_Layer: 11
   m_Name: PlayerClone
-  m_TagString: Player
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -35,7 +35,7 @@ Transform:
   - {fileID: 8334123836799243455}
   - {fileID: 448364479618553845}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -188}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4048911326372375608
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -49,8 +49,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _rb2d: {fileID: 4307045051133944857}
-  _player: {fileID: 191160983667545446, guid: 1fa994d84365a144392272d4fece4383, type: 3}
-  _enemyHelper: {fileID: 2498890659525056410, guid: 29f3c0cba197b2c41a98e44e093b6a74, type: 3}
   _bulletSpawnPoint: {fileID: 1457638194406933492}
   _bulletPrefab: {fileID: 5689039745023292918, guid: 591ee9558d478f248936976d67428483, type: 3}
 --- !u!50 &4307045051133944857

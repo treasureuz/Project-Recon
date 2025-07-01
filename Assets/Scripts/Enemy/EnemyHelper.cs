@@ -3,14 +3,9 @@ using UnityEngine;
 
 public class EnemyHelper : MonoBehaviour
 {
-	private List<GameObject> _enemyList = new List<GameObject>();
+	private List<Enemy> _enemyList = new List<Enemy>();
 
-	private void Update()
-	{
-		Debug.Log("Enemies in list: " + GetEnemyList().Count);
-	}
-
-	public void AddEnemyToList(GameObject newEnemy)
+	public void AddEnemyToList(Enemy newEnemy)
 	{
 		if (!this._enemyList.Contains(newEnemy))
 		{
@@ -18,7 +13,7 @@ public class EnemyHelper : MonoBehaviour
 		}
 	}
 
-	public void RemoveEnemyFromList(GameObject enemyToRemove)
+	public void RemoveEnemyFromList(Enemy enemyToRemove)
 	{
 		if (this._enemyList.Contains(enemyToRemove))
 		{
@@ -26,7 +21,7 @@ public class EnemyHelper : MonoBehaviour
 		}
 	}
 
-	public List<GameObject> GetEnemyList()
+	public List<Enemy> GetEnemyList()
 	{
 		return this._enemyList;
 	}

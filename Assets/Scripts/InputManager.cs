@@ -33,7 +33,7 @@ public class InputManager : MonoBehaviour
     {
 		if (this._player.GetPlayerType() != Player.PlayerType.Standard && this._ability.WasPressedThisFrame())
         {
-            this._wasAbilityPressedThisFrame = true; // Used to check if ability was pressed this frame
+            this._wasAbilityPressedThisFrame = true; // Used to check if ability was pressed this frame (for player overlay)
 			SetIsAbilityPressed(true); // Doesn't turn false until left mouse button is pressed;
 		}
         else this._wasAbilityPressedThisFrame = false; // Reset ability pressed this frame
