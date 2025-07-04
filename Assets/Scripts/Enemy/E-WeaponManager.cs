@@ -66,10 +66,9 @@ public class EWeaponManager : MonoBehaviour
 			this._bulletInstance = Instantiate(this._bulletPrefab, this._bulletSpawnPoint.position, this.transform.rotation);
 			this._nextShootTime = 0f; // Reset timer after shooting
 		}
-		
 	}
 
-	public void HandleBulletDamage()
+	public void HandleEnemyWeaponType()
 	{
 		switch(this._enemy.GetEnemyType())
 		{
@@ -78,4 +77,37 @@ public class EWeaponManager : MonoBehaviour
 			case Enemy.EnemyType.LilGuard: LilGuard(); break;
 		}
 	}
+
+	#region Getters & Setters
+	public void SetSlowModeTimeBetweenShots(float slowAmount)
+	{
+		this._timeBetweenEnemyShots += slowAmount; // Increase the time between enemy shots when slow mode is active
+	}
+
+	public void SetTimeBetweenShots(float newTimeBetweenShots)
+	{
+		this._timeBetweenEnemyShots = newTimeBetweenShots; // Set the time between enemy shots
+	}
+
+	public float GetCurrentTimeBetweenShots()
+	{
+		return this._timeBetweenEnemyShots;
+	}
+
+	public float GetBaseTimeBetweenShots()
+	{
+		switch (this._enemy.GetEnemyType())
+		{
+			case Enemy.EnemyType.Guard: return this._guardTimeBetweenEnemyShots;
+			case Enemy.EnemyType.Cop: return this._copTimeBetweenEnemyShots;
+			case Enemy.EnemyType.LilGuard: return this._lilGuardTimeBetweenEnemyShots;
+			default: return 0f; // Default case if no enemy type matches
+		}
+	}
+
+	public float GetTimeBetweenShotsThreshold()
+	{
+		return this._timeBetweenEnemyShots + 0.13f; // Returns the threshold for the time between shots
+	}
+	#endregion
 }

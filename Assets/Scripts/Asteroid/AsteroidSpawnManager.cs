@@ -1,11 +1,6 @@
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography;
-using NUnit.Framework.Constraints;
-using Unity.Burst.Intrinsics;
-using Unity.VisualScripting;
 using UnityEngine;
 
-public class AsteriodSpawnManager : MonoBehaviour
+public class AsteroidSpawnManager : MonoBehaviour
 {
 	[Header("References")]
 	[SerializeField] private GameObject _cosmicAsteroidPrefab;

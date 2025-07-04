@@ -2,7 +2,6 @@ using System;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
-using static PWeaponManager;
 
 public class PBulletManager : MonoBehaviour
 {

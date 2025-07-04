@@ -345,8 +345,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1725233700033458854}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.75, y: 3.04, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 3.6183596, y: 4, z: 0}
   m_LocalScale: {x: 0.865, y: 0.865, z: 0.865}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -375,14 +375,16 @@ MonoBehaviour:
   _maxBounds: {x: -6.3, y: 3.42}
   _rotationDuration: 0.2
   _moveDuration: 1.35
+  _slowAmount: 0.2
+  _moveSpeedThreshold: 0.85
   _guardTimeBetweenMoves: 2
   _guardMoveSpeed: 1.55
   _guardMaxHealth: 120
-  _guardWaitTimeUntilPatrol: 4
+  _guardWaitTimeUntilPatrol: 3.85
   _copTimeBetweenMoves: 1.65
   _copMoveSpeed: 2
   _copMaxHealth: 180
-  _copWaitTimeUntilPatrol: 7.5
+  _copWaitTimeUntilPatrol: 5.58
   _lilGuardPrefab: {fileID: 2551665939021353220, guid: a06205a3483ba5f41b8886e04f1e2f01, type: 3}
   _lilGuardMoveSpeed: 1.75
   _lilGuardMaxHealth: 180
@@ -438,7 +440,7 @@ Rigidbody2D:
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDamping: 0
-  m_AngularDamping: 5
+  m_AngularDamping: 2.35
   m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -449,7 +451,7 @@ Rigidbody2D:
     m_Bits: 0
   m_Interpolate: 1
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 0
 --- !u!1 &3815346087496208159
 GameObject:
@@ -813,7 +815,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: -0.35, y: 0}
-  m_Radius: 6
+  m_Radius: 6.75
 --- !u!114 &1987500767680005915
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -42,16 +42,26 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 697032226462455953}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e11ac5addd432fe498d1ca15dd724349, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _rb2d: {fileID: 3606735017681977860}
-  _asteroidForce: 2
-  _maxHealth: 40
-  _asteroidDamage: 52
-  _asteroidRotationSpeed: 60
+  _waitTimeUntilMove: 3.35
+  _slowForceAmount: 0.065
+  _slowRotateSpeedAmount: 1.32
+  _forceThreshold: 1.5
+  _rotateSpeedThreshold: 10
+  _cosmicAsteroidForce: 2
+  _cosmicMaxHealth: 40
+  _cosmicAsteroidDamage: 52
+  _cosmicAsteroidRotationSpeed: 60
+  _dwarfAsteroidForce: 2.5
+  _dwarfMaxHealth: 20
+  _dwarfAsteroidDamage: 30
+  _dwarfAsteroidRotationSpeed: 63.35
+  _asteroidType: 0
 --- !u!50 &3606735017681977860
 Rigidbody2D:
   serializedVersion: 5

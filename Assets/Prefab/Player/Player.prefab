@@ -52,6 +52,9 @@ MonoBehaviour:
   _playerClonePrefab: {fileID: 126401449369213983, guid: c85be10f807356a4d9330efc4c36cc80, type: 3}
   _playerOverlayPrefab: {fileID: 4632535971161004411, guid: a640de712ffb9f444b19805bc0899b70, type: 3}
   _playerWeaponManager: {fileID: 1699253976151754416}
+  _asteroids:
+  - {fileID: 6430892029719757333, guid: 42137422141fffe41ab10d200b1aec7d, type: 3}
+  - {fileID: 6430892029719757333, guid: 16976ee5c03273f40b1c8751f504508b, type: 3}
   _standardScale: {x: 0.855, y: 0.855, z: 0.855}
   _standardMaxHealth: 100
   _standardMoveSpeed: 2.88
@@ -62,6 +65,8 @@ MonoBehaviour:
   _soraScale: {x: 0.9, y: 0.9, z: 0.9}
   _soraMaxHealth: 155
   _soraMoveSpeed: 3.4
+  _soraFreezeCooldown: 12
+  _soraFreezeDuration: 6.89
   _ralphScale: {x: 0.93, y: 0.93, z: 0.93}
   _ralphMaxHealth: 200
   _ralphMoveSpeed: 3.75

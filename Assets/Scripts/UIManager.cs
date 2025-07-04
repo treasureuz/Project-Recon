@@ -38,7 +38,7 @@ public class UIManager : MonoBehaviour
 
 	private void Update()
 	{
-		if (!(this._player.GetPlayerType() == Player.PlayerType.Sora && InputManager.instance.GetIsAbilityPressed()))
+		if (!this._player.GetIsSoraFreezeActive())
 		{
 			UpdateTimeText(); // Update the time text every frame	
 		}
@@ -80,9 +80,7 @@ public class UIManager : MonoBehaviour
 		{
 			this._cooldownBox.SetActive(true); // Show the cooldown box if player type is not Standard
 			cooldownTime -= (int) Time.time; // Calculate remaining cooldown time
-
-			if (cooldownTime <= 0) cooldownTime = this._player.GetMaxCooldown(); // Ensure cooldown time does not go negative
-
+			if (cooldownTime <= 0) cooldownTime = this._player.GetBaseCooldownTime(); // Ensure cooldown time does not go negative
 			this._cooldownText.text = cooldownTime.ToString() + "s";
 		}
 		else this._cooldownBox.SetActive(false); // Hide the cooldown box

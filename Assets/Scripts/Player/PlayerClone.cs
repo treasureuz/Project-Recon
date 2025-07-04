@@ -42,7 +42,7 @@ public class PlayerClone : MonoBehaviour, IDamageable
 		this._currentHealth = this._player.GetMaxHealth();
 		this._moveSpeed = this._player.GetMoveSpeed();
 
-		this._playerWeaponManager = GameObject.Find("P-WeaponSpriteParent").GetComponent<PWeaponManager>();
+		this._playerWeaponManager = FindAnyObjectByType<PWeaponManager>();
 		this._timeBetweenShots = this._playerWeaponManager.GetTimeBetweenShots();
 	}
 
@@ -80,17 +80,13 @@ public class PlayerClone : MonoBehaviour, IDamageable
 	#region Player Clone Handlers
 	private void HandleStartLocalScale()
 	{
-		float zAngle = this._player.transform.eulerAngles.z;
-		if (zAngle > 180f) zAngle -= 360f;
+		this.transform.localScale = this._player.transform.localScale; // Match player scale
 
-		Vector3 localScale = this.transform.localScale;
-
-		// Flip the player sprite vertically when facing left
-		if (zAngle > 120f || zAngle < -100f) localScale.y = -Mathf.Abs(localScale.y);
-		else localScale.y = Mathf.Abs(localScale.y); // Keep the player sprite upright when facing right
-
-		this.transform.localScale = localScale;// Apply the scale to the player
+		if (this._player.transform.localScale.y == -Mathf.Abs(this._player.transform.localScale.y))
+			this.transform.eulerAngles = new Vector3(0, 0, 180); // Flip clone if player is facing left
+		else this.transform.eulerAngles = new Vector3(0, 0, 0); // Keep clone upright if player is facing right
 	}
+
 	private void HandlePlayerCloneMovement()
 	{
 		//Offsets enemy position to avoid collision with the enemy  

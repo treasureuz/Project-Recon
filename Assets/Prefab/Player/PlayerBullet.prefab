@@ -176,7 +176,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerBulletDamage: 15
-  _bulletMagazineCount: 23
+  _bulletMagazineCount: 38
   _thinBulletSprite: {fileID: 6104453994792669460}
   _wideBulletSprite: {fileID: 2800622063955491697}
   _wideBulletCircleCollider: {fileID: 372467707223896636}

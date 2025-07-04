@@ -20,19 +20,21 @@ public class Enemy : MonoBehaviour, IDamageable
 	[Header("Global Enemy Settings")]
 	[SerializeField] private float _rotationDuration = 0.2f; //How long to rotate towards player position
 	[SerializeField] private float _moveDuration = 1f; //How long to move towards random position
+	[SerializeField] private float _slowAmount = 0.2f; // Amount to slow down the enemy when shot
+	[SerializeField] private float _moveSpeedThreshold = 0.85f; // Minimum speed for the enemy to move
 
 	#region Enemy Settings
 	[Header("Guard Enemy Settings")]
 	[SerializeField] private float _guardTimeBetweenMoves = 2f;
 	[SerializeField] private float _guardMoveSpeed = 1.55f;
 	[SerializeField] private float _guardMaxHealth = 120f;
-	[SerializeField] private float _guardWaitTimeUntilPatrol = 4f;
+	[SerializeField] private float _guardWaitTimeUntilPatrol = 3.85f;
 
 	[Header("Cop Enemy Settings")]
 	[SerializeField] private float _copTimeBetweenMoves = 1.65f;
 	[SerializeField] private float _copMoveSpeed = 2f;
 	[SerializeField] private float _copMaxHealth = 180f; 
-	[SerializeField] private float _copWaitTimeUntilPatrol = 7.5f;
+	[SerializeField] private float _copWaitTimeUntilPatrol = 5.58f;
 
 	[Header("Lil Guard Enemy Settings")]
 	[SerializeField] private Enemy _lilGuardPrefab;
@@ -92,24 +94,25 @@ public class Enemy : MonoBehaviour, IDamageable
 
 		this._radius = this.transform.Find("Radius").GetComponent<CircleCollider2D>();
 		this._radiusManager = this.transform.Find("Radius").GetComponent<RadiusManager>();
-		this._player = GameObject.Find("Player").GetComponent<Player>(); // Finds the active Player in the scene
-		this._players = this._player.GetPlayerList(); // Get all players in the scene
-		this._enemyHelper = FindAnyObjectByType<EnemyHelper>(); // Finds the active EnemyHelper in the scene
 
+		this._player = FindAnyObjectByType<Player>();	
+		this._players = this._player.GetPlayerList(); // Get all players in the scene
+
+		this._enemyHelper = FindAnyObjectByType<EnemyHelper>(); // Finds the active EnemyHelper in the scene
 		this._enemyHelper.AddEnemyToList(this); // Adds this enemy to the enemy list in EnemyHelper
 
-		//if (enemyType != EnemyType.LilGuard)
-		//{
-		//	//Dodging/Moving Bounds based off radius 
-		//	this._minBounds = new Vector2((this.transform.position.x - this._radius.bounds.extents.x)/2f, -1.35f);
-		//	this._maxBounds = new Vector2((this.transform.position.x + this._radius.bounds.extents.x)/2f, 2.35f);
+		if (enemyType != EnemyType.LilGuard)
+		{
+			//Dodging/Moving Bounds based off radius 
+			this._minBounds = new Vector2((this.transform.position.x - this._radius.bounds.extents.x) / 2f, -1.35f);
+			this._maxBounds = new Vector2((this.transform.position.x + this._radius.bounds.extents.x) / 2f, 2.35f);
 
-		//	//Generate position to move to on start
-		//	this._targetPosition = GenerateDodgePosition();
-		//}
+			//Generate position to move to on start
+			this._targetPosition = GenerateDodgePosition();
+		}
 
 		HandleEnemyType();
-		this._enemyWeaponManager.HandleBulletDamage(); // Sets enemy weapon type
+		this._enemyWeaponManager.HandleEnemyWeaponType(); // Sets enemy weapon type
 	}
 
 	private void Update()
@@ -119,10 +122,6 @@ public class Enemy : MonoBehaviour, IDamageable
 
 		UpdateEnemyState();
 		FindClosestPlayer();
-	}
-
-	private void FixedUpdate()
-	{
 		if (this._closestPlayer != null) PerformEnemyAction();
 	}
 
@@ -131,9 +130,8 @@ public class Enemy : MonoBehaviour, IDamageable
 		switch (this.enemyState)
 		{
 			case EnemyState.Attack:
-				HandleEnemyRotation();
-				HandleEnemyMovement();
-				break;
+				HandleEnemyRotation(); 
+				HandleEnemyMovement(); break;
 			case EnemyState.Patrol: break;
 		}
 	}
@@ -198,33 +196,8 @@ public class Enemy : MonoBehaviour, IDamageable
 	private void HandleEnemyMovement()
 	{
 		MoveTowardsClosestPlayer();
-		//if (enemyType != EnemyType.LilGuard) HandleDodging();
+		if (enemyType != EnemyType.LilGuard) HandleDodging();
 	}
-
-	private void HandleEnemyRotation()
-	{
-		// Checks if direction is positive (player is to the left) or negative (player is to the right)
-		this._directionToClosestPlayer = (this.transform.position - this._closestPlayer.transform.position); 
-
-		float angle = Vector3.SignedAngle(this.transform.right, this._directionToClosestPlayer, Vector3.forward);
-
-		//Rotate smoothly/step by step
-		float t = Time.fixedDeltaTime / this._rotationDuration; // a fraction of the total angle you want to rotate THIS frame
-		this.transform.Rotate(Vector3.forward, angle * t);
-
-		//Normalize angle for scale flipping (eulerAngles.z can't be negative -- 0 to 360 degrees)
-		float zAngle = this.transform.eulerAngles.z;
-		if (zAngle > 180f) zAngle -= 360f;
-
-		Vector3 localScale = this.transform.localScale;
-
-		// Flip the enemy sprite vertically when facing left
-		if (zAngle > 120f || zAngle < -100f) localScale.y = -Mathf.Abs(localScale.y);
-		else localScale.y = Mathf.Abs(localScale.y); // Keep the enemy sprite upright when facing right
-
-		this.transform.localScale = localScale; // Apply the scale to the enemy
-	}
-	#endregion
 
 	#region Enemy Movement
 	private void MoveTowardsClosestPlayer()
@@ -259,8 +232,56 @@ public class Enemy : MonoBehaviour, IDamageable
 	}
 	#endregion
 
+	private void HandleEnemyRotation()
+	{
+		// Checks if direction is positive (player is to the left) or negative (player is to the right)
+		this._directionToClosestPlayer = (this.transform.position - this._closestPlayer.transform.position); 
+
+		float angle = Vector3.SignedAngle(this.transform.right, this._directionToClosestPlayer, Vector3.forward);
+
+		//Rotate smoothly/step by step
+		float t = Time.fixedDeltaTime / this._rotationDuration; // a fraction of the total angle you want to rotate THIS frame
+		this.transform.Rotate(Vector3.forward, angle * t);
+
+		//Normalize angle for scale flipping (eulerAngles.z can't be negative -- 0 to 360 degrees)
+		float zAngle = this.transform.eulerAngles.z;
+		if (zAngle > 180f) zAngle -= 360f;
+
+		Vector3 localScale = this.transform.localScale;
+
+		// Flip the enemy sprite vertically when facing left
+		if (zAngle > 120f || zAngle < -100f) localScale.y = -Mathf.Abs(localScale.y);
+		else localScale.y = Mathf.Abs(localScale.y); // Keep the enemy sprite upright when facing right
+
+		this.transform.localScale = localScale; // Apply the scale to the enemy
+	}
+
+	// Handles the slow mode effect when the enemy is shot **(Sora's bullet)**
+	private IEnumerator HandleSlowMode(float slowAmount, float moveSpeedThreshold)
+	{
+		this._moveSpeed -= slowAmount; // Slow down the enemy when shot
+		if (this._moveSpeed < moveSpeedThreshold) this._moveSpeed = moveSpeedThreshold; // Prevents speed from going below threshold (0.85f)
+
+		this._enemyWeaponManager.SetSlowModeTimeBetweenShots(slowAmount); // Adjust the enemy's shooting speed
+		// Prevents shoot speed from going below the threshold
+		if (this._enemyWeaponManager.GetCurrentTimeBetweenShots() > this._enemyWeaponManager.GetTimeBetweenShotsThreshold())
+			this._enemyWeaponManager.SetTimeBetweenShots(this._enemyWeaponManager.GetTimeBetweenShotsThreshold()); 
+
+		yield return new WaitUntil(() => !this._isShot); // Wait until the enemy is not shot anymore
+
+		if (this._moveSpeed != GetBaseMoveSpeed()) // Only reset if the speed was changed
+			this._moveSpeed = GetBaseMoveSpeed(); // Reset to base speed when not shot
+
+		if (this._enemyWeaponManager.GetCurrentTimeBetweenShots() != this._enemyWeaponManager.GetBaseTimeBetweenShots())
+			this._enemyWeaponManager.SetTimeBetweenShots(this._enemyWeaponManager.GetBaseTimeBetweenShots()); // Reset to base shooting speed
+	}
+	#endregion
+
 	private IEnumerator OnEnemyShot()
 	{
+		//Reset the isShot boolean if the enemy is shot again before the wait time is over
+
+
 		this._isShot = true;
 		yield return new WaitForSeconds(this._waitTimeUntilPatrol);
 		this._isShot = false;
@@ -268,6 +289,8 @@ public class Enemy : MonoBehaviour, IDamageable
 
 	private IEnumerator IsWithinRadius()
 	{
+		//Reset the isWithinRadius boolean if the player is in the radius before the wait time is over
+
 		this._isWithinRadius = true;
 		yield return new WaitForSeconds(this._waitTimeUntilPatrol);
 		this._isWithinRadius = false;
@@ -288,6 +311,19 @@ public class Enemy : MonoBehaviour, IDamageable
 		float randYPos = Random.Range(minY, maxY);
 
 		return new Vector2(randXPos, randYPos);
+	}
+	#endregion
+
+	#region Helper Methods 
+	private float GetBaseMoveSpeed()
+	{
+		switch (this.enemyType)
+		{
+			case EnemyType.Cop: return this._copMoveSpeed;
+			case EnemyType.Guard: return this._guardMoveSpeed;
+			case EnemyType.LilGuard: return this._lilGuardMoveSpeed;
+			default: return 0f;
+		}
 	}
 	#endregion
 
@@ -354,10 +390,10 @@ public class Enemy : MonoBehaviour, IDamageable
 	public void OnDamaged(float damageAmount)
 	{
 		this._currentHealth -= damageAmount;
-		if (this._currentHealth <= 0)
-		{
-			DestroyOnDie(); // Destroy enemy when health reaches zero
-		}
+		if (this._currentHealth <= 0) DestroyOnDie(); // Destroy enemy when health reaches zero
+
+		if (this._player.GetPlayerType() == Player.PlayerType.Sora) 
+			StartCoroutine(HandleSlowMode(this._slowAmount, this._moveSpeedThreshold));
 	}
 	#endregion
 }

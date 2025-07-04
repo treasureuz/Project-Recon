@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Unity.VisualScripting;
@@ -11,6 +12,7 @@ public class Player : MonoBehaviour, IDamageable
 	[SerializeField] private GameObject _playerClonePrefab;
 	[SerializeField] private GameObject _playerOverlayPrefab;
 	[SerializeField] private PWeaponManager _playerWeaponManager;
+	[SerializeField] private AsteroidBehavior[] _asteroids;
 
 	[Header("Global Player Settings")]
 	[SerializeField] private static float _rotationDuration = 0.072f; //How long to rotate towards mouse position
@@ -25,18 +27,23 @@ public class Player : MonoBehaviour, IDamageable
 	[SerializeField] private Vector3 _omenScale = new Vector3(0.875f, 0.875f, 0.875f);
 	[SerializeField] private int _omenMaxHealth = 125;
 	[SerializeField] private float _omenMoveSpeed = 3.3f;
-	[SerializeField] private float _omenCloneCooldown = 5; // Cooldown for Omen's clone ability
+	[SerializeField] private float _omenCloneCooldown = 5f; // Cooldown for Omen's clone ability
 
 	[Header("Sora's Player Settings")]
 	[SerializeField] private Vector3 _soraScale = new Vector3(0.9f, 0.9f, 0.9f);
 	[SerializeField] private int _soraMaxHealth = 155;
 	[SerializeField] private float _soraMoveSpeed = 3.65f;
-	
+	[SerializeField] private float _soraFreezeCooldown = 12f; // Cooldown for Sora's freeze ability
+	[SerializeField] private float _soraFreezeDuration = 6.89f; // Duration of Sora's freeze ability
+
 	[Header("Ralph's Player Settings")]
 	[SerializeField] private Vector3 _ralphScale = new Vector3(0.93f, 0.93f, 0.93f);
 	[SerializeField] private int _ralphMaxHealth = 200;
 	[SerializeField] private float _ralphMoveSpeed = 4f;
 	#endregion
+	
+	private EnemyHelper _enemyHelper;
+	private AsteroidSpawnManager _asteroidSpawnManager; // Reference to the AsteroidSpawnManager
 
 	private GameObject _playerCloneInstance; // Player clone instance for Omen's ability
 	private GameObject _playerOverlayInstance;
@@ -45,7 +52,9 @@ public class Player : MonoBehaviour, IDamageable
 										  
 	private float _currentHealth;
 	private float _moveSpeed;
-	private float _cooldown = 0;
+	private float _cooldown = 0f;
+
+	private bool _isSoraFreezeActive = false; // Indicates if Sora's freeze ability is active
 
 	public enum PlayerType
 	{
@@ -56,6 +65,12 @@ public class Player : MonoBehaviour, IDamageable
 	}
 
 	private PlayerType _playerType;
+
+	private void Awake()
+	{
+		this._enemyHelper = FindAnyObjectByType<EnemyHelper>(); // Finds the active EnemyHelper in the scene
+		this._asteroidSpawnManager = FindAnyObjectByType<AsteroidSpawnManager>(); // Finds the active AsteroidSpawnManager in the scene
+	}
 
 	private void Start()
 	{
@@ -68,8 +83,8 @@ public class Player : MonoBehaviour, IDamageable
 	private void Update()
 	{
 		HandlePlayerRotation();
-		if (InputManager.instance.GetIsAbilityPressed()) HandlePlayerAbilities();
-		UIManager.instance.UpdateCooldownText(GetCurrentCooldown());
+		if (InputManager.instance.GetWasAbilityPressedThisFrame()) HandlePlayerAbilities();
+		UIManager.instance.UpdateCooldownText(GetCurrentCooldownTime());
 	}
 
 	private void FixedUpdate()
@@ -97,6 +112,7 @@ public class Player : MonoBehaviour, IDamageable
 	{
 		this._currentHealth = this._soraMaxHealth;
 		this._moveSpeed = this._soraMoveSpeed;
+		this._cooldown = this._soraFreezeCooldown; // Set cooldown for Sora's freeze ability
 		this.transform.localScale = this._soraScale;
 	}
 
@@ -119,6 +135,8 @@ public class Player : MonoBehaviour, IDamageable
 			{
 				this._playerOverlayInstance = Instantiate(this._playerOverlayPrefab, mousePosition, Quaternion.identity);
 			}
+
+			#region Handle Player Overlay Local Scale
 			if (this._playerOverlayInstance != null)
 			{
 				this._playerOverlayInstance.transform.localScale = this.transform.localScale; // Match player scale
@@ -129,19 +147,65 @@ public class Player : MonoBehaviour, IDamageable
 
 				this._playerOverlayInstance.transform.position = mousePosition;
 			}
-			if (Mouse.current.rightButton.wasPressedThisFrame && this._playerOverlayInstance != null)
+			#endregion
+
+			while (InputManager.instance.GetIsAbilityPressed())
 			{
-				this._playerCloneInstance = Instantiate
-				(this._playerClonePrefab, this._playerOverlayInstance.transform.position, Quaternion.identity);
+				if (Mouse.current.rightButton.wasPressedThisFrame && this._playerOverlayInstance != null)
+				{
+					this._playerCloneInstance = Instantiate
+					(this._playerClonePrefab, this._playerOverlayInstance.transform.position, Quaternion.identity);
 
-				InputManager.instance.SetIsAbilityPressed(false); // Reset the ability pressed state
+					InputManager.instance.SetIsAbilityPressed(false); // Reset the ability pressed state
 
-				Destroy(this._playerOverlayInstance); // Destroy the overlay after spawning the player clone
-				this._playerOverlayInstance = null; // Reset the overlay instance
+					Destroy(this._playerOverlayInstance); // Destroy the overlay after spawning the player clone
+					this._playerOverlayInstance = null; // Reset the overlay instance
 
-				this._cooldown = Time.time + this._omenCloneCooldown; // Reset cooldown
-			}
+					this._cooldown = Time.time + this._omenCloneCooldown; // Reset cooldown
+				}
+			}	
 		}
+	}
+
+	private IEnumerator SorasFreeze()
+	{
+		if (this._isSoraFreezeActive) yield break; // Prevents multiple calls to this coroutine
+
+		if (Time.time >= this._cooldown)
+		{
+			this._isSoraFreezeActive = true;
+
+			// Disable/Freeze Enemies and their Weapon Managers
+			foreach (Enemy enemy in this._enemyHelper.GetEnemyList())
+			{
+				enemy.enabled = false; // Disable enemy behavior
+				enemy.GetComponentInChildren<EWeaponManager>().enabled = false; // Disable enemy weapon manager
+			}
+			// Disable/Freeze asteroid behavior and spawning
+			foreach (AsteroidBehavior asteroid in this._asteroids) asteroid.enabled = false; 
+			this._asteroidSpawnManager.enabled = false; // Disable asteroid spawning
+
+			yield return new WaitForSeconds(this._soraFreezeDuration);
+
+			this._isSoraFreezeActive = false;
+
+			// Re-enable Enemies and their Weapon Managers
+			foreach (Enemy enemy in this._enemyHelper.GetEnemyList())
+			{
+				enemy.enabled = true; 
+				enemy.GetComponentInChildren<EWeaponManager>(true).enabled = true;
+			}
+			// Re-enable asteroid behavior and spawning
+			foreach (AsteroidBehavior asteroid in this._asteroids) asteroid.enabled = true;
+			this._asteroidSpawnManager.enabled = true; 
+
+			this._cooldown = Time.time + this._soraFreezeCooldown;
+		}
+	}
+
+	private void RalphsTeleport()
+	{
+
 	}
 	#endregion
 
@@ -181,18 +245,19 @@ public class Player : MonoBehaviour, IDamageable
 			case PlayerType.Ralph: Ralph(); break; //Thruster Type - Double
 		}
 		this._playerWeaponManager.InstantiateThrusterAndBullet();
+		if (this._playerCloneInstance != null) Destroy(this._playerCloneInstance); //Destroy clone if exists
 
 		UIManager.instance.UpdateHealthText(GetCurrentHealth());
 	}
 
 	private void HandlePlayerAbilities()
 	{
-		if (this._playerType == PlayerType.Omen)
-		{
-			OmensClone();
-		}
+		if (this._playerType == PlayerType.Omen) OmensClone();
+		else if (this._playerType == PlayerType.Sora) StartCoroutine(SorasFreeze());
+		else if (this._playerType == PlayerType.Ralph) RalphsTeleport();
 	}
 	#endregion
+
 
 	private void OnOrbsCollect(Collider2D collision)
 	{
@@ -232,7 +297,6 @@ public class Player : MonoBehaviour, IDamageable
 	{
 		return this._playerType;
 	}
-
 	public void AddPlayerToList(GameObject newPlayer)
 	{
 		if (!this._playerList.Contains(newPlayer))
@@ -240,7 +304,6 @@ public class Player : MonoBehaviour, IDamageable
 			this._playerList.Add(newPlayer);
 		}
 	}
-
 	public void RemovePlayerFromList(GameObject playerToRemove)
 	{
 		if (this._playerList.Contains(playerToRemove))
@@ -248,17 +311,14 @@ public class Player : MonoBehaviour, IDamageable
 			this._playerList.Remove(playerToRemove);
 		}
 	}
-
 	public List<GameObject> GetPlayerList()
 	{
 		return this._playerList;
 	}
-
 	public int GetCurrentHealth()
 	{
 		return (int) this._currentHealth;
 	}
-
 	public int GetMaxHealth()
 	{
 		switch (this._playerType)
@@ -274,21 +334,23 @@ public class Player : MonoBehaviour, IDamageable
 	{
 		return this._moveSpeed;
 	}
-
-	public int GetCurrentCooldown()
+	public int GetCurrentCooldownTime()
 	{
 		return (int) this._cooldown;
 	}
-
-	public int GetMaxCooldown()
+	public int GetBaseCooldownTime()
 	{
 		switch (this._playerType)
 		{
 			case PlayerType.Omen: return (int) this._omenCloneCooldown;
-			case PlayerType.Sora: return 0;
+			case PlayerType.Sora: return (int) this._soraFreezeCooldown;
 			case PlayerType.Ralph: return 0;
 			default: return 0;
 		}
+	}
+	public bool GetIsSoraFreezeActive()
+	{
+		return this._isSoraFreezeActive;
 	}
 	#endregion
 
@@ -302,9 +364,11 @@ public class Player : MonoBehaviour, IDamageable
 				SetPlayerTypeWithThruster(); //Set player type based on current thruster type,
 
 				RemovePlayerFromList(this.gameObject);
-				Destroy(this.gameObject); //Then, destroy in game	
-				if (this._playerCloneInstance != null) Destroy(this._playerCloneInstance); break; //Destroy clone if exists
+				Destroy(this.gameObject); break; //Then, destroy in game	
+
 			default: //Every other Thruster Type - Thin, Wide, Double
+				if (this._playerCloneInstance != null) Destroy(this._playerCloneInstance); //Destroy clone if exists
+				
 				this._playerWeaponManager.PopAndSetThrusterType(); //First, remove from stack,
 
 				SetPlayerTypeWithThruster(); //Set player type based on current thruster type,
@@ -321,7 +385,7 @@ public class Player : MonoBehaviour, IDamageable
 			iDamageable.OnDamaged(collision.GetComponent<AsteroidBehavior>().GetAsteroidDamage()); 
 			Debug.Log("Player hit by Asteroid: " + collision.GetComponent<AsteroidBehavior>().GetAsteroidDamage());
 		} 
-		else if (collision.CompareTag("EnemyBullet"))
+		else if (collision.CompareTag("EnemyBullet") && this.gameObject.layer == LayerMask.NameToLayer("Player"))
 		{
 			//Bullet damage is specific to THIS bullet/collision's character type
 			iDamageable.OnDamaged(collision.GetComponent<EBulletManager>().GetEnemyBulletDamage());
