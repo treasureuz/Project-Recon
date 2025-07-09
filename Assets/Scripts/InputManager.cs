@@ -35,27 +35,37 @@ public class InputManager : MonoBehaviour
 
 	private void Update()
     {
-		if (this._player.GetPlayerType() != Player.PlayerType.Standard && this._abilityE.WasPressedThisFrame())
-        {
-            this._wasAbilityEPressedThisFrame = true; // Used to check if ability was pressed this frame (for player overlay)
-			this._isAbilityEPressed = true; // Set ability pressed to true
-		}
-        else this._wasAbilityEPressedThisFrame = false; // Reset ability pressed this frame
-
-        if (this._player.GetPlayerType() == Player.PlayerType.Ralph && this._abilityC.IsPressed())
-        {
-            this._isAbilityCPressed = true; // Set ability C pressed to true
-        }
-        else this._isAbilityCPressed = false; // Reset ability C pressed
+		HandleAbilityInput();
 	}
 
-	#region Movement Input
 	private void FixedUpdate()
     {
-        if (this._movement.WasPressedThisFrame() || this._movement.IsPressed()) this._isMoving = true;
-        else this._isMoving = false;
+        HandleMovementInput();
+	}
 
-		moveDirection = this._movement.ReadValue<Vector2>().normalized;
+	#region Input Handlers
+	private void HandleMovementInput()
+	{
+		if (this._movement.WasPressedThisFrame() || this._movement.IsPressed()) this._isMoving = true;
+		else this._isMoving = false;
+
+		InputManager.moveDirection = this._movement.ReadValue<Vector2>().normalized;
+	}
+
+	private void HandleAbilityInput()
+    {
+		if (this._player.GetPlayerType() != Player.PlayerType.Standard && this._abilityE.WasPressedThisFrame())
+		{
+			this._wasAbilityEPressedThisFrame = true; // Used to check if ability was pressed this frame (for player overlay)
+			this._isAbilityEPressed = true; // Set ability pressed to true
+		}
+		else this._wasAbilityEPressedThisFrame = false; // Reset ability pressed this frame
+
+		if (this._player.GetPlayerType() == Player.PlayerType.Ralph && this._abilityC.IsPressed())
+		{
+			this._isAbilityCPressed = true; // Set ability C pressed to true
+		}
+		else this._isAbilityCPressed = false; // Reset ability C pressed
 	}
 	#endregion
 

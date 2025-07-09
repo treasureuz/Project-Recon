@@ -104,7 +104,7 @@ public class PWeaponManager : MonoBehaviour
 	}
 	#endregion
 
-	#region Shoot Actions
+	#region Player Shoot Actions
 	private void HandlePlayerShoot()
 	{
 		//Time.time is the actual time accumulated every single frame since the game started

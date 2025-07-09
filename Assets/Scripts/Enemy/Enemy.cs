@@ -57,7 +57,7 @@ public class Enemy : MonoBehaviour, IDamageable
 	private Vector2 _directionToClosestPlayer;
 	private Vector2 _targetPosition;
 
-	#region Enemy Variables
+	#region Enemy Settings Variables
 	private float _timeBetweenMoves;
 	private float _currentHealth;
 	private float _moveSpeed;
@@ -97,7 +97,7 @@ public class Enemy : MonoBehaviour, IDamageable
 		// Finds the active LilGuardSpawnPointsParent in the scene
 		this._lilGuardSpawnPointsParent = FindAnyObjectByType<LilGuardSpawnManager>();
 
-		this._radius = this.transform.Find("Radius").GetComponent<CircleCollider2D>();
+		this._radius = this.transform.GetComponentInChildren<CircleCollider2D>();
 		this._radiusManager = this.transform.GetComponentInChildren<RadiusManager>();
 
 		this._player = FindAnyObjectByType<Player>();	
@@ -122,9 +122,7 @@ public class Enemy : MonoBehaviour, IDamageable
 
 	private void Update()
 	{
-		//Not needed but adds clarity as Enemy HAS the radius
-		IsWithinRadius();
-
+		IsWithinRadius(); //Not needed but adds clarity as Enemy HAS the radius
 		UpdateEnemyState();
 		FindClosestPlayer();
 		if (this._closestPlayer != null && this.enemyState == EnemyState.Attack) HandleEnemyRotation();
@@ -134,17 +132,6 @@ public class Enemy : MonoBehaviour, IDamageable
 	{
 		if (this._closestPlayer != null && this.enemyState == EnemyState.Attack) HandleEnemyMovement();
 	}
-
-	//private void PerformEnemyAction()
-	//{
-	//	switch (this.enemyState)
-	//	{
-	//		case EnemyState.Attack:
-	//			HandleEnemyRotation(); 
-	//			HandleEnemyMovement(); break;
-	//		case EnemyState.Patrol: break;
-	//	}
-	//}
 
 	private void UpdateEnemyState()
 	{

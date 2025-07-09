@@ -3,6 +3,7 @@ using TMPro;
 
 public class UIManager : MonoBehaviour
 {
+	#region All References
 	[Header("Text References")]
 	[SerializeField] private TMP_Text _timeText;
 	[SerializeField] private TMP_Text _healthText;
@@ -18,6 +19,7 @@ public class UIManager : MonoBehaviour
 	[SerializeField] private Player _player;
 	[SerializeField] private PWeaponManager _playerWeaponManager;
 	[SerializeField] private PBulletManager _playerBulletManager;
+	#endregion
 
 	[Header("Time Settings")]
 	[SerializeField] private int _maxTime = 480; // 8 minutes in seconds

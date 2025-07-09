@@ -33,13 +33,15 @@ public class AsteroidBehavior : MonoBehaviour, IDamageable
 
 	private Player _player; // Reference to the player
 
+	#region Asteroid Settings Variables
 	private float _asteroidForce;
 	private float _asteroidDamage;
 	private float _currentHealth;
 	private float _asteroidRotationSpeed;
 
 	private bool _isShot = false; // Indicates if the asteroid is currently shot
-	private bool _hasResetSettings;
+	private bool _hasResetSettings = false;
+	#endregion
 
 	public enum AsteroidType
 	{
@@ -73,8 +75,6 @@ public class AsteroidBehavior : MonoBehaviour, IDamageable
 			this._rb2d.linearVelocity = Vector2.zero; // Stop the asteroid if Sora's freeze is active
 			this.transform.Rotate(0, 0, 0); // Stop the rotation if Sora's freeze is active
 		}
-
-		//this._rb2d.AddForce(Vector2.left * this._asteroidForce, ForceMode2D.Impulse);
 	}
 
 	#region Asteroid Type Settings
@@ -203,6 +203,4 @@ public class AsteroidBehavior : MonoBehaviour, IDamageable
 			HandleSlowMode(this._slowForceAmount, this._slowRotateSpeedAmount);
 	}
 	#endregion
-
-	
 }

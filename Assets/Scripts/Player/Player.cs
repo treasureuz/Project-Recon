@@ -53,7 +53,8 @@ public class Player : MonoBehaviour, IDamageable
 	private GameObject _playerTeleportInstance; // Player teleport object for Ralph's ability
 
 	private List<GameObject> _playerList = new List<GameObject>(); // List of players in the game
-										  
+
+	#region Player Settings Variables
 	private float _currentHealth;
 	private float _moveSpeed;
 	private float _cooldown;
@@ -65,6 +66,7 @@ public class Player : MonoBehaviour, IDamageable
 	private bool _isSoraFreezeActive = false; // Indicates if Sora's freeze ability is active
 	private bool _canTeleport = false; // Indicates if Ralph can teleport
 	private bool _isRalphInvincibilityActive = false; // Indicates if Ralph's invincibility is active
+	#endregion
 
 	public enum PlayerType
 	{
