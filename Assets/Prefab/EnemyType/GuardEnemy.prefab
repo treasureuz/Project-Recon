@@ -311,7 +311,8 @@ MonoBehaviour:
   _bulletPrefab: {fileID: 1232338131004727195, guid: 5cdd4c7b141c1b847b21d330a8585d8e, type: 3}
   _bulletSpawnPoint: {fileID: 274353830520883155}
   _enemy: {fileID: 8227912361535481234}
-  _enemyBulletManager: {fileID: 6718664040238761696, guid: 5cdd4c7b141c1b847b21d330a8585d8e, type: 3}
+  _enemyBulletManager: {fileID: 8207255779652036418, guid: 5cdd4c7b141c1b847b21d330a8585d8e, type: 3}
+  _timeBetweenShotsThreshold: 0
   _guardTimeBetweenEnemyShots: 0.6
   _guardBulletDamage: 20
   _copTimeBetweenEnemyShots: 0.72

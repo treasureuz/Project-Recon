@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 471806266274825588}
-  - component: {fileID: 6718664040238761696}
+  - component: {fileID: 8207255779652036418}
   - component: {fileID: 1050130379820493484}
   - component: {fileID: 7253802200055206241}
   - component: {fileID: 1912071455066929077}
@@ -36,7 +36,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6718664040238761696
+--- !u!114 &8207255779652036418
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -48,7 +48,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02f3f26fd20e411408b1175114fa5fa7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enemyBulletDamage: 33
+  _enemyBulletDamage: 20
 --- !u!114 &1050130379820493484
 MonoBehaviour:
   m_ObjectHideFlags: 0

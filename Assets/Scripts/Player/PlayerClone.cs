@@ -142,13 +142,11 @@ public class PlayerClone : MonoBehaviour, IDamageable
 		if (collision.CompareTag("Asteroid"))
 		{
 			iDamageable.OnDamaged(collision.GetComponent<AsteroidBehavior>().GetAsteroidDamage());
-			Debug.Log("Player Clone hit by Asteroid: " + collision.GetComponent<AsteroidBehavior>().GetAsteroidDamage());
 		}
 		else if (collision.CompareTag("EnemyBullet"))
 		{
 			//Bullet damage is specific to THIS bullet/collision's character type
 			iDamageable.OnDamaged(collision.GetComponent<EBulletManager>().GetEnemyBulletDamage());
-			Debug.Log("Player Clone hit: " + collision.GetComponent<EBulletManager>().GetEnemyBulletDamage());
 		}
 	}
 
@@ -156,7 +154,6 @@ public class PlayerClone : MonoBehaviour, IDamageable
 	public void OnDamaged(float damageAmount)
 	{
 		this._currentHealth -= damageAmount;
-		Debug.Log("Current Health (Clone): " + this._currentHealth);
 
 		if (this._currentHealth <= 0)
 		{

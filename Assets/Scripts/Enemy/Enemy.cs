@@ -20,8 +20,12 @@ public class Enemy : MonoBehaviour, IDamageable
 	[Header("Global Enemy Settings")]
 	[SerializeField] private float _rotationDuration = 0.2f; //How long to rotate towards player position
 	[SerializeField] private float _moveDuration = 1f; //How long to move towards random position
+	[SerializeField] private float _moveOffset = 0.75f; // How far enemy is allowed to move each time
+
+	[Header("Slow Mode Settings")]
 	[SerializeField] private float _slowAmount = 0.2f; // Amount to slow down the enemy when shot
 	[SerializeField] private float _moveSpeedThreshold = 0.85f; // Minimum speed for the enemy to move
+	[SerializeField] private float _timeBetweenMovesThreshold = 3.5f; // Minimum time between moves for the enemy
 
 	#region Enemy Settings
 	[Header("Guard Enemy Settings")]
@@ -43,8 +47,6 @@ public class Enemy : MonoBehaviour, IDamageable
 	#endregion
 
 	private Player _player;
-	private Enemy _lilGuardTopInstance;
-	private Enemy _lilGuardBottomInstance;
 	private EnemyHelper _enemyHelper;
 	private LilGuardSpawnManager _lilGuardSpawnPointsParent;
 
@@ -55,18 +57,21 @@ public class Enemy : MonoBehaviour, IDamageable
 	private Vector2 _directionToClosestPlayer;
 	private Vector2 _targetPosition;
 
+	#region Enemy Variables
 	private float _timeBetweenMoves;
 	private float _currentHealth;
 	private float _moveSpeed;
 	private float _waitTimeUntilPatrol;
 
-	private float _closestDistance = Mathf.Infinity; // Set to positive/negative infinity on start
+	private float _closestDistance = Mathf.Infinity; //Set to positive infinity
 
-	private float _elapsedMoveTime;
-	private float _offset = 0.75f; // How far enemy is allowed to move each time
+	private float _elapsedMoveTime; // Used for move interpolation
+	private float _elapsedTimeInRadius; // Used for radius check
 
 	private bool _isWithinRadius;
 	private bool _isShot;
+	private bool _hasResetSettings;
+	#endregion
 
 	#region Enemy Enums
 	public enum EnemyType
@@ -93,7 +98,7 @@ public class Enemy : MonoBehaviour, IDamageable
 		this._lilGuardSpawnPointsParent = FindAnyObjectByType<LilGuardSpawnManager>();
 
 		this._radius = this.transform.Find("Radius").GetComponent<CircleCollider2D>();
-		this._radiusManager = this.transform.Find("Radius").GetComponent<RadiusManager>();
+		this._radiusManager = this.transform.GetComponentInChildren<RadiusManager>();
 
 		this._player = FindAnyObjectByType<Player>();	
 		this._players = this._player.GetPlayerList(); // Get all players in the scene
@@ -118,23 +123,28 @@ public class Enemy : MonoBehaviour, IDamageable
 	private void Update()
 	{
 		//Not needed but adds clarity as Enemy HAS the radius
-		if (this._radiusManager.IsWithinRadius()) StartCoroutine(IsWithinRadius());
+		IsWithinRadius();
 
 		UpdateEnemyState();
 		FindClosestPlayer();
-		if (this._closestPlayer != null) PerformEnemyAction();
+		if (this._closestPlayer != null && this.enemyState == EnemyState.Attack) HandleEnemyRotation();
 	}
 
-	private void PerformEnemyAction()
+	private void FixedUpdate()
 	{
-		switch (this.enemyState)
-		{
-			case EnemyState.Attack:
-				HandleEnemyRotation(); 
-				HandleEnemyMovement(); break;
-			case EnemyState.Patrol: break;
-		}
+		if (this._closestPlayer != null && this.enemyState == EnemyState.Attack) HandleEnemyMovement();
 	}
+
+	//private void PerformEnemyAction()
+	//{
+	//	switch (this.enemyState)
+	//	{
+	//		case EnemyState.Attack:
+	//			HandleEnemyRotation(); 
+	//			HandleEnemyMovement(); break;
+	//		case EnemyState.Patrol: break;
+	//	}
+	//}
 
 	private void UpdateEnemyState()
 	{
@@ -214,20 +224,20 @@ public class Enemy : MonoBehaviour, IDamageable
 
 	private void HandleDodging()
 	{
-		this._elapsedMoveTime += Time.fixedDeltaTime;
+		Vector2 startPosition = this.transform.position;
 		// "Dodge"/"Move" to the generated position. **Takes 1 sec for move interpolation to finish**
 		if (this._elapsedMoveTime < this._moveDuration)
 		{
-			//Reposition smoothly
-			float t = Mathf.Clamp01(this._elapsedMoveTime / this._moveDuration);
-			this.transform.position = Vector3.Slerp(this.transform.position, this._targetPosition, t);
+			float t = this._elapsedMoveTime / this._moveDuration; //a fraction of the total move duration (0 to 1)
+			this.transform.position = Vector2.Lerp(startPosition, this._targetPosition, t);
+			this._elapsedMoveTime += Time.fixedDeltaTime;
 		}
 
 		//Then wait 2 sec before "dodging" or "moving" again
 		if (this._elapsedMoveTime >= this._timeBetweenMoves + this._moveDuration)
 		{
 			this._targetPosition = GenerateDodgePosition();
-			this._elapsedMoveTime = 0f;
+			this._elapsedMoveTime = 0f; // Reset elapsed move time
 		}
 	}
 	#endregion
@@ -240,7 +250,7 @@ public class Enemy : MonoBehaviour, IDamageable
 		float angle = Vector3.SignedAngle(this.transform.right, this._directionToClosestPlayer, Vector3.forward);
 
 		//Rotate smoothly/step by step
-		float t = Time.fixedDeltaTime / this._rotationDuration; // a fraction of the total angle you want to rotate THIS frame
+		float t = Time.deltaTime / this._rotationDuration; // a fraction of the total rotation duration
 		this.transform.Rotate(Vector3.forward, angle * t);
 
 		//Normalize angle for scale flipping (eulerAngles.z can't be negative -- 0 to 360 degrees)
@@ -257,54 +267,57 @@ public class Enemy : MonoBehaviour, IDamageable
 	}
 
 	// Handles the slow mode effect when the enemy is shot **(Sora's bullet)**
-	private IEnumerator HandleSlowMode(float slowAmount, float moveSpeedThreshold)
+	private void HandleSlowMode(float slowAmount)
 	{
 		this._moveSpeed -= slowAmount; // Slow down the enemy when shot
-		if (this._moveSpeed < moveSpeedThreshold) this._moveSpeed = moveSpeedThreshold; // Prevents speed from going below threshold (0.85f)
+		if (this._moveSpeed < this._moveSpeedThreshold) this._moveSpeed = this._moveSpeedThreshold; // Prevents speed from going below threshold (0.85f)
+
+		this._timeBetweenMoves += slowAmount; // Slow down the enemy's movement speed
+		if (this._timeBetweenMoves > this._timeBetweenMovesThreshold) 
+			this._timeBetweenMoves = this._timeBetweenMovesThreshold; // Prevents time between moves from going above threshold (3.5f)
 
 		this._enemyWeaponManager.SetSlowModeTimeBetweenShots(slowAmount); // Adjust the enemy's shooting speed
 		// Prevents shoot speed from going below the threshold
 		if (this._enemyWeaponManager.GetCurrentTimeBetweenShots() > this._enemyWeaponManager.GetTimeBetweenShotsThreshold())
 			this._enemyWeaponManager.SetTimeBetweenShots(this._enemyWeaponManager.GetTimeBetweenShotsThreshold()); 
 
-		yield return new WaitUntil(() => !this._isShot); // Wait until the enemy is not shot anymore
-
-		if (this._moveSpeed != GetBaseMoveSpeed()) // Only reset if the speed was changed
-			this._moveSpeed = GetBaseMoveSpeed(); // Reset to base speed when not shot
-
-		if (this._enemyWeaponManager.GetCurrentTimeBetweenShots() != this._enemyWeaponManager.GetBaseTimeBetweenShots())
-			this._enemyWeaponManager.SetTimeBetweenShots(this._enemyWeaponManager.GetBaseTimeBetweenShots()); // Reset to base shooting speed
+		if(!this._hasResetSettings) StartCoroutine(ResetEnemySettings()); // Reset enemy settings 
 	}
 	#endregion
 
 	private IEnumerator OnEnemyShot()
 	{
-		//Reset the isShot boolean if the enemy is shot again before the wait time is over
-
-
 		this._isShot = true;
 		yield return new WaitForSeconds(this._waitTimeUntilPatrol);
 		this._isShot = false;
 	}
 
-	private IEnumerator IsWithinRadius()
+	private void IsWithinRadius()
 	{
-		//Reset the isWithinRadius boolean if the player is in the radius before the wait time is over
-
-		this._isWithinRadius = true;
-		yield return new WaitForSeconds(this._waitTimeUntilPatrol);
-		this._isWithinRadius = false;
+		if (this._radiusManager.IsWithinRadius())
+		{
+			this._elapsedTimeInRadius = 0f; //Reset elapsed time in radius
+			this._isWithinRadius = true;
+		}
+		else
+		{
+			this._elapsedTimeInRadius += Time.deltaTime;
+			if (this._elapsedTimeInRadius >= this._waitTimeUntilPatrol)
+			{
+				this._isWithinRadius = false;
+			}
+		}
 	}
 
 	#region Generate Dodge Position
 	private Vector2 GenerateDodgePosition()
 	{
 		// Picks best max/min x, y positions enemy is allowed to move to based on the background bounds
-		float minX = Mathf.Max(this._minBounds.x, transform.position.x - this._offset);
-		float maxX = Mathf.Min(this._maxBounds.x, transform.position.x + this._offset);
+		float minX = Mathf.Max(this._minBounds.x, transform.position.x - this._moveOffset);
+		float maxX = Mathf.Min(this._maxBounds.x, transform.position.x + this._moveOffset);
 
-		float minY = Mathf.Max(this._minBounds.y, transform.position.y - this._offset);
-		float maxY = Mathf.Min(this._maxBounds.y, transform.position.y + this._offset);
+		float minY = Mathf.Max(this._minBounds.y, transform.position.y - this._moveOffset);
+		float maxY = Mathf.Min(this._maxBounds.y, transform.position.y + this._moveOffset);
 
 		// Generates random positions within appropriate bounds
 		float randXPos = Random.Range(minX, maxX);
@@ -314,7 +327,25 @@ public class Enemy : MonoBehaviour, IDamageable
 	}
 	#endregion
 
-	#region Helper Methods 
+	#region Helper Methods/Coroutines
+	private IEnumerator ResetEnemySettings()
+	{
+		this._hasResetSettings = true; // Prevents multiple resets from happening at the same time
+		yield return new WaitUntil(() => !this._isShot); // Wait until the enemy is not shot anymore
+
+		this._moveSpeed = GetBaseMoveSpeed(); // Reset to base speed when not shot
+		this._timeBetweenMoves = GetBaseTimeBetweenMoves(); // Reset to base time between moves when not shot
+		this._enemyWeaponManager.SetTimeBetweenShots(this._enemyWeaponManager.GetBaseTimeBetweenShots()); // Reset to base shooting speed
+
+		this._hasResetSettings = false; // Reset the hasResetSettings boolean
+	}
+
+	private void TriggerOnEnemyShot()
+	{
+		if (this._isShot) StopCoroutine(OnEnemyShot());
+		StartCoroutine(OnEnemyShot());
+	}
+
 	private float GetBaseMoveSpeed()
 	{
 		switch (this.enemyType)
@@ -322,6 +353,17 @@ public class Enemy : MonoBehaviour, IDamageable
 			case EnemyType.Cop: return this._copMoveSpeed;
 			case EnemyType.Guard: return this._guardMoveSpeed;
 			case EnemyType.LilGuard: return this._lilGuardMoveSpeed;
+			default: return 0f;
+		}
+	}
+
+	private float GetBaseTimeBetweenMoves()
+	{
+		switch (this.enemyType)
+		{
+			case EnemyType.Cop: return this._copTimeBetweenMoves;
+			case EnemyType.Guard: return this._guardTimeBetweenMoves;
+			case EnemyType.LilGuard: return this._lilGuardMoveSpeed; // Lil Guard doesn't have a time between moves
 			default: return 0f;
 		}
 	}
@@ -359,10 +401,8 @@ public class Enemy : MonoBehaviour, IDamageable
 		switch (enemyType)
 		{
 			case EnemyType.Cop:
-				this._lilGuardTopInstance = Instantiate
-					(this._lilGuardPrefab, this._lilGuardSpawnPointsParent.GetTopSpawnPoint(), this.transform.rotation);
-				this._lilGuardBottomInstance = Instantiate
-					(this._lilGuardPrefab, this._lilGuardSpawnPointsParent.GetBottomSpawnPoint(), this.transform.rotation);
+				Instantiate(this._lilGuardPrefab, this._lilGuardSpawnPointsParent.GetTopSpawnPoint(), this.transform.rotation);
+				Instantiate(this._lilGuardPrefab, this._lilGuardSpawnPointsParent.GetBottomSpawnPoint(), this.transform.rotation);
 				this._enemyHelper.RemoveEnemyFromList(this);
 				Destroy(gameObject); break;
 			default:
@@ -378,7 +418,7 @@ public class Enemy : MonoBehaviour, IDamageable
 
 		if (collision.CompareTag("PlayerBullet"))
 		{
-			StartCoroutine(OnEnemyShot()); //Enables isShot boolean and switches Enemy to attack mode
+			TriggerOnEnemyShot(); //Enables isShot boolean and switches Enemy to attack mode
 			iDamageable.OnDamaged(collisionBM.GetPlayerBulletDamage());
 
 			Vector3 spawnPos = new Vector3(this.transform.position.x, this.transform.position.y + 0.3f);
@@ -392,8 +432,7 @@ public class Enemy : MonoBehaviour, IDamageable
 		this._currentHealth -= damageAmount;
 		if (this._currentHealth <= 0) DestroyOnDie(); // Destroy enemy when health reaches zero
 
-		if (this._player.GetPlayerType() == Player.PlayerType.Sora) 
-			StartCoroutine(HandleSlowMode(this._slowAmount, this._moveSpeedThreshold));
+		if (this._player.GetPlayerType() == Player.PlayerType.Sora) HandleSlowMode(this._slowAmount);
 	}
 	#endregion
 }

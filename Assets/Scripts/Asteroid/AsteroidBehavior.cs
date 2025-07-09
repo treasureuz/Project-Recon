@@ -1,4 +1,6 @@
 using System.Collections;
+using System.Collections.Generic;
+using NUnit.Framework;
 using UnityEngine;
 
 public class AsteroidBehavior : MonoBehaviour, IDamageable
@@ -13,7 +15,7 @@ public class AsteroidBehavior : MonoBehaviour, IDamageable
 	[SerializeField] private float _slowForceAmount = 0.02f; // Amount to slow down the asteroid
 	[SerializeField] private float _slowRotateSpeedAmount = 1.32f; // Amount to slow down the asteroid's rotation speed	
 	[SerializeField] private float _forceThreshold = 0.85f; // Minimum speed before slowing down
-	[SerializeField] private float _rotateSpeedThreshold = 10f; // Minimum rotation speed before slowing down
+	[SerializeField] private float _rotateSpeedThreshold = 50f; // Minimum rotation speed before speeding back up
 
 	#region Asteroid Settings
 	[Header("Cosmic Asteroid Settings")]
@@ -37,6 +39,7 @@ public class AsteroidBehavior : MonoBehaviour, IDamageable
 	private float _asteroidRotationSpeed;
 
 	private bool _isShot = false; // Indicates if the asteroid is currently shot
+	private bool _hasResetSettings;
 
 	public enum AsteroidType
 	{
@@ -55,13 +58,22 @@ public class AsteroidBehavior : MonoBehaviour, IDamageable
 	private void Update()
 	{
 		LaunchAsteroid();
-		this.transform.Rotate(0, 0, this._asteroidRotationSpeed * this._asteroidForce * Time.deltaTime);
 	}
 
 	private void LaunchAsteroid()
 	{
 		// Both do the same thing
-		this._rb2d.linearVelocity = Vector2.left * this._asteroidForce;
+		if (!this._player.GetIsSoraFreezeActive())
+		{
+			this._rb2d.linearVelocity = Vector2.left * this._asteroidForce;
+			this.transform.Rotate(0, 0, this._asteroidRotationSpeed * this._asteroidForce * Time.deltaTime);
+		}
+		else
+		{
+			this._rb2d.linearVelocity = Vector2.zero; // Stop the asteroid if Sora's freeze is active
+			this.transform.Rotate(0, 0, 0); // Stop the rotation if Sora's freeze is active
+		}
+
 		//this._rb2d.AddForce(Vector2.left * this._asteroidForce, ForceMode2D.Impulse);
 	}
 
@@ -91,26 +103,20 @@ public class AsteroidBehavior : MonoBehaviour, IDamageable
 			case AsteroidType.Cosmic: Cosmic(); break;
 			case AsteroidType.Dwarf: Dwarf(); break;
 		}
-		this._rotateSpeedThreshold = this._asteroidRotationSpeed - 9.78f; // Set the rotation speed threshold based on the asteroid type
+		this._rotateSpeedThreshold = this._asteroidRotationSpeed - 10f; // Set the rotation speed threshold based on the asteroid type
 	}
 
 	// Handles the slow mode effect when the enemy is shot **(Sora's bullet)**
-	private IEnumerator HandleSlowMode(float slowForceAmount, float forceThreshold, float slowRotateSpeedAmount, float rotateSpeedThreshold)
+	private void HandleSlowMode(float slowForceAmount, float slowRotateSpeedAmount)
 	{
 		this._asteroidForce -= slowForceAmount; // Slow down the enemy when shot
-		if (this._asteroidForce < forceThreshold) this._asteroidForce = forceThreshold; // Prevents speed from going below threshold (0.85f)
+		if (this._asteroidForce < this._forceThreshold) this._asteroidForce = this._forceThreshold; // Prevents speed from going below threshold (0.85f)
 
 		this._asteroidRotationSpeed -= slowRotateSpeedAmount; // Slow down the rotation speed of the asteroid
-		if (this._asteroidRotationSpeed < rotateSpeedThreshold)
-			this._asteroidRotationSpeed = rotateSpeedThreshold; // Prevents rotation speed from going too low
+		if (this._asteroidRotationSpeed < this._rotateSpeedThreshold)
+			this._asteroidRotationSpeed = this._rotateSpeedThreshold; // Prevents rotation speed from going too low
 
-		yield return new WaitUntil(() => !this._isShot); // Wait until the asteroid is not shot anymore
-		Debug.Log($"{this.gameObject.name} is not shot anymore");
-		if (this._asteroidForce != GetBaseAsteroidForce()) // Only reset if the speed was changed
-			this._asteroidForce = GetBaseAsteroidForce(); // Reset to base speed when not shot
-
-		if (this._asteroidRotationSpeed != GetBaseAsteroidRotationSpeed()) // Only reset if the rotation speed was changed
-			this._asteroidRotationSpeed = GetBaseAsteroidRotationSpeed(); // Reset to base rotation speed when not shot
+		if (!this._hasResetSettings) StartCoroutine(ResetAsteroidSettings()); // Start the coroutine to reset asteroid settings
 	}
 	#endregion
 
@@ -123,29 +129,26 @@ public class AsteroidBehavior : MonoBehaviour, IDamageable
 		this._isShot = false;
 	}
 
-	private void OnTriggerEnter2D(Collider2D collision)
+	#region Helper Methods
+	private IEnumerator ResetAsteroidSettings()
 	{
-		PBulletManager collisionBM = collision.GetComponent<PBulletManager>();
-		IDamageable iDamageable = this.GetComponent<IDamageable>();
-		
-		if (collision.gameObject.layer == LayerMask.NameToLayer("Player") || collision.CompareTag("Backdrop"))
-		{
-			Destroy(gameObject);
-		}
-		else if (collision.gameObject.CompareTag("PlayerBullet"))
-		{
-			StartCoroutine(OnAsteroidShot()); // Start the coroutine to handle slow mode
-			iDamageable.OnDamaged(collisionBM.GetPlayerBulletDamage());
+		this._hasResetSettings = true;
+		yield return new WaitUntil(() => !this._isShot); // Wait until the asteroid is not shot anymore
 
-			Vector3 spawnPos = new Vector3(this.transform.position.x, this.transform.position.y + 0.3f);
-			UIManager.instance.SpawnDamageText(spawnPos, (int) collisionBM.GetPlayerBulletDamage());
-		}
+		this._asteroidForce = GetBaseAsteroidForce(); // Reset to base speed when not shot
+		this._asteroidRotationSpeed = GetBaseAsteroidRotationSpeed(); // Reset to base rotation speed when not shot
+
+		this._hasResetSettings = false; // Reset the flag after the coroutine is done
+	}
+	private void TriggerOnAsteroidShot()
+	{
+		if (this._isShot) StopCoroutine(OnAsteroidShot());
+		StartCoroutine(OnAsteroidShot());
 	}
 
-	#region Helper Methods
 	private float GetBaseAsteroidForce()
 	{
-		switch(this._asteroidType)
+		switch (this._asteroidType)
 		{
 			case AsteroidType.Cosmic: return this._cosmicAsteroidForce;
 			case AsteroidType.Dwarf: return this._dwarfAsteroidForce;
@@ -155,7 +158,7 @@ public class AsteroidBehavior : MonoBehaviour, IDamageable
 
 	private float GetBaseAsteroidRotationSpeed()
 	{
-		switch(this._asteroidType)
+		switch (this._asteroidType)
 		{
 			case AsteroidType.Cosmic: return this._cosmicAsteroidRotationSpeed;
 			case AsteroidType.Dwarf: return this._dwarfAsteroidRotationSpeed;
@@ -171,6 +174,25 @@ public class AsteroidBehavior : MonoBehaviour, IDamageable
 	}
 	#endregion
 
+	private void OnTriggerEnter2D(Collider2D collision)
+	{
+		PBulletManager collisionBM = collision.GetComponent<PBulletManager>();
+		IDamageable iDamageable = this.GetComponent<IDamageable>();
+		
+		if (collision.gameObject.layer == LayerMask.NameToLayer("Player") || collision.CompareTag("Backdrop"))
+		{
+			Destroy(gameObject);
+		}
+		else if (collision.gameObject.CompareTag("PlayerBullet"))
+		{
+			TriggerOnAsteroidShot(); // Start the coroutine to handle slow mode
+			iDamageable.OnDamaged(collisionBM.GetPlayerBulletDamage());
+
+			Vector3 spawnPos = new Vector3(this.transform.position.x, this.transform.position.y + 0.3f);
+			UIManager.instance.SpawnDamageText(spawnPos, (int) collisionBM.GetPlayerBulletDamage());
+		}
+	}
+
 	#region IDamageable Interface Implementation
 	public void OnDamaged(float damageAmount)
 	{
@@ -178,10 +200,7 @@ public class AsteroidBehavior : MonoBehaviour, IDamageable
 		if (this._currentHealth <= 0) Destroy(gameObject); // Destroy asteroid when health reaches zero
 
 		if (this._player.GetPlayerType() == Player.PlayerType.Sora)
-			StartCoroutine(HandleSlowMode(this._slowForceAmount, this._forceThreshold, this._slowRotateSpeedAmount, this._rotateSpeedThreshold));
-
-		Debug.Log("Asteroid Force (" + this.gameObject.name + "): " + this._asteroidForce);
-		Debug.Log("Asteroid Rotation Speed (" + this.gameObject.name + "): " + this._asteroidRotationSpeed);
+			HandleSlowMode(this._slowForceAmount, this._slowRotateSpeedAmount);
 	}
 	#endregion
 

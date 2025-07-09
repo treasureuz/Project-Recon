@@ -225,7 +225,8 @@ MonoBehaviour:
   _bulletPrefab: {fileID: 1232338131004727195, guid: 5cdd4c7b141c1b847b21d330a8585d8e, type: 3}
   _bulletSpawnPoint: {fileID: 3808580741841407433}
   _enemy: {fileID: 9110741389325589097}
-  _enemyBulletManager: {fileID: 6718664040238761696, guid: 5cdd4c7b141c1b847b21d330a8585d8e, type: 3}
+  _enemyBulletManager: {fileID: 8207255779652036418, guid: 5cdd4c7b141c1b847b21d330a8585d8e, type: 3}
+  _timeBetweenShotsThreshold: 0
   _guardTimeBetweenEnemyShots: 0.6
   _guardBulletDamage: 20
   _copTimeBetweenEnemyShots: 0.72
@@ -758,7 +759,7 @@ Transform:
   m_GameObject: {fileID: 6549979989845715930}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 3.2783594, y: 0, z: 0}
+  m_LocalPosition: {x: -1.83, y: 0, z: 0}
   m_LocalScale: {x: 0.93, y: 0.93, z: 0.93}
   m_ConstrainProportionsScale: 1
   m_Children:

@@ -38,7 +38,7 @@ public class GameManager : MonoBehaviour
 
 	private void HandleGameEnd()
 	{
-		if (UIManager.instance.GetTime() >= 480) DestroyScripts();
+		if (UIManager.instance.GetTime() <= 0) DestroyScripts();
 	}
 
 	private void DestroyScripts()

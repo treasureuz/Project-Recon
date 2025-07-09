@@ -1,3 +1,4 @@
+using UnityEditor.ShaderKeywordFilter;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -11,11 +12,13 @@ public class InputManager : MonoBehaviour
 	public static InputManager instance;
                                         
     private InputAction _movement;
-    private InputAction _ability;
+    private InputAction _abilityE;
+    private InputAction _abilityC;
 
     private bool _isMoving;
-    private bool _isAbilityPressed;
-    private bool _wasAbilityPressedThisFrame;
+    private bool _isAbilityEPressed;
+    private bool _isAbilityCPressed;
+	private bool _wasAbilityEPressedThisFrame;
 
 	private void Awake()
 	{
@@ -26,41 +29,55 @@ public class InputManager : MonoBehaviour
 	private void Start()
     {
         this._movement = playerInput.actions["Movement"];
-        this._ability = playerInput.actions["Ability"];
+        this._abilityE = playerInput.actions["E - Ability"];
+        this._abilityC = playerInput.actions["C - Ability"];
 	}
 
 	private void Update()
     {
-		if (this._player.GetPlayerType() != Player.PlayerType.Standard && this._ability.WasPressedThisFrame())
+		if (this._player.GetPlayerType() != Player.PlayerType.Standard && this._abilityE.WasPressedThisFrame())
         {
-            this._wasAbilityPressedThisFrame = true; // Used to check if ability was pressed this frame (for player overlay)
-			SetIsAbilityPressed(true); // Doesn't turn false until left mouse button is pressed;
+            this._wasAbilityEPressedThisFrame = true; // Used to check if ability was pressed this frame (for player overlay)
+			this._isAbilityEPressed = true; // Set ability pressed to true
 		}
-        else this._wasAbilityPressedThisFrame = false; // Reset ability pressed this frame
+        else this._wasAbilityEPressedThisFrame = false; // Reset ability pressed this frame
+
+        if (this._player.GetPlayerType() == Player.PlayerType.Ralph && this._abilityC.IsPressed())
+        {
+            this._isAbilityCPressed = true; // Set ability C pressed to true
+        }
+        else this._isAbilityCPressed = false; // Reset ability C pressed
 	}
 
+	#region Movement Input
 	private void FixedUpdate()
     {
         if (this._movement.WasPressedThisFrame() || this._movement.IsPressed()) this._isMoving = true;
         else this._isMoving = false;
 
-        moveDirection = this._movement.ReadValue<Vector2>().normalized;
+		moveDirection = this._movement.ReadValue<Vector2>().normalized;
+	}
+	#endregion
+
+	#region Setters/Getters
+	public void SetIsAbilityEPressedToFalse()
+    {
+        this._isAbilityEPressed = false;
 	}
 
-    #region Setters/Getters
-    public void SetIsAbilityPressed(bool isPressed)
+    public bool GetIsAbilityEPressed()
     {
-        this._isAbilityPressed = isPressed;
-	}
-
-    public bool GetIsAbilityPressed()
-    {
-        return this._isAbilityPressed;
+        return this._isAbilityEPressed;
     }
 
-    public bool GetWasAbilityPressedThisFrame()
+    public bool GetIsAbilityCPressed()
     {
-        return this._wasAbilityPressedThisFrame;
+        return this._isAbilityCPressed;
+	}
+
+	public bool GetWasAbilityEPressedThisFrame()
+    {
+        return this._wasAbilityEPressedThisFrame;
 	}
 
 	public bool GetIsMoving()

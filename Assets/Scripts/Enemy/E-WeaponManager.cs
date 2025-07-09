@@ -10,6 +10,9 @@ public class EWeaponManager : MonoBehaviour
 	[SerializeField] private Enemy _enemy;
 	[SerializeField] private EBulletManager _enemyBulletManager;
 
+	[Header("Slow Mode Settings")]
+	[SerializeField] private float _timeBetweenShotsThreshold; // Threshold for the time between shots when slow mode is active
+
 	#region Enemy Weapon Settings
 	[Header("Guard Weapon Settings")]
 	[SerializeField] private float _guardTimeBetweenEnemyShots = 0.6f;
@@ -76,6 +79,7 @@ public class EWeaponManager : MonoBehaviour
 			case Enemy.EnemyType.Cop: Cop(); break;	
 			case Enemy.EnemyType.LilGuard: LilGuard(); break;
 		}
+		this._timeBetweenShotsThreshold = this._timeBetweenEnemyShots + 0.13f; // Set the threshold for the time between shots based on the enemy type
 	}
 
 	#region Getters & Setters
@@ -107,7 +111,7 @@ public class EWeaponManager : MonoBehaviour
 
 	public float GetTimeBetweenShotsThreshold()
 	{
-		return this._timeBetweenEnemyShots + 0.13f; // Returns the threshold for the time between shots
+		return this._timeBetweenShotsThreshold; // Returns the threshold for the time between shots
 	}
 	#endregion
 }

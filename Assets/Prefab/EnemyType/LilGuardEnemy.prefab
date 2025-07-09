@@ -257,7 +257,8 @@ MonoBehaviour:
   _bulletPrefab: {fileID: 1232338131004727195, guid: 5cdd4c7b141c1b847b21d330a8585d8e, type: 3}
   _bulletSpawnPoint: {fileID: 8391638174749483951}
   _enemy: {fileID: 2551665939021353220}
-  _enemyBulletManager: {fileID: 6718664040238761696, guid: 5cdd4c7b141c1b847b21d330a8585d8e, type: 3}
+  _enemyBulletManager: {fileID: 8207255779652036418, guid: 5cdd4c7b141c1b847b21d330a8585d8e, type: 3}
+  _timeBetweenShotsThreshold: 0
   _guardTimeBetweenEnemyShots: 0.6
   _guardBulletDamage: 20
   _copTimeBetweenEnemyShots: 0.72
@@ -756,6 +757,8 @@ MonoBehaviour:
   _maxBounds: {x: -6.3, y: 3.42}
   _rotationDuration: 0.2
   _moveDuration: 1.35
+  _slowAmount: 0.2
+  _moveSpeedThreshold: 0.85
   _guardTimeBetweenMoves: 2
   _guardMoveSpeed: 1.55
   _guardMaxHealth: 120
