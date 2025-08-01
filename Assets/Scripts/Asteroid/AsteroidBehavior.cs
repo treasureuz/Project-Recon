@@ -129,7 +129,7 @@ public class AsteroidBehavior : MonoBehaviour, IDamageable
 		this._isShot = false;
 	}
 
-	#region Helper Methods
+	#region Other Helper Methods
 	private IEnumerator ResetAsteroidSettings()
 	{
 		this._hasResetSettings = true;

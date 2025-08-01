@@ -90,7 +90,7 @@ public class PlayerClone : MonoBehaviour, IDamageable
 	private void HandlePlayerCloneMovement()
 	{
 		//Offsets enemy position to avoid collision with the enemy  
-		Vector2 closestEnemyPos = new Vector2(this._closestEnemy.transform.position.x - 1.78f, this._closestEnemy.transform.position.y);
+		Vector2 closestEnemyPos = new Vector2(this._closestEnemy.transform.position.x - 3f, this._closestEnemy.transform.position.y);
 		Vector2 direction = (closestEnemyPos - this._rb2d.position).normalized;
 
 		//This allows for interpolation

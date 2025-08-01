@@ -165,7 +165,7 @@ public class PWeaponManager : MonoBehaviour
 		UIManager.instance.UpdateBulletText(this._playerBulletManager.GetCurrentMagazineCount(), GetMaxBulletMagazineCount());
 	}
 
-	#region Helper Methods
+	#region Other Helper Methods
 	private bool HasBullets()
 	{
 		return this._playerBulletManager.GetCurrentMagazineCount() > 0;

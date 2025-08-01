@@ -59,12 +59,11 @@ public class Player : MonoBehaviour, IDamageable
 	private float _moveSpeed;
 	private float _cooldown;
 
-	private float _elapsedTime; // Used for teleportation duration
-
 	private float _ralphsMaxInvincibilityCount = 400f; // Maximum invincibility count for Ralph
 
 	private bool _isSoraFreezeActive = false; // Indicates if Sora's freeze ability is active
 	private bool _canTeleport = false; // Indicates if Ralph can teleport
+	private bool _isInTeleport = false; // Indicates if the player is currently teleporting
 	private bool _isRalphInvincibilityActive = false; // Indicates if Ralph's invincibility is active
 	#endregion
 
@@ -155,15 +154,24 @@ public class Player : MonoBehaviour, IDamageable
 			{
 				this._playerOverlayInstance = Instantiate(this._playerOverlayPrefab, mousePosition, Quaternion.identity);
 			}
+			else if (InputManager.instance.GetWasAbilityEPressedThisFrame() && this._playerOverlayInstance != null)
+			{
+				InputManager.instance.SetIsAbilityEPressedToFalse();
+				Destroy(this._playerOverlayInstance); // Destroy overlay instance if it exists
+				this._playerOverlayInstance = null; // Reset overlay instance
+			}
 
 			#region Handle Player Overlay Local Scale
-			this._playerOverlayInstance.transform.localScale = this.transform.localScale; // Match player scale
+			if (this._playerOverlayInstance != null)
+			{
+				this._playerOverlayInstance.transform.localScale = this.transform.localScale; // Match player scale
 
-			if (this.transform.localScale.y == -Mathf.Abs(this.transform.localScale.y)) 
-				this._playerOverlayInstance.transform.eulerAngles = new Vector3(0, 0, 180); // Flip overlay if player is facing left
-			else this._playerOverlayInstance.transform.eulerAngles = new Vector3(0, 0, 0); // Keep overlay upright if player is facing right
+				if (this.transform.localScale.y == -Mathf.Abs(this.transform.localScale.y)) 
+					this._playerOverlayInstance.transform.eulerAngles = new Vector3(0, 0, 180); // Flip overlay if player is facing left
+				else this._playerOverlayInstance.transform.eulerAngles = new Vector3(0, 0, 0); // Keep overlay upright if player is facing right
 
-			this._playerOverlayInstance.transform.position = mousePosition;
+				this._playerOverlayInstance.transform.position = mousePosition;
+			}
 			#endregion
 
 			if (Mouse.current.rightButton.wasPressedThisFrame && this._playerOverlayInstance != null)
@@ -228,6 +236,13 @@ public class Player : MonoBehaviour, IDamageable
 			{
 				this._playerTeleportInstance = Instantiate(this._playerTeleporterPrefab, mousePosition, Quaternion.identity);
 			}
+			else if (InputManager.instance.GetWasAbilityEPressedThisFrame() && this._playerTeleportInstance != null)
+			{
+				InputManager.instance.SetIsAbilityEPressedToFalse(); // Reset the ability pressed state
+				Destroy(this._playerTeleportInstance); // Destroy teleport instance if it exists
+				this._playerTeleportInstance = null; // Reset teleport instance
+			}
+
 			if (this._playerTeleportInstance != null && !this._canTeleport)
 			{
 				this._playerTeleportInstance.transform.position = mousePosition; // Update teleport instance position
@@ -240,19 +255,19 @@ public class Player : MonoBehaviour, IDamageable
 			}
 			else if (Mouse.current.rightButton.wasPressedThisFrame && this._canTeleport)
 			{
-				StartCoroutine(Teleport(this._playerTeleportInstance.transform.position, 0.8f)); // Teleport player to the teleport instance position
+				StartCoroutine(Teleport(this._playerTeleportInstance.transform.position, 0.55f)); // Teleport player to the teleport instance position
+				
 				InputManager.instance.SetIsAbilityEPressedToFalse(); // Reset the ability pressed state
-				this._canTeleport = false;
+				this._canTeleport = false; this._isInTeleport = false; // Reset teleport states
 
 				Destroy(this._playerTeleportInstance); // Destroy teleport instance after teleporting
 				this._playerTeleportInstance = null; // Reset teleport instance
-				
+
 				this._cooldown = Time.time + this._ralphsTeleportCooldown;
 			}
 		}
 		else InputManager.instance.SetIsAbilityEPressedToFalse(); // Reset the ability pressed state if cooldown is active
 	}
-
 	private void HandleRalphsInvincibility()
 	{
 		if (HasInvincibilityEnergy() && InputManager.instance.GetIsAbilityCPressed())
@@ -264,9 +279,9 @@ public class Player : MonoBehaviour, IDamageable
 		else
 		{
 			this._isRalphInvincibilityActive = false; // Reset invincibility active 
-			// Regenerate invincibility energy by 0.1 per frame. 
+			// Regenerate invincibility energy by 0.0833 per frame -- 5 per second. 
 			this._ralphsInvincibilityCount = Mathf.Min
-				(this._ralphsMaxInvincibilityCount, this._ralphsInvincibilityCount + 0.01f); //Ensures the count does not exceed the maximum
+			(this._ralphsMaxInvincibilityCount, this._ralphsInvincibilityCount + 0.0833f); //Ensures the count does not exceed the maximum
 		}
 	}
 	#endregion
@@ -275,6 +290,7 @@ public class Player : MonoBehaviour, IDamageable
 	#region Player Handlers
 	private void HandlePlayerRotation()
 	{
+		if (this._isInTeleport) return; // Prevents rotation while teleporting
 		Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
 		//Checks if direction is positive (mouse position is to the right) or negative (mouse position is to the left)
 		Vector2 direction = (mousePosition - (Vector2)this.transform.position).normalized;
@@ -295,7 +311,7 @@ public class Player : MonoBehaviour, IDamageable
 		if (zAngle > 120f || zAngle < -100f) localScale.y = -Mathf.Abs(localScale.y);
 		else localScale.y = Mathf.Abs(localScale.y); // Keep the player sprite upright when facing right
 
-		this.transform.localScale = localScale;// Apply the scale to the player
+		this.transform.localScale = localScale; // Apply the scale to the player
 	}
 
 	private void HandlePlayerSwitch()
@@ -348,16 +364,19 @@ public class Player : MonoBehaviour, IDamageable
 		Destroy(collision.gameObject);
 	}
 
-	#region Helper Methods
+	#region Other Helper Methods
 	private IEnumerator Teleport(Vector2 targetPosition, float duration)
 	{
+		float elapsedTime = 0f;
 		Vector2 startPosition = this.transform.position;
-		while (this._elapsedTime < duration)
+		this._isInTeleport = true; // Set teleport state to true
+
+		while (elapsedTime < duration)
 		{
-			float t = this._elapsedTime / duration;
+			float t = elapsedTime / duration;
 			this.transform.position = Vector2.Lerp(startPosition, targetPosition, t); // Animation is done when elapsed time >= duration
 			yield return null; // Waits for next frame then continues the loop
-			this._elapsedTime += Time.deltaTime;
+			elapsedTime += Time.deltaTime;
 		}
 	}
 

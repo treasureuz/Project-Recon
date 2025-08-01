@@ -17,15 +17,17 @@ public class Enemy : MonoBehaviour, IDamageable
 	[SerializeField] private Vector2 _minBounds;
 	[SerializeField] private Vector2 _maxBounds;
 
+	#region Other Enemy Settings
 	[Header("Global Enemy Settings")]
 	[SerializeField] private float _rotationDuration = 0.2f; //How long to rotate towards player position
 	[SerializeField] private float _moveDuration = 1f; //How long to move towards random position
-	[SerializeField] private float _moveOffset = 0.75f; // How far enemy is allowed to move each time
+	[SerializeField] private float _moveOffset; // How far enemy is allowed to move each time
 
 	[Header("Slow Mode Settings")]
 	[SerializeField] private float _slowAmount = 0.2f; // Amount to slow down the enemy when shot
 	[SerializeField] private float _moveSpeedThreshold = 0.85f; // Minimum speed for the enemy to move
 	[SerializeField] private float _timeBetweenMovesThreshold = 3.5f; // Minimum time between moves for the enemy
+	#endregion
 
 	#region Enemy Settings
 	[Header("Guard Enemy Settings")]
@@ -94,27 +96,23 @@ public class Enemy : MonoBehaviour, IDamageable
 
 	private void Start()
 	{
+		#region Find References
 		// Finds the active LilGuardSpawnPointsParent in the scene
 		this._lilGuardSpawnPointsParent = FindAnyObjectByType<LilGuardSpawnManager>();
 
-		this._radius = this.transform.GetComponentInChildren<CircleCollider2D>();
-		this._radiusManager = this.transform.GetComponentInChildren<RadiusManager>();
+		this._radiusManager = this.gameObject.GetComponentInChildren<RadiusManager>();
+		this._radius = this.transform.Find("Radius").GetComponent<CircleCollider2D>();
 
 		this._player = FindAnyObjectByType<Player>();	
 		this._players = this._player.GetPlayerList(); // Get all players in the scene
 
 		this._enemyHelper = FindAnyObjectByType<EnemyHelper>(); // Finds the active EnemyHelper in the scene
 		this._enemyHelper.AddEnemyToList(this); // Adds this enemy to the enemy list in EnemyHelper
+		#endregion
 
-		if (enemyType != EnemyType.LilGuard)
-		{
-			//Dodging/Moving Bounds based off radius 
-			this._minBounds = new Vector2((this.transform.position.x - this._radius.bounds.extents.x) / 2f, -1.35f);
-			this._maxBounds = new Vector2((this.transform.position.x + this._radius.bounds.extents.x) / 2f, 2.35f);
-
-			//Generate position to move to on start
-			this._targetPosition = GenerateDodgePosition();
-		}
+		UpdateMoveBounds(); // Updates the move bounds based on the radius
+		//Generate position to move to on start
+		this._targetPosition = GenerateDodgePosition();
 
 		HandleEnemyType();
 		this._enemyWeaponManager.HandleEnemyWeaponType(); // Sets enemy weapon type
@@ -122,15 +120,21 @@ public class Enemy : MonoBehaviour, IDamageable
 
 	private void Update()
 	{
+		UpdateMoveBounds(); // Updates the move bounds based on the radius
 		IsWithinRadius(); //Not needed but adds clarity as Enemy HAS the radius
 		UpdateEnemyState();
 		FindClosestPlayer();
-		if (this._closestPlayer != null && this.enemyState == EnemyState.Attack) HandleEnemyRotation();
+
+		if (this._closestPlayer != null && this.enemyState == EnemyState.Attack)
+		{
+			HandleEnemyMovement();
+			HandleEnemyRotation();
+		}
 	}
 
 	private void FixedUpdate()
 	{
-		if (this._closestPlayer != null && this.enemyState == EnemyState.Attack) HandleEnemyMovement();
+		
 	}
 
 	private void UpdateEnemyState()
@@ -193,7 +197,7 @@ public class Enemy : MonoBehaviour, IDamageable
 	private void HandleEnemyMovement()
 	{
 		MoveTowardsClosestPlayer();
-		if (enemyType != EnemyType.LilGuard) HandleDodging();
+		if (!(enemyType == EnemyType.LilGuard)) HandleDodging();
 	}
 
 	#region Enemy Movement
@@ -212,16 +216,17 @@ public class Enemy : MonoBehaviour, IDamageable
 	private void HandleDodging()
 	{
 		Vector2 startPosition = this.transform.position;
-		// "Dodge"/"Move" to the generated position. **Takes 1 sec for move interpolation to finish**
+		//First, "Dodge"/"Move" to the generated position. **Takes 1 sec for move interpolation to finish**
 		if (this._elapsedMoveTime < this._moveDuration)
 		{
 			float t = this._elapsedMoveTime / this._moveDuration; //a fraction of the total move duration (0 to 1)
 			this.transform.position = Vector2.Lerp(startPosition, this._targetPosition, t);
-			this._elapsedMoveTime += Time.fixedDeltaTime;
 		}
+		this._elapsedMoveTime += Time.fixedDeltaTime;
 
+		float nextMoveTime = this._timeBetweenMoves + this._moveDuration; // Total time until next move
 		//Then wait 2 sec before "dodging" or "moving" again
-		if (this._elapsedMoveTime >= this._timeBetweenMoves + this._moveDuration)
+		if (this._elapsedMoveTime >= nextMoveTime)
 		{
 			this._targetPosition = GenerateDodgePosition();
 			this._elapsedMoveTime = 0f; // Reset elapsed move time
@@ -272,6 +277,16 @@ public class Enemy : MonoBehaviour, IDamageable
 	}
 	#endregion
 
+	private void UpdateMoveBounds()
+	{
+		if (enemyType != EnemyType.LilGuard)
+		{
+			//Dodging/Moving Bounds based off radius 
+			this._minBounds = new Vector2(this.transform.position.x - this._radius.bounds.extents.x, -1.35f);
+			this._maxBounds = new Vector2(this.transform.position.x + this._radius.bounds.extents.x, 2.35f);
+		}
+	}
+
 	private IEnumerator OnEnemyShot()
 	{
 		this._isShot = true;
@@ -299,6 +314,8 @@ public class Enemy : MonoBehaviour, IDamageable
 	#region Generate Dodge Position
 	private Vector2 GenerateDodgePosition()
 	{
+		this._moveOffset = Random.Range(0.75f, 1.55f); // Randomize the move offset to dodge
+
 		// Picks best max/min x, y positions enemy is allowed to move to based on the background bounds
 		float minX = Mathf.Max(this._minBounds.x, transform.position.x - this._moveOffset);
 		float maxX = Mathf.Min(this._maxBounds.x, transform.position.x + this._moveOffset);
@@ -314,7 +331,7 @@ public class Enemy : MonoBehaviour, IDamageable
 	}
 	#endregion
 
-	#region Helper Methods/Coroutines
+	#region Other Helper Methods/Coroutines
 	private IEnumerator ResetEnemySettings()
 	{
 		this._hasResetSettings = true; // Prevents multiple resets from happening at the same time
@@ -332,7 +349,7 @@ public class Enemy : MonoBehaviour, IDamageable
 		if (this._isShot) StopCoroutine(OnEnemyShot());
 		StartCoroutine(OnEnemyShot());
 	}
-
+	
 	private float GetBaseMoveSpeed()
 	{
 		switch (this.enemyType)
@@ -343,7 +360,6 @@ public class Enemy : MonoBehaviour, IDamageable
 			default: return 0f;
 		}
 	}
-
 	private float GetBaseTimeBetweenMoves()
 	{
 		switch (this.enemyType)

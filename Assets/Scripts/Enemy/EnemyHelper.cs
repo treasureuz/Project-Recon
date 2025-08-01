@@ -12,7 +12,6 @@ public class EnemyHelper : MonoBehaviour
 			this._enemyList.Add(newEnemy);
 		}
 	}
-
 	public void RemoveEnemyFromList(Enemy enemyToRemove)
 	{
 		if (this._enemyList.Contains(enemyToRemove))
@@ -20,7 +19,6 @@ public class EnemyHelper : MonoBehaviour
 			this._enemyList.Remove(enemyToRemove);
 		}
 	}
-
 	public List<Enemy> GetEnemyList()
 	{
 		return this._enemyList;

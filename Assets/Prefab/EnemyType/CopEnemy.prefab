@@ -714,7 +714,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: -0.35, y: 0}
-  m_Radius: 8
+  m_Radius: 6.95
 --- !u!114 &238831766910545831
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -788,8 +788,10 @@ MonoBehaviour:
   _maxBounds: {x: -6.3, y: 3.42}
   _rotationDuration: 0.2
   _moveDuration: 1.35
+  _moveOffset: 0.75
   _slowAmount: 0.2
   _moveSpeedThreshold: 0.85
+  _timeBetweenMovesThreshold: 3.5
   _guardTimeBetweenMoves: 2
   _guardMoveSpeed: 1.55
   _guardMaxHealth: 120
