@@ -1,4 +1,6 @@
 # Recon
+#This project is canceled due to my UnityProjects folder being wiped from my computer
+
 Repo for my 2D Game "Recon" or "Project Recon." Details for the game below:
 
 Intro To Recon:
